@@ -1,6 +1,4 @@
-# Require gem
 require "sprockets"
-require "middleman-sprockets/sass"
 
 # Sprockets extension
 module Middleman::Sprockets
@@ -13,15 +11,24 @@ module Middleman::Sprockets
       # Add class methods to context
       app.send :include, InstanceMethods
       
+      require "middleman-sprockets/sass"
       app.register Middleman::Sprockets::Sass
 
       # Once Middleman is setup
       app.ready do
         # Add any gems with (vendor|app|.)/assets/javascripts to paths
         # also add similar directories from project root (like in rails)
-        root_paths = [%w{ app }, %w{ assets }, %w{ vendor }, %w{ app assets }, %w{ vendor assets }, %w{ lib }, %w{ lib assets }]
-        try_paths  = root_paths.map {|rp| File.join(rp, 'javascripts') } +
-                     root_paths.map {|rp| File.join(rp, 'stylesheets') }
+        try_paths = [
+          %w{ assets },
+          %w{ app },
+          %w{ app assets },
+          %w{ vendor },
+          %w{ vendor assets },
+          %w{ lib },
+          %w{ lib assets }
+        ].inject([]) do |sum, v|
+          sum + [File.join(v, 'javascripts'), File.join(v, 'stylesheets')]
+        end
 
         ([root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
           try_paths.map {|p| File.join(root_path, p) }.
@@ -34,6 +41,7 @@ module Middleman::Sprockets
 
         # Intercept requests to /javascripts and /stylesheets and pass to sprockets
         our_sprockets = sprockets
+        
         map("/#{js_dir}")  { run our_sprockets }
         map("/#{css_dir}") { run our_sprockets }
       end

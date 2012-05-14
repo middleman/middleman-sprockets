@@ -1,4 +1,5 @@
 require "middleman-core"
+require "middleman-more"
 require "middleman-sprockets/version"
 
 Middleman::Extensions.register(:sprockets, Middleman::Sprockets::VERSION) do
