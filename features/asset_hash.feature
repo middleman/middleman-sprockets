@@ -81,3 +81,22 @@ Feature: Assets get a file hash appended to their and references to them are upd
       """
     When I go to "/partials/"
     Then I should see 'href="../stylesheets/uses_partials-1f9f0ed2.css'
+
+  Scenario: The asset hash should change when a Javascript partial changes
+    Given the Server is running at "asset-hash-app"
+    And the file "source/javascripts/sprockets_sub.js" has the contents
+      """
+      function sprockets_sub_function() { }
+      """
+    When I go to "/partials/"
+    Then I should see 'src="../javascripts/sprockets_base-0252a861.js'
+    When I go to "/javascripts/sprockets_base-0252a861.js"
+    Then I should see "sprockets_sub_function"
+    And the file "source/javascripts/sprockets_sub.js" has the contents
+      """
+      function sprockets_sub2_function() { }
+      """
+    When I go to "/partials/"
+    Then I should see 'src="../javascripts/sprockets_base-5121d891.js'
+    When I go to "/javascripts/sprockets_base-5121d891.js"
+    Then I should see "sprockets_sub2_function"
