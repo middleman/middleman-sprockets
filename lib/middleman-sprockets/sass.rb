@@ -1,3 +1,5 @@
+require "sprockets-sass"
+  
 module Middleman
   module Sprockets
     
@@ -9,7 +11,6 @@ module Middleman
     
         # Once registered
         def registered(app)
-          require "sprockets-sass"
 
           # Stick with Compass' asset functions
           ::Sprockets::Sass.add_sass_functions = false
