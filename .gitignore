@@ -3,3 +3,4 @@ Gemfile.lock
 tmp
 .rbenv-*
 .sass-cache
+pkg
