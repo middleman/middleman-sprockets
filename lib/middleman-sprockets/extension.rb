@@ -82,6 +82,11 @@ module Middleman::Sprockets
       # configure search paths
       append_path app.js_dir
       append_path app.css_dir
+
+      # add custom assets paths to the scope
+      app.js_assets_paths.each do |p|
+        append_path p
+      end
     end
 
     # Override Sprockets' default digest function to *not*
