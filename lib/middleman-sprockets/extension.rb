@@ -66,7 +66,8 @@ module Middleman::Sprockets
       # Make the app context available to Sprockets
       context_class.send(:define_method, :app) { app }
       context_class.class_eval do
-        def method_missing(name)
+        def method_missing(*args)
+          name = args.first
           if app.respond_to?(name)
             app.send(name)
           else
