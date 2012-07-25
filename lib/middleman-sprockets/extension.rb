@@ -8,6 +8,11 @@ module Middleman::Sprockets
 
     # Once registered
     def registered(app)
+      # Location of javascripts external to source directory.
+      # @return [Array]
+      #   set :js_assets_paths, ["#{root}/assets/javascripts/", "/path/2/external/js/repository/"]
+      app.set :js_assets_paths, []
+    
       # Add class methods to context
       app.send :include, InstanceMethods
       
@@ -69,7 +74,7 @@ module Middleman::Sprockets
         def method_missing(*args)
           name = args.first
           if app.respond_to?(name)
-            app.send(name)
+            app.send(*args)
           else
             super
           end
