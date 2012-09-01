@@ -21,6 +21,9 @@ module Middleman::Sprockets
 
       # Once Middleman is setup
       app.ready do
+        ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
+        ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
+        
         # Add any gems with (vendor|app|.)/assets/javascripts to paths
         # also add similar directories from project root (like in rails)
         try_paths = [

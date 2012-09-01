@@ -25,4 +25,6 @@ group :test do
   gem "jquery-rails", "~> 2.0.1"
   # gem "bootstrap-rails", "0.0.5"
   # gem "zurb-foundation"
+  gem "ejs"
+  gem "eco"
 end
