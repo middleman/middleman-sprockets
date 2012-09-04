@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -z -- {fixtures,features}/*`.split("\0")
   s.require_paths = ["lib"]
   
-  s.add_dependency("middleman-more", "~> 3.0.0")
+  s.add_dependency("middleman-more", "~> 3.0.1")
   s.add_dependency("sprockets", ["~> 2.1"])
   s.add_dependency("sprockets-sass", ["~> 0.8.0"])
 end
