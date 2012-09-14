@@ -20,6 +20,22 @@ Feature: Sprockets
     When I go to "/javascripts/multiple_engines.js"
     Then I should see "Hello One"
     
+  Scenario: Sprockets JS should only contain body when requested
+    Given the Server is running at "sprockets-app2"
+    When I go to "/javascripts/sprockets_base.js?body=1"
+    Then I should see "base"
+    And I should not see "sprockets_sub_function"
+    
+  Scenario: Script tags should be provided individually while debugging assets
+    Given the Server is running at "sprockets-app-debug-assets"
+    When I go to "/index.html"
+    Then I should see 
+      """
+      <script src="/javascripts/dependency2.js?body=1" type="text/javascript"></script>
+      <script src="/javascripts/dependency1.js?body=1" type="text/javascript"></script>
+      <script src="/javascripts/main.js?body=1" type="text/javascript"></script>
+      """
+    
   Scenario: Multiple engine files should build correctly
     Given a successfully built app at "sprockets-app2"
     When I cd to "build"
