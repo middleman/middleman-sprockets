@@ -4,6 +4,11 @@ Feature: Sprockets
     Given the Server is running at "sprockets-app2"
     When I go to "/javascripts/sprockets_base.js"
     Then I should see "sprockets_sub_function"
+
+  Scenario: asset_path helper
+    Given the Server is running at "sprockets-app2"
+    When I go to "/javascripts/asset_path.js"
+    Then I should see "templates.js"
     
   Scenario: Sprockets JS require with custom :js_dir
     Given the Server is running at "sprockets-app"
