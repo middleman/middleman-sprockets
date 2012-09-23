@@ -11,7 +11,6 @@ module Middleman::Sprockets
       # Location of javascripts external to source directory.
       # @return [Array]
       #   set :js_assets_paths, ["#{root}/assets/javascripts/", "/path/2/external/js/repository/"]
-      app.set :js_assets_paths, []
     
       # Add class methods to context
       app.send :include, InstanceMethods
@@ -20,7 +19,7 @@ module Middleman::Sprockets
       app.register Middleman::Sprockets::Sass
 
       # Once Middleman is setup
-      app.ready do
+      app.after_configuration do
         ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
         ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
         
@@ -93,9 +92,10 @@ module Middleman::Sprockets
       append_path app.css_dir
 
       # add custom assets paths to the scope
+
       app.js_assets_paths.each do |p|
         append_path p
-      end
+      end if app.respond_to?(:js_assets_paths)
     end
 
     # Override Sprockets' default digest function to *not*

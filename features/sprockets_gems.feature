@@ -13,3 +13,8 @@ Feature: Sprockets Gems
     Given the Server is running at "sprockets-app"
     When I go to "/library/js/vendored_include.js"
     Then I should see "var vendored_js_included = true;"
+  
+  Scenario: Sprockets can pull js from custom vendor dir
+    Given the Server is running at "asset-paths-app"
+    When I go to "/javascripts/vendored_include.js"
+    Then I should see "var vendored_js_included = true;"
