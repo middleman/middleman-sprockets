@@ -18,6 +18,10 @@ module Middleman::Sprockets
       require "middleman-sprockets/sass"
       app.register Middleman::Sprockets::Sass
 
+      app.after_configuration do
+        helpers JavascriptTagHelper
+      end
+
       # Once Middleman is setup
       app.after_configuration do
         ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
@@ -122,5 +126,33 @@ module Middleman::Sprockets
 
     # Clear cache on error
     alias :css_exception_response :javascript_exception_response
+  end
+  
+  module JavascriptTagHelper
+    
+    # extend padrinos javascript_include_tag with debug functionality
+    # splits up script dependencies in individual files when
+    # configuration variable :debug_assets is set to true
+    def javascript_include_tag(*sources)
+      options = sources.extract_options!.symbolize_keys
+
+      if debug_assets
+
+        # loop through all sources and the dependencies and
+        # output each as script tag in the correct order
+        sources.map do |source|
+          dependencies_paths = sprockets[source].to_a.map do |dependency|
+            # if sprockets sees "?body=1" it only gives back the body
+            # of the script without the dependencies included
+            dependency.logical_path << "?body=1"
+          end
+
+          super(dependencies_paths)
+        end.join("")
+
+      else
+        super
+      end
+    end
   end
 end
