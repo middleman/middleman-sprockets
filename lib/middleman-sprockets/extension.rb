@@ -136,7 +136,7 @@ module Middleman::Sprockets
     def javascript_include_tag(*sources)
       options = sources.extract_options!.symbolize_keys
 
-      if debug_assets
+      if respond_to?(:debug_assets) && debug_assets
 
         # loop through all sources and the dependencies and
         # output each as script tag in the correct order
