@@ -134,9 +134,8 @@ module Middleman::Sprockets
     # splits up script dependencies in individual files when
     # configuration variable :debug_assets is set to true
     def javascript_include_tag(*sources)
-      options = sources.extract_options!.symbolize_keys
-
       if respond_to?(:debug_assets) && debug_assets
+        options = sources.extract_options!.symbolize_keys
 
         # loop through all sources and the dependencies and
         # output each as script tag in the correct order
@@ -147,9 +146,8 @@ module Middleman::Sprockets
             dependency.logical_path << "?body=1"
           end
 
-          super(dependencies_paths)
+          super(dependencies_paths, options)
         end.join("")
-
       else
         super
       end

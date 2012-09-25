@@ -4,6 +4,11 @@ Feature: Sprockets
     Given the Server is running at "sprockets-app2"
     When I go to "/javascripts/sprockets_base.js"
     Then I should see "sprockets_sub_function"
+    
+  Scenario: javascript_include_tag with opts
+    Given the Server is running at "sprockets-app"
+    When I go to "/index.html"
+    Then I should see "data-name"
 
   Scenario: asset_path helper
     Given the Server is running at "sprockets-app2"
@@ -34,12 +39,10 @@ Feature: Sprockets
   Scenario: Script tags should be provided individually while debugging assets
     Given the Server is running at "sprockets-app-debug-assets"
     When I go to "/index.html"
-    Then I should see 
-      """
-      <script src="/javascripts/dependency2.js?body=1" type="text/javascript"></script>
-      <script src="/javascripts/dependency1.js?body=1" type="text/javascript"></script>
-      <script src="/javascripts/main.js?body=1" type="text/javascript"></script>
-      """
+    Then I should see "data-name"
+    Then I should see 'src="/javascripts/dependency2.js?body=1"'
+    Then I should see 'src="/javascripts/dependency1.js?body=1"'
+    Then I should see 'src="/javascripts/main.js?body=1"'
     
   Scenario: Multiple engine files should build correctly
     Given a successfully built app at "sprockets-app2"
