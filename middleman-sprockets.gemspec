@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   
   s.add_dependency("middleman-more", "~> 3.0.1")
-  s.add_dependency("sprockets", ["~> 2.1"])
+  s.add_dependency("sprockets", ["~> 2.1", "< 2.5"])
   s.add_dependency("sprockets-sass", ["~> 0.8.0"])
 end
