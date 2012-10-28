@@ -100,6 +100,9 @@ module Middleman::Sprockets
       app.js_assets_paths.each do |p|
         append_path p
       end if app.respond_to?(:js_assets_paths)
+
+      # Stylus support 
+      ::Stylus.setup(self, app.styl) if defined?(::Stylus)
     end
 
     # Override Sprockets' default digest function to *not*
