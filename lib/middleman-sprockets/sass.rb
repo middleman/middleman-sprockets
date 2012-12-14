@@ -35,6 +35,7 @@ module Middleman
       
       # A SassTemplate for Sprockets/Tilt which outputs debug messages
       class SassPlusCSSFilenameTemplate < ::Sprockets::Sass::SassTemplate
+        self.default_mime_type = 'text/css'
           
         # Add exception messaging
         # @param [Class] context
@@ -49,21 +50,32 @@ module Middleman
         end
         
       protected
+        def cache_store
+          nil
+        end
+
         # Change Sass path, for url functions, to the build folder if we're building
         # @return [Hash]
         def sass_options
-          location_of_sass_file = File.expand_path(@context.source, @context.root)
-      
-          parts = basename.split('.')
-          parts.pop
-          css_filename = File.join(location_of_sass_file, @context.css_dir, parts.join("."))
-      
-          super.merge(:css_filename => css_filename)
+          orig = super
+
+          if context && context.app
+            location_of_sass_file = File.expand_path(context.app.source, context.app.root)
+
+            parts = basename.split('.')
+            parts.pop
+            css_filename = File.join(location_of_sass_file, context.app.css_dir, parts.join("."))
+
+            orig.merge(:css_filename => css_filename)
+          end
+
+          orig
         end
       end
         
       # SCSS version of the above template
       class ScssPlusCSSFilenameTemplate < SassPlusCSSFilenameTemplate
+        self.default_mime_type = 'text/css'
           
         # Define the expected syntax for the template
         # @return [Symbol]
