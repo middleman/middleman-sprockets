@@ -66,7 +66,7 @@ module Middleman
             parts.pop
             css_filename = File.join(location_of_sass_file, context.app.css_dir, parts.join("."))
 
-            orig.merge(:css_filename => css_filename)
+            orig.merge!(:css_filename => css_filename)
           end
 
           orig
