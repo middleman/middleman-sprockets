@@ -38,7 +38,11 @@ module Middleman::Sprockets
           %w{ lib },
           %w{ lib assets }
         ].inject([]) do |sum, v|
-          sum + [File.join(v, 'javascripts'), File.join(v, 'stylesheets')]
+          sum + [
+            File.join(v, 'javascripts'),
+            File.join(v, 'stylesheets'),
+            File.join(v, 'images')
+          ]
         end
 
         ([root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
