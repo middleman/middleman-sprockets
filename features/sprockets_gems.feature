@@ -18,3 +18,12 @@ Feature: Sprockets Gems
     Given the Server is running at "asset-paths-app"
     When I go to "/javascripts/vendored_include.js"
     Then I should see "var vendored_js_included = true;"
+
+  Scenario: Custom paths added to extension load their assets
+    Given the Server is running at "assets-load-paths-app"
+    When I go to "/"
+    Then I should see '/pictures/test.jpg'
+    When I go to "/pictures/test.jpg"
+    Then I should get a response with status "200"
+    When I go to "/stylesheets/all.css"
+    Then I should see 'url("/pictures/test.jpg")'

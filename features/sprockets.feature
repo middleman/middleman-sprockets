@@ -74,12 +74,3 @@ Feature: Sprockets
     Given the Server is running at "sprockets-app"
     When I go to "/library/css/sprockets_base2.css"
     Then I should see "hello"
-    
-  Scenario: Custom paths added to extension load assets
-    Given the Server is running at "sprockets-custom-paths-app"
-    When I go to "/"
-    Then I should see '/pictures/test.jpg'
-    When I go to "/pictures/test.jpg"
-    Then I should get a response with status "200"
-    When I go to "/stylesheets/all.css"
-    Then I should see 'url("/pictures/test.jpg")'
