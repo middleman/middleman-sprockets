@@ -109,6 +109,7 @@ module Middleman::Sprockets
       # configure search paths
       append_path app.js_dir
       append_path app.css_dir
+      append_path app.images_dir
 
       # add custom assets paths to the scope
 
