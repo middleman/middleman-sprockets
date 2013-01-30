@@ -74,3 +74,13 @@ Feature: Sprockets
     Given the Server is running at "sprockets-app"
     When I go to "/library/css/sprockets_base2.css"
     Then I should see "hello"
+
+Scenario: Sprockets inline Images with asset_path and image_path helpers
+    Given the Server is running at "sprockets-images-app"
+    When I go to "/"
+    Then I should see 'src="/library/images/cat.jpg"'
+    And I should see 'src="/library/images/cat-2.jpg"'
+    When I go to "/library/images/cat.jpg"
+    Then I should get a response with status "200"
+    When I go to "/library/images/cat-2.jpg"
+    Then I should get a response with status "200"

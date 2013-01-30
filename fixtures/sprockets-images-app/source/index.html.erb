@@ -1,0 +1,10 @@
+<!doctype html>
+<html>
+  <head>
+    <%= javascript_include_tag :plain, :data => { :name => "plain" } %>
+  </head>
+  <body>
+    <img src="<%= image_path('cat.jpg') %>" alt="cat" />
+    <img src="<%= asset_path(:images, 'cat-2.jpg') %>" alt="cat" />
+  </body>
+</html>
