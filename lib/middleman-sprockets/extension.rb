@@ -52,9 +52,19 @@ module Middleman::Sprockets
 
         # Intercept requests to /javascripts and /stylesheets and pass to sprockets
         our_sprockets = sprockets
-        
+
         map("/#{js_dir}")  { run our_sprockets }
         map("/#{css_dir}") { run our_sprockets }
+
+        # Add additional custom asset load paths and mappings
+        assets_load_paths.map do |hash|
+          hash.map do |path, sprockets_path|
+            our_sprockets.append_path(path)
+            map("/#{sprockets_path}") {
+              run our_sprockets
+            }
+          end
+        end if respond_to?(:assets_load_paths)
       end
     end
     alias :included :registered
