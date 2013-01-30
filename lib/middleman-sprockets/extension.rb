@@ -59,6 +59,7 @@ module Middleman::Sprockets
         
         map("/#{js_dir}")  { run our_sprockets }
         map("/#{css_dir}") { run our_sprockets }
+        map("/#{images_dir}") { run our_sprockets }
       end
     end
     alias :included :registered
