@@ -27,3 +27,9 @@ Feature: Sprockets Gems
     Then I should get a response with status "200"
     When I go to "/stylesheets/all.css"
     Then I should see 'url("/pictures/test.jpg")'
+
+  Scenario: Custom paths added to extension are in sitemap
+    Given a successfully built app at "assets-load-paths-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | pictures/test.jpg |
