@@ -4,7 +4,7 @@
     <%= javascript_include_tag :plain, :data => { :name => "plain" } %>
   </head>
   <body>
-    <img src="<%= image_path('cat.jpg') %>" alt="cat" />
-    <img src="<%= asset_path(:images, 'cat-2.jpg') %>" alt="cat" />
+    <%= image_tag('cat.jpg') %>
+    <%= image_tag('cat-2.jpg') %>
   </body>
 </html>

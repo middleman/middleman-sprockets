@@ -4,3 +4,4 @@ tmp
 .rbenv-*
 .sass-cache
 pkg
+build

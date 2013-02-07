@@ -41,7 +41,8 @@ module Middleman::Sprockets
           sum + [
             File.join(v, 'javascripts'),
             File.join(v, 'stylesheets'),
-            File.join(v, 'images')
+            File.join(v, 'images'),
+            File.join(v, 'fonts')
           ]
         end
 
@@ -60,6 +61,10 @@ module Middleman::Sprockets
         map("/#{js_dir}")  { run our_sprockets }
         map("/#{css_dir}") { run our_sprockets }
         map("/#{images_dir}") { run our_sprockets }
+        map("/#{fonts_dir}") { run our_sprockets }
+        
+        # register resource list manipulator to add assets_load_paths to sitemap
+        sitemap.register_resource_list_manipulator(:assets_load_paths, SitemapExtension.new(self), false)
       end
     end
     alias :included :registered
@@ -162,6 +167,35 @@ module Middleman::Sprockets
       else
         super
       end
+    end
+  end
+
+  class SitemapExtension
+    def initialize(app)
+      @app = app
+    end
+
+    # Add sitemap resource for every image in the sprockets load path
+    def manipulate_resource_list(resources)
+      resources_list = []
+       @app.sprockets.paths.each do |load_path|
+        output_dir = nil
+        if load_path.end_with?('/images')
+          output_dir = @app.images_dir
+        elsif load_path.end_with?('/fonts')
+          output_dir = @app.fonts_dir
+        end
+
+        if output_dir
+          @app.sprockets.each_entry(load_path) do |entry|
+            next unless entry.file?
+            base_path = entry.sub("#{load_path}/", '')
+            new_path = File.join(output_dir, base_path)
+            resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, entry.to_s)
+          end
+        end
+      end
+      resources + resources_list
     end
   end
 end
