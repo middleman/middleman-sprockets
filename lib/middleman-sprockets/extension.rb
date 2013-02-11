@@ -76,10 +76,20 @@ module Middleman::Sprockets
 
       # Make the app context available to Sprockets
       context_class.send(:define_method, :app) { app }
+
       context_class.class_eval do
+        # Find the Middleman-compatible version of this file's path
+        def mm_path
+          @mm_path ||= app.sitemap.file_to_path(pathname.to_s)
+        end
+
         def method_missing(*args)
           name = args.first
           if app.respond_to?(name)
+            # Set the middleman application current path, since it won't
+            # be set if the request came in through Sprockets and helpers
+            # won't work without it.
+            app.current_path = mm_path unless app.current_path
             app.send(*args)
           else
             super
