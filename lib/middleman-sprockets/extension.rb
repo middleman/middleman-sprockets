@@ -112,7 +112,10 @@ module Middleman::Sprockets
       end if app.respond_to?(:js_assets_paths)
 
       # Stylus support 
-      ::Stylus.setup(self, app.styl) if defined?(::Stylus)
+      if defined?(::Stylus)
+        require 'stylus/sprockets'
+        ::Stylus.setup(self, app.styl)
+      end
     end
 
     # Override Sprockets' default digest function to *not*
