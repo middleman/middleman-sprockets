@@ -163,7 +163,7 @@ module Middleman::Sprockets
           end
 
           super(dependencies_paths, options)
-        end.join("")
+        end.join("").gsub("body=1.js", "body=1")
       else
         super
       end
