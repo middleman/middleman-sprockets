@@ -128,12 +128,6 @@ module Middleman::Sprockets
       @digest.dup
     end
 
-    # During development, don't use the asset cache
-    def find_asset(path, options = {})
-      expire_index! if @app.development?
-      super
-    end
-
     # Clear cache on error
     def javascript_exception_response(exception)
       expire_index!
