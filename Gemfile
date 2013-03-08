@@ -14,10 +14,10 @@ gem "rake",     "~> 10.0.3"
 gem "yard",     "~> 0.8.0"
 
 # Test tools
-gem "cucumber", "~> 1.2.1"
-gem "fivemat",  "~> 1.1.0"
+gem "cucumber", "~> 1.2.2"
+gem "fivemat",  "~> 1.2.0"
 gem "aruba",    "~> 0.5.1"
-gem "rspec",    "~> 2.12"
+gem "rspec",    "~> 2.13"
 
 # For actual tests
 gem "jquery-rails", "2.0.1"
