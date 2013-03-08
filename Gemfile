@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 git "git://github.com/middleman/middleman.git", :branch => "3.0-stable" do
   gem "middleman"
@@ -9,24 +9,18 @@ end
 # Specify your gem's dependencies in middleman-blog.gemspec
 gemspec
 
-group :development do
-  gem "rake",     "~> 0.9.2"
-  gem "rdoc",     "~> 3.9"
-  gem "yard",     "~> 0.8.0"
-  gem "pry"
-  gem "pry-debugger"
-end
+# Build and doc tools
+gem "rake",     "~> 10.0.3"
+gem "yard",     "~> 0.8.0"
 
-group :test do
-  gem "cucumber", "~> 1.2.0"
-  gem "fivemat"
-  gem "aruba",    "~> 0.4.11"
-  gem "rspec",    "~> 2.7"
+# Test tools
+gem "cucumber", "~> 1.2.2"
+gem "fivemat",  "~> 1.2.0"
+gem "aruba",    "~> 0.5.1"
+gem "rspec",    "~> 2.13"
 
-  # For actual tests
-  gem "jquery-rails", "~> 2.0.1"
-  # gem "bootstrap-rails", "0.0.5"
-  # gem "zurb-foundation"
-  gem "ejs"
-  gem "eco"
-end
+# For actual tests
+gem "jquery-rails", "2.0.1"
+gem "ejs", "~> 1.1.1"
+gem "eco", "~> 1.0.0"
+gem "erubis", "~> 2.7.0"

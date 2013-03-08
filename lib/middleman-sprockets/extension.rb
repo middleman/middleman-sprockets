@@ -81,10 +81,20 @@ module Middleman::Sprockets
 
       # Make the app context available to Sprockets
       context_class.send(:define_method, :app) { app }
+
       context_class.class_eval do
+        # Find the Middleman-compatible version of this file's path
+        def mm_path
+          @mm_path ||= app.sitemap.file_to_path(pathname.to_s)
+        end
+
         def method_missing(*args)
           name = args.first
           if app.respond_to?(name)
+            # Set the middleman application current path, since it won't
+            # be set if the request came in through Sprockets and helpers
+            # won't work without it.
+            app.current_path = mm_path unless app.current_path
             app.send(*args)
           else
             super
@@ -108,7 +118,10 @@ module Middleman::Sprockets
       end if app.respond_to?(:js_assets_paths)
 
       # Stylus support 
-      ::Stylus.setup(self, app.styl) if defined?(::Stylus)
+      if defined?(::Stylus)
+        require 'stylus/sprockets'
+        ::Stylus.setup(self, app.styl)
+      end
     end
 
     # Override Sprockets' default digest function to *not*
@@ -143,7 +156,7 @@ module Middleman::Sprockets
     # splits up script dependencies in individual files when
     # configuration variable :debug_assets is set to true
     def javascript_include_tag(*sources)
-      if respond_to?(:debug_assets) && debug_assets
+      if respond_to?(:debug_assets) && debug_assets && !build?
         options = sources.extract_options!.symbolize_keys
 
         # loop through all sources and the dependencies and
@@ -156,7 +169,7 @@ module Middleman::Sprockets
           end
 
           super(dependencies_paths, options)
-        end.join("")
+        end.join("").gsub("body=1.js", "body=1")
       else
         super
       end

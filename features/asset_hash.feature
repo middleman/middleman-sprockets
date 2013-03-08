@@ -7,7 +7,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | images/100px-1242c368.png |
       | images/100px-5fd6fb90.jpg |
       | images/100px-5fd6fb90.gif |
-      | javascripts/application-1d8d5276.js |
+      | javascripts/application-df677242.js |
       | stylesheets/site-50eaa978.css |
       | index.html |
       | subdir/index.html |
@@ -19,33 +19,33 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | javascripts/application.js |
       | stylesheets/site.css |
       
-    And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
+    And the file "javascripts/application-df677242.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
     And the file "stylesheets/site-50eaa978.css" should contain "background-image: url('../images/100px-5fd6fb90.jpg')"
     And the file "index.html" should contain 'href="stylesheets/site-50eaa978.css"'
-    And the file "index.html" should contain 'src="javascripts/application-1d8d5276.js"'
+    And the file "index.html" should contain 'src="javascripts/application-df677242.js"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
     And the file "subdir/index.html" should contain 'href="../stylesheets/site-50eaa978.css"'
-    And the file "subdir/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
+    And the file "subdir/index.html" should contain 'src="../javascripts/application-df677242.js"'
     And the file "subdir/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
     And the file "other/index.html" should contain 'href="../stylesheets/site-50eaa978.css"'
-    And the file "other/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
+    And the file "other/index.html" should contain 'src="../javascripts/application-df677242.js"'
     And the file "other/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
     
   Scenario: Hashed assets work in preview server
     Given the Server is running at "asset-hash-app"
     When I go to "/"
     Then I should see 'href="stylesheets/site-50eaa978.css"'
-    And I should see 'src="javascripts/application-1d8d5276.js"'
+    And I should see 'src="javascripts/application-df677242.js"'
     And I should see 'src="images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
     Then I should see 'href="../stylesheets/site-50eaa978.css"'
-    And I should see 'src="../javascripts/application-1d8d5276.js"'
+    And I should see 'src="../javascripts/application-df677242.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
     Then I should see 'href="../stylesheets/site-50eaa978.css"'
-    And I should see 'src="../javascripts/application-1d8d5276.js"'
+    And I should see 'src="../javascripts/application-df677242.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
-    When I go to "/javascripts/application-1d8d5276.js"
+    When I go to "/javascripts/application-df677242.js"
     Then I should see "img.src = '/images/100px-5fd6fb90.jpg'"
     When I go to "/stylesheets/site-50eaa978.css"
     Then I should see "background-image: url('../images/100px-5fd6fb90.jpg')"
@@ -89,14 +89,14 @@ Feature: Assets get a file hash appended to their and references to them are upd
       function sprockets_sub_function() { }
       """
     When I go to "/partials/"
-    Then I should see 'src="../javascripts/sprockets_base-095c3f3f.js'
-    When I go to "/javascripts/sprockets_base-095c3f3f.js"
+    Then I should see 'src="../javascripts/sprockets_base-0252a861.js'
+    When I go to "/javascripts/sprockets_base-0252a861.js"
     Then I should see "sprockets_sub_function"
     And the file "source/javascripts/sprockets_sub.js" has the contents
       """
       function sprockets_sub2_function() { }
       """
     When I go to "/partials/"
-    Then I should see 'src="../javascripts/sprockets_base-095c3f3f.js'
-    When I go to "/javascripts/sprockets_base-095c3f3f.js"
+    Then I should see 'src="../javascripts/sprockets_base-5121d891.js'
+    When I go to "/javascripts/sprockets_base-5121d891.js"
     Then I should see "sprockets_sub2_function"

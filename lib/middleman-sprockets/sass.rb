@@ -61,11 +61,8 @@ module Middleman
 
           if context && context.app
             location_of_sass_file = File.expand_path(context.app.source, context.app.root)
-
-            parts = basename.split('.')
-            parts.pop
-            css_filename = File.join(location_of_sass_file, context.app.css_dir, parts.join("."))
-
+            css_dir = File.join(location_of_sass_file, context.app.css_dir)
+            css_filename = File.expand_path(file, css_dir)
             orig.merge!(:css_filename => css_filename)
           end
 

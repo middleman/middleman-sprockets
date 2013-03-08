@@ -17,3 +17,5 @@ desc "Build HTML documentation"
 task :doc do
   sh 'bundle exec yard'
 end
+
+task :default => [:test]
