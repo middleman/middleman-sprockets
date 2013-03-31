@@ -52,9 +52,24 @@ module Middleman::Sprockets
 
         # Intercept requests to /javascripts and /stylesheets and pass to sprockets
         our_sprockets = sprockets
-        
+
         map("/#{js_dir}")  { run our_sprockets }
         map("/#{css_dir}") { run our_sprockets }
+
+        # Add additional custom asset load paths and mappings
+        if respond_to?(:assets_load_paths)
+          assets_load_paths.map do |hash|
+            hash.map do |path, sprockets_path|
+              our_sprockets.append_path(path)
+              map("/#{sprockets_path}") {
+                run our_sprockets
+              }
+            end
+          end
+
+          # register resource list manipulator to add assets_load_paths to sitemap
+          sitemap.register_resource_list_manipulator(:assets_load_paths, Sitemap.new(self), false)
+        end
       end
     end
     alias :included :registered
@@ -161,6 +176,27 @@ module Middleman::Sprockets
       else
         super
       end
+    end
+  end
+
+  class Sitemap
+    def initialize(app)
+      @app = app
+    end
+
+    # Update the main sitemap resource list
+    def manipulate_resource_list(resources)
+      resources_list = []
+      @app.assets_load_paths.each do |hash|
+        hash.map do |full_path, build_path|
+          Dir["#{full_path}/**"].map do |existing_file|
+            new_path = File.join(build_path, File.basename(existing_file))
+            p = ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path, existing_file)
+            resources_list << p
+          end
+        end
+      end
+      resources + resources_list
     end
   end
 end
