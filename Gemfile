@@ -26,3 +26,4 @@ gem "bootstrap-sass", :require => false
 gem "ejs", "~> 1.1.1"
 gem "eco", "~> 1.0.0"
 gem "erubis", "~> 2.7.0"
+gem 'jquery_mobile_rails', '~>1.2.0', :require => false
