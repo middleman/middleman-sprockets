@@ -38,7 +38,11 @@ module Middleman::Sprockets
           %w{ lib },
           %w{ lib assets }
         ].inject([]) do |sum, v|
-          sum + [File.join(v, 'javascripts'), File.join(v, 'stylesheets')]
+          sum + [
+            File.join(v, 'javascripts'),
+            File.join(v, 'stylesheets'),
+            File.join(v, 'images')
+          ]
         end
 
         ([root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
@@ -55,6 +59,7 @@ module Middleman::Sprockets
         
         map("/#{js_dir}")  { run our_sprockets }
         map("/#{css_dir}") { run our_sprockets }
+        map("/#{images_dir}") { run our_sprockets }
       end
     end
     alias :included :registered
@@ -104,6 +109,7 @@ module Middleman::Sprockets
       # configure search paths
       append_path app.js_dir
       append_path app.css_dir
+      append_path app.images_dir
 
       # add custom assets paths to the scope
 
