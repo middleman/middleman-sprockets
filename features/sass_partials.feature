@@ -17,6 +17,7 @@ Feature: Sass partials should work with Sprockets
     When I go to "/stylesheets/main2.css"
     Then I should see "color: red;"
     Then I should see "font-size: 14px"
+    And wait a second
     And the file "source/stylesheets/main2.css.sass" has the contents
       """
       //= require "_partial2.css.sass"
@@ -30,5 +31,6 @@ Feature: Sass partials should work with Sprockets
         font-size: 18px
       """
     When I go to "/stylesheets/main2.css"
-      Then I should see "color: blue;"
+    When I go to "/stylesheets/main2.css"
+    Then I should see "color: blue;"
     Then I should see "font-size: 18px"

@@ -83,6 +83,11 @@ module Middleman::Sprockets
           @mm_path ||= app.sitemap.file_to_path(pathname.to_s)
         end
 
+        def asset_path(*args)
+          app.current_path = mm_path unless app.current_path
+          app.asset_path(*args)
+        end
+
         def method_missing(*args)
           name = args.first
           if app.respond_to?(name)
@@ -106,7 +111,6 @@ module Middleman::Sprockets
       append_path app.css_dir
 
       # add custom assets paths to the scope
-
       app.js_assets_paths.each do |p|
         append_path p
       end if app.respond_to?(:js_assets_paths)
@@ -127,15 +131,6 @@ module Middleman::Sprockets
       @digest ||= Digest::SHA1.new.update(version.to_s)
       @digest.dup
     end
-
-    # Clear cache on error
-    def javascript_exception_response(exception)
-      expire_index!
-      super(exception)
-    end
-
-    # Clear cache on error
-    alias :css_exception_response :javascript_exception_response
   end
   
   module JavascriptTagHelper
