@@ -70,16 +70,6 @@ module Middleman::Sprockets
     def sprockets
       @sprockets ||= MiddlemanSprocketsEnvironment.new(self)
     end
-
-    # Sprockets sends a second arg but padrino can't deal
-    def image_path(*args)
-      super(args.first)
-    end
-
-    # Define font_path to help out Sass
-    def font_path(src, options)
-      asset_path :fonts, src
-    end
   end
 
   # Generic Middleman Sprockets env
@@ -101,6 +91,17 @@ module Middleman::Sprockets
         def asset_path(*args)
           app.current_path = mm_path unless app.current_path
           app.asset_path(*args)
+        end
+
+
+        # Sprockets sends a second arg but padrino can't deal
+        def image_path(*args)
+          app.image_path(args.first)
+        end
+
+        # Define font_path to help out Sass
+        def font_path(src, options)
+          app.asset_path :fonts, src
         end
 
         def method_missing(*args)
@@ -128,6 +129,7 @@ module Middleman::Sprockets
 
       # add custom assets paths to the scope
       app.js_assets_paths.each do |p|
+        warn ":js_assets_paths is deprecated. Call sprockets.append_path instead."
         append_path p
       end if app.respond_to?(:js_assets_paths)
 
@@ -146,6 +148,22 @@ module Middleman::Sprockets
     def digest
       @digest ||= Digest::SHA1.new.update(version.to_s)
       @digest.dup
+    end
+
+    # Invalidate sitemap when users mess with the sprockets load paths
+    def append_path(*args)
+      @app.sitemap.rebuild_resource_list!(:sprockets_paths)
+      super
+    end
+
+    def prepend_path(*args)
+      @app.sitemap.rebuild_resource_list!(:sprockets_paths)
+      super
+    end
+
+    def clear_paths
+      @app.sitemap.rebuild_resource_list!(:sprockets_paths)
+      super
     end
   end
 
