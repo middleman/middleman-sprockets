@@ -8,7 +8,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | images/100px-5fd6fb90.jpg |
       | images/100px-5fd6fb90.gif |
       | javascripts/application-df677242.js |
-      | stylesheets/site-50eaa978.css |
+      | stylesheets/site-700ca585.css |
       | index.html |
       | subdir/index.html |
       | other/index.html |
@@ -20,50 +20,52 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | stylesheets/site.css |
       
     And the file "javascripts/application-df677242.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
-    And the file "stylesheets/site-50eaa978.css" should contain "background-image: url('../images/100px-5fd6fb90.jpg')"
-    And the file "index.html" should contain 'href="stylesheets/site-50eaa978.css"'
+    And the file "stylesheets/site-700ca585.css" should contain 'background-image: url("../images/100px-5fd6fb90.jpg")'
+    And the file "index.html" should contain 'href="stylesheets/site-700ca585.css"'
     And the file "index.html" should contain 'src="javascripts/application-df677242.js"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
-    And the file "subdir/index.html" should contain 'href="../stylesheets/site-50eaa978.css"'
+    And the file "subdir/index.html" should contain 'href="../stylesheets/site-700ca585.css"'
     And the file "subdir/index.html" should contain 'src="../javascripts/application-df677242.js"'
     And the file "subdir/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
-    And the file "other/index.html" should contain 'href="../stylesheets/site-50eaa978.css"'
+    And the file "other/index.html" should contain 'href="../stylesheets/site-700ca585.css"'
     And the file "other/index.html" should contain 'src="../javascripts/application-df677242.js"'
     And the file "other/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
     
   Scenario: Hashed assets work in preview server
     Given the Server is running at "asset-hash-app"
     When I go to "/"
-    Then I should see 'href="stylesheets/site-50eaa978.css"'
+    Then I should see 'href="stylesheets/site-700ca585.css"'
     And I should see 'src="javascripts/application-df677242.js"'
     And I should see 'src="images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
-    Then I should see 'href="../stylesheets/site-50eaa978.css"'
+    Then I should see 'href="../stylesheets/site-700ca585.css"'
     And I should see 'src="../javascripts/application-df677242.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="../stylesheets/site-50eaa978.css"'
+    Then I should see 'href="../stylesheets/site-700ca585.css"'
     And I should see 'src="../javascripts/application-df677242.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/javascripts/application-df677242.js"
     Then I should see "img.src = '/images/100px-5fd6fb90.jpg'"
-    When I go to "/stylesheets/site-50eaa978.css"
-    Then I should see "background-image: url('../images/100px-5fd6fb90.jpg')"
+    When I go to "/stylesheets/site-700ca585.css"
+    Then I should see 'background-image: url("../images/100px-5fd6fb90.jpg")'
+    When I go to "/stylesheets/jquery-mobile-67e48856.css"
+    #Then I should see 'background-image: url("../images/jquery-mobile/icons-18-white-4a0ff57b.png")'
 
   Scenario: Enabling an asset host still produces hashed files and references  
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-171eb3c0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-fcab9a4b.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-171eb3c0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-fcab9a4b.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-171eb3c0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-fcab9a4b.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     # Asset helpers don't appear to work from Compass right now
-    # When I go to "/stylesheets/site-171eb3c0.css"
-    # Then I should see "background-image: url('http://middlemanapp.com/images/100px-5fd6fb90.jpg')"
+    # When I go to "/stylesheets/site-fcab9a4b.css"
+    # Then I should see 'background-image: url("http://middlemanapp.com/images/100px-5fd6fb90.jpg")'
 
   Scenario: The asset hash should change when a SASS partial changes
     Given the Server is running at "asset-hash-app"
@@ -73,7 +75,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
         font-size: 14px
       """
     When I go to "/partials/"
-    Then I should see 'href="../stylesheets/uses_partials-423a00f7.css'
+    Then I should see 'href="../stylesheets/uses_partials-c5df27d1.css'
     And wait a second
     And the file "source/stylesheets/_partial.sass" has the contents
       """
@@ -81,7 +83,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
         font-size: 18px !important
       """
     When I go to "/partials/"
-    Then I should see 'href="../stylesheets/uses_partials-e8c3d4eb.css'
+    Then I should see 'href="../stylesheets/uses_partials-cfc242b5.css'
 
   Scenario: The asset hash should change when a Javascript partial changes
     Given the Server is running at "asset-hash-app"

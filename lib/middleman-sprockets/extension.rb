@@ -1,4 +1,5 @@
 require "sprockets"
+require "sprockets-sass"
 
 # Sprockets extension
 module Middleman::Sprockets
