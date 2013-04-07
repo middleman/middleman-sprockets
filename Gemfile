@@ -18,9 +18,9 @@ gem "cucumber", "~> 1.2.1"
 gem "fivemat",  "~> 1.1.0"
 gem "aruba",    "~> 0.5.1"
 gem "rspec",    "~> 2.12"
+gem 'gherkin', '<= 2.11.6'
 
 # For actual tests
-gem "jquery-rails", "2.0.1"
 gem "ejs", "~> 1.1.1"
 gem "eco", "~> 1.0.0"
 gem "erubis", "~> 2.7.0"
