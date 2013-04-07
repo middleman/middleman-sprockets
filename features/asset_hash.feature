@@ -74,6 +74,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
       """
     When I go to "/partials/"
     Then I should see 'href="../stylesheets/uses_partials-423a00f7.css'
+    And wait a second
     And the file "source/stylesheets/_partial.sass" has the contents
       """
       body
@@ -92,6 +93,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
     Then I should see 'src="../javascripts/sprockets_base-0252a861.js'
     When I go to "/javascripts/sprockets_base-0252a861.js"
     Then I should see "sprockets_sub_function"
+    And wait a second
     And the file "source/javascripts/sprockets_sub.js" has the contents
       """
       function sprockets_sub2_function() { }
