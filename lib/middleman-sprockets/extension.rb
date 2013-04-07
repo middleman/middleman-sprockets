@@ -11,22 +11,16 @@ module Middleman::Sprockets
       # Location of javascripts external to source directory.
       # @return [Array]
       #   set :js_assets_paths, ["#{root}/assets/javascripts/", "/path/2/external/js/repository/"]
-    
+
       # Add class methods to context
       app.send :include, InstanceMethods
-      
-      require "middleman-sprockets/sass"
-      app.register Middleman::Sprockets::Sass
 
       app.after_configuration do
         helpers JavascriptTagHelper
-      end
 
-      # Once Middleman is setup
-      app.after_configuration do
         ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
         ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
-        
+
         # Add any gems with (vendor|app|.)/assets/javascripts to paths
         # also add similar directories from project root (like in rails)
         try_paths = [
@@ -57,12 +51,12 @@ module Middleman::Sprockets
 
         # Intercept requests to /javascripts and /stylesheets and pass to sprockets
         our_sprockets = sprockets
-        
+
         map("/#{js_dir}")  { run our_sprockets }
         map("/#{css_dir}") { run our_sprockets }
         map("/#{images_dir}") { run our_sprockets }
         map("/#{fonts_dir}") { run our_sprockets }
-        
+
         # register resource list manipulator to add assets_load_paths to sitemap
         sitemap.register_resource_list_manipulator(:assets_load_paths, SitemapExtension.new(self), false)
       end
@@ -74,6 +68,16 @@ module Middleman::Sprockets
     # @return [Middleman::CoreExtensions::Sprockets::MiddlemanSprocketsEnvironment]
     def sprockets
       @sprockets ||= MiddlemanSprocketsEnvironment.new(self)
+    end
+
+    # Sprockets sends a second arg but padrino can't deal
+    def image_path(*args)
+      super(args.first)
+    end
+
+    # Define font_path to help out Sass
+    def font_path(src, options)
+      asset_path :fonts, src
     end
   end
 
@@ -126,7 +130,7 @@ module Middleman::Sprockets
         append_path p
       end if app.respond_to?(:js_assets_paths)
 
-      # Stylus support 
+      # Stylus support
       if defined?(::Stylus)
         require 'stylus/sprockets'
         ::Stylus.setup(self, app.styl)
@@ -143,9 +147,9 @@ module Middleman::Sprockets
       @digest.dup
     end
   end
-  
+
   module JavascriptTagHelper
-    
+
     # extend padrinos javascript_include_tag with debug functionality
     # splits up script dependencies in individual files when
     # configuration variable :debug_assets is set to true
