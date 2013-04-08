@@ -9,10 +9,6 @@ module Middleman::Sprockets
 
     # Once registered
     def registered(app)
-      # Location of javascripts external to source directory.
-      # @return [Array]
-      #   set :js_assets_paths, ["#{root}/assets/javascripts/", "/path/2/external/js/repository/"]
-
       # Add class methods to context
       app.send :include, InstanceMethods
 
@@ -83,38 +79,58 @@ module Middleman::Sprockets
       context_class.send(:define_method, :app) { app }
 
       context_class.class_eval do
-        # Find the Middleman-compatible version of this file's path
-        def mm_path
-          @mm_path ||= app.sitemap.file_to_path(pathname.to_s)
+        def asset_path(path, options={})
+          # Handle people calling with the Middleman/Padrino asset path signature
+          if path.is_a?(::Symbol) && !options.is_a?(::Hash)
+            return app.asset_path(path, options)
+          end
+
+          kind = case options[:type]
+                 when :image then :images
+                 when :font then :fonts
+                 when :javascript then :js
+                 when :stylesheet then :css
+                 else options[:type]
+                 end
+
+          app.asset_path(kind, path)
         end
 
-        def asset_path(*args)
-          app.current_path = mm_path unless app.current_path
-          app.asset_path(*args)
+        # These helpers are already defined in later versions of Sprockets, but we define
+        # them ourself to help older versions and to provide extra options that Sass wants.
+
+        # Expand logical image asset path.
+        def image_path(path, options={})
+          asset_path(path, :type => :image)
         end
 
-
-        # Sprockets sends a second arg but padrino can't deal
-        def image_path(*args)
-          app.image_path(args.first)
+        # Expand logical font asset path.
+        def font_path(path, options={})
+          asset_path(path, :type => :font)
         end
 
-        # Define font_path to help out Sass
-        def font_path(src, options)
-          app.asset_path :fonts, src
+        # Expand logical javascript asset path.
+        def javascript_path(path, options={})
+          asset_path(path, :type => :javascript)
+        end
+
+        # Expand logical stylesheet asset path.
+        def stylesheet_path(path, options={})
+          asset_path(path, :type => :stylesheet)
         end
 
         def method_missing(*args)
           name = args.first
           if app.respond_to?(name)
-            # Set the middleman application current path, since it won't
-            # be set if the request came in through Sprockets and helpers
-            # won't work without it.
-            app.current_path = mm_path unless app.current_path
             app.send(*args)
           else
             super
           end
+        end
+
+        # Needed so that method_missing makes sense
+        def respond_to?(method, include_private = false)
+          super || app.respond_to?(method, include_private)
         end
       end
 
@@ -165,6 +181,23 @@ module Middleman::Sprockets
       @app.sitemap.rebuild_resource_list!(:sprockets_paths)
       super
     end
+
+    def css_exception_response(exception)
+      raise exception if @app.build?
+      super
+    end
+
+    def javascript_exception_response(exception)
+      raise exception if @app.build?
+      super
+    end
+
+    def call(env)
+      # Set the app current path based on the full URL so that helpers work
+      full_path = File.join(env['SCRIPT_NAME'], env['PATH_INFO'])
+      @app.current_path = ::Middleman::Util.normalize_path(full_path)
+      super
+    end
   end
 
   module JavascriptTagHelper
@@ -210,11 +243,11 @@ module Middleman::Sprockets
         end
 
         if output_dir
-          @app.sprockets.each_entry(load_path) do |entry|
-            next unless entry.file?
-            base_path = entry.sub("#{load_path}/", '')
+          @app.sprockets.each_entry(load_path) do |path|
+            next unless path.file?
+            base_path = path.sub("#{load_path}/", '')
             new_path = File.join(output_dir, base_path)
-            resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, entry.to_s)
+            resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, path.to_s)
           end
         end
       end
