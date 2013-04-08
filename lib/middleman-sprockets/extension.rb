@@ -142,6 +142,7 @@ module Middleman::Sprockets
       append_path app.js_dir
       append_path app.css_dir
       append_path app.images_dir
+      append_path app.fonts_dir
 
       # add custom assets paths to the scope
       app.js_assets_paths.each do |p|
