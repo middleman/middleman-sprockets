@@ -50,7 +50,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
     When I go to "/stylesheets/site-700ca585.css"
     Then I should see 'background-image: url("../images/100px-5fd6fb90.jpg")'
     When I go to "/stylesheets/jquery-mobile-67e48856.css"
-    #Then I should see 'background-image: url("../images/jquery-mobile/icons-18-white-4a0ff57b.png")'
+    Then I should see 'background-image: url("../images/jquery-mobile/icons-18-white-4a0ff57b.png")'
 
   Scenario: Enabling an asset host still produces hashed files and references  
     Given the Server is running at "asset-hash-host-app"
@@ -63,7 +63,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
     When I go to "/other/"
     Then I should see 'href="http://middlemanapp.com/stylesheets/site-fcab9a4b.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
-    # Asset helpers don't appear to work from Compass right now
+    # This actually works on middleman master, but not 3.0-stable
     # When I go to "/stylesheets/site-fcab9a4b.css"
     # Then I should see 'background-image: url("http://middlemanapp.com/images/100px-5fd6fb90.jpg")'
 
