@@ -7,7 +7,7 @@ Feature: Sprockets Gems
   Scenario: Sprockets can pull CSS from gem
     Given the Server is running at "sprockets-app"
     When I go to "/library/css/bootstrap_include.css"
-    Then I should see "bootstrap/_pagination"
+    Then I should see ".btn-mini"
   
   Scenario: Sprockets can pull js from vendored assets
     Given the Server is running at "sprockets-app"

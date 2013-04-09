@@ -5,6 +5,7 @@ git "git://github.com/middleman/middleman.git", :branch => "3.0-stable" do
   gem "middleman-core"
   gem "middleman-more"
 end
+#gem "middleman", :path => '../middleman'
 
 # Specify your gem's dependencies in middleman-blog.gemspec
 gemspec
