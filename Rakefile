@@ -9,9 +9,16 @@ end
 
 require 'rake/clean'
 
-task :test => ["cucumber"]
+task :test => [:destroy_sass_cache, "cucumber"]
 
 desc "Build HTML documentation"
 task :doc do
   sh 'bundle exec yard'
+end
+
+desc "Destroy the sass cache from fixtures in case it messes with results"
+task :destroy_sass_cache do
+  Dir["fixtures/*/.sass-cache"].each do |dir|
+    rm_rf dir
+  end
 end
