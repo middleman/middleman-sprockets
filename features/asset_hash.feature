@@ -63,9 +63,8 @@ Feature: Assets get a file hash appended to their and references to them are upd
     When I go to "/other/"
     Then I should see 'href="http://middlemanapp.com/stylesheets/site-1fdf4fb5.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
-    # This actually works on middleman master, but not 3.0-stable
-    # When I go to "/stylesheets/site-1fdf4fb5.css"
-    # Then I should see 'background-image: url("http://middlemanapp.com/images/100px-5fd6fb90.jpg")'
+    When I go to "/stylesheets/site-1fdf4fb5.css"
+    Then I should see 'background-image: url("http://middlemanapp.com/images/100px-5fd6fb90.jpg")'
 
   Scenario: The asset hash should change when a SASS partial changes
     Given the Server is running at "asset-hash-app"

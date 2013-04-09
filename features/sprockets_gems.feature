@@ -26,7 +26,7 @@ Feature: Sprockets Gems
 
   Scenario: Proper reference to images from a gem, in build
     Given a successfully built app at "jquery-mobile-app"
-    When I cd to "../relative_build"
+    When I cd to "build"
     Then the following files should exist:
       | stylesheets/base.css |
       | images/jquery-mobile/icons-36-white.png |
