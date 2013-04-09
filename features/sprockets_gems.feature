@@ -7,7 +7,7 @@ Feature: Sprockets Gems
   Scenario: Sprockets can pull CSS from gem
     Given the Server is running at "sprockets-app"
     When I go to "/library/css/bootstrap_include.css"
-    Then I should see "bootstrap/_pagination"
+    Then I should see ".btn-mini"
   
   Scenario: Sprockets can pull js from vendored assets
     Given the Server is running at "sprockets-app"
@@ -26,7 +26,7 @@ Feature: Sprockets Gems
 
   Scenario: Proper reference to images from a gem, in build
     Given a successfully built app at "jquery-mobile-app"
-    When I cd to "../relative_build"
+    When I cd to "build"
     Then the following files should exist:
       | stylesheets/base.css |
       | images/jquery-mobile/icons-36-white.png |
