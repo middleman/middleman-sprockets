@@ -41,3 +41,8 @@ Feature: Sprockets Gems
     Given the Server is running at "jquery-mobile-app"
     When I go to "/stylesheets/base.css"
     Then I should see 'url("../images/jquery-mobile/icons-36-white.png")'
+
+  Scenario: JS/CSS from gems must be declared to be accessible
+    Given the Server is running at "jquery-mobile-app"
+    When I go to "/javascripts/jquery.mobile.js"
+    Then I should get a response with status "404"

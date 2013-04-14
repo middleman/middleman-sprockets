@@ -198,8 +198,21 @@ module Middleman::Sprockets
 
     def call(env)
       # Set the app current path based on the full URL so that helpers work
-      full_path = File.join(env['SCRIPT_NAME'], env['PATH_INFO'])
-      @app.current_path = ::Middleman::Util.normalize_path(full_path)
+      request_path = URI.decode(File.join(env['SCRIPT_NAME'], env['PATH_INFO']))
+      if request_path.respond_to? :force_encoding
+        request_path.force_encoding('UTF-8')
+      end
+      resource = @app.sitemap.find_resource_by_destination_path(request_path)
+
+      if !resource
+        response = ::Rack::Response.new
+        response.status = 404
+        response.write "<html><body><h1>File Not Found</h1><p>#{request_path}</p></body>"
+        return response.finish
+      end
+
+      @app.current_path = request_path
+
       super
     end
   end
