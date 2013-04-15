@@ -42,7 +42,17 @@ Feature: Sprockets Gems
     When I go to "/stylesheets/base.css"
     Then I should see 'url("../images/jquery-mobile/icons-36-white.png")'
 
-  Scenario: JS/CSS from gems must be declared to be accessible
+  Scenario: JS/CSS from gems aren't aumatically in the site
     Given the Server is running at "jquery-mobile-app"
     When I go to "/javascripts/jquery.mobile.js"
     Then I should get a response with status "404"
+
+  Scenario: JS/CSS from gems can be declared to be accessible
+    Given a fixture app "jquery-mobile-app"
+    Given a file named "config.rb" with:
+      """
+      sprockets.import_asset 'jquery.mobile'
+      """
+    And the Server is running at "jquery-mobile-app"
+    When I go to "/javascripts/jquery.mobile.js"
+    Then I should get a response with status "200"

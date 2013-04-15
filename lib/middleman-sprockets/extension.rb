@@ -12,12 +12,12 @@ module Middleman::Sprockets
       # Add class methods to context
       app.send :include, InstanceMethods
 
+      app.helpers JavascriptTagHelper
+
+      ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
+      ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
+
       app.after_configuration do
-        helpers JavascriptTagHelper
-
-        ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
-        ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
-
         # Add any gems with (vendor|app|.)/assets/javascripts to paths
         # also add similar directories from project root (like in rails)
         try_paths = [
@@ -72,11 +72,42 @@ module Middleman::Sprockets
   class MiddlemanSprocketsEnvironment < ::Sprockets::Environment
     # Setup
     def initialize(app)
+      @imported_assets = []
       @app = app
+
       super app.source_dir
 
       # By default, sprockets has no cache! Give it an in-memory one using a Hash
       @cache = {}
+
+      enhance_context_class!
+
+      # Remove compressors, we handle these with middleware
+      unregister_bundle_processor 'application/javascript', :js_compressor
+      unregister_bundle_processor 'text/css', :css_compressor
+
+      # configure search paths
+      append_path app.js_dir
+      append_path app.css_dir
+      append_path app.images_dir
+      append_path app.fonts_dir
+
+      # add custom assets paths to the scope
+      app.js_assets_paths.each do |p|
+        warn ":js_assets_paths is deprecated. Call sprockets.append_path instead."
+        append_path p
+      end if app.respond_to?(:js_assets_paths)
+
+      # Stylus support
+      if defined?(::Stylus)
+        require 'stylus/sprockets'
+        ::Stylus.setup(self, app.styl)
+      end
+    end
+
+    # Add our own customizations to the Sprockets context class
+    def enhance_context_class!
+      app = @app
 
       # Make the app context available to Sprockets
       context_class.send(:define_method, :app) { app }
@@ -136,29 +167,8 @@ module Middleman::Sprockets
           super || app.respond_to?(method, include_private)
         end
       end
-
-      # Remove compressors, we handle these with middleware
-      unregister_bundle_processor 'application/javascript', :js_compressor
-      unregister_bundle_processor 'text/css', :css_compressor
-
-      # configure search paths
-      append_path app.js_dir
-      append_path app.css_dir
-      append_path app.images_dir
-      append_path app.fonts_dir
-
-      # add custom assets paths to the scope
-      app.js_assets_paths.each do |p|
-        warn ":js_assets_paths is deprecated. Call sprockets.append_path instead."
-        append_path p
-      end if app.respond_to?(:js_assets_paths)
-
-      # Stylus support
-      if defined?(::Stylus)
-        require 'stylus/sprockets'
-        ::Stylus.setup(self, app.styl)
-      end
     end
+    private :enhance_context_class!
 
     # Override Sprockets' default digest function to *not*
     # change depending on the exact Sprockets version. It still takes
@@ -207,13 +217,24 @@ module Middleman::Sprockets
       if !resource
         response = ::Rack::Response.new
         response.status = 404
-        response.write "<html><body><h1>File Not Found</h1><p>#{request_path}</p></body>"
+        response.write """<html><body><h1>File Not Found</h1><p>#{request_path}</p>
+          <p>If this is an an asset from a gem, add <tt>sprockets.import_asset '#{File.basename(request_path)}'</tt>
+          to your <tt>config.rb</tt>.</body>"""
         return response.finish
       end
 
       @app.current_path = request_path
 
       super
+    end
+
+    # A list of Sprockets logical paths for assets that should be brought into the
+    # Middleman application and built.
+    attr_accessor :imported_assets
+
+    # Tell Middleman to build this asset, referenced as a logical path.
+    def import_asset(asset_logical_path)
+      imported_assets << asset_logical_path
     end
   end
 
@@ -250,19 +271,43 @@ module Middleman::Sprockets
 
     # Add sitemap resource for every image in the sprockets load path
     def manipulate_resource_list(resources)
+      sprockets = @app.sprockets
+
+      imported_assets = []
+      sprockets.imported_assets.each do |asset_logical_path|
+        assets = []
+        sprockets.resolve(asset_logical_path) do |asset|
+          assets << asset
+          @app.logger.debug "== Importing Sprockets asset #{asset}"
+        end
+        raise ::Sprockets::FileNotFound, "couldn't find asset '#{asset_logical_path}'" if assets.empty?
+        imported_assets.concat(assets)
+      end
+
       resources_list = []
-       @app.sprockets.paths.each do |load_path|
+      sprockets.paths.each do |load_path|
         output_dir = nil
+        export_all = false
         if load_path.end_with?('/images')
           output_dir = @app.images_dir
+          export_all = true
         elsif load_path.end_with?('/fonts')
           output_dir = @app.fonts_dir
+          export_all = true
+        elsif load_path.end_with?('/stylesheets')
+          output_dir = @app.css_dir
+        elsif load_path.end_with?('/javascripts')
+          output_dir = @app.js_dir
         end
 
         if output_dir
-          @app.sprockets.each_entry(load_path) do |path|
+          sprockets.each_entry(load_path) do |path|
             next unless path.file?
+            next if path.basename.to_s.start_with?('_')
+            next unless export_all || imported_assets.include?(path)
+
             base_path = path.sub("#{load_path}/", '')
+
             new_path = File.join(output_dir, base_path)
             resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, path.to_s)
           end
