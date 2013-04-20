@@ -75,6 +75,9 @@ module Middleman::Sprockets
       @app = app
       super app.source_dir
 
+      # By default, sprockets has no cache! Give it an in-memory one using a Hash
+      @cache = {}
+
       # Make the app context available to Sprockets
       context_class.send(:define_method, :app) { app }
 
