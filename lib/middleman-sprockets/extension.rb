@@ -140,7 +140,9 @@ module Middleman::Sprockets
 
         # Expand logical font asset path.
         def font_path(path, options={})
-          asset_path(path, :type => :font)
+          # Knock .fonts off the end, because Middleman < 3.1 doesn't handle fonts
+          # in asset_path
+          asset_path(path, :type => :font).sub(/\.fonts$/, '')
         end
 
         # Expand logical javascript asset path.
