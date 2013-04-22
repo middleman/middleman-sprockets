@@ -22,9 +22,11 @@ gem "rspec",    "~> 2.12"
 gem 'gherkin', '<= 2.11.6'
 
 # For actual tests
+# Make sure to lock down the versions of the asset gems
+# so they don't cause asset hashes to change.
 gem "jquery-rails", '2.0.1', :require => false
-gem "bootstrap-sass", :require => false
+gem "bootstrap-sass", '2.3.1.0', :require => false
 gem "ejs", "~> 1.1.1"
 gem "eco", "~> 1.0.0"
 gem "erubis", "~> 2.7.0"
-gem 'jquery_mobile_rails', '~>1.2.0', :require => false
+gem 'jquery_mobile_rails', '1.2.0', :require => false
