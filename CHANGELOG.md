@@ -1,0 +1,23 @@
+3.0.12
+===
+
+* Enable in-memory caching in Sprockets, so unchanged assets don't get recompiled when other assets change. #25
+* Refuse to serve gem-assets that haven't been added to the Middleman sitemap. #23
+* Allow importing JS/CSS assets from gems by their logical path, using `sprockets.import_asset`. #23
+* Fix a bug where, when `:debug_assets` was enabled, refreshing the page would produce the wrong JavaScript include path. #26
+
+3.0.11
+===
+
+* Fonts are now included in the Sprockets load path.
+* When `:debug_assets` is on, do not add `?body=1` multiple times. #24
+* :js_assets_paths configuration is deprecated in favor of just calling sprockets.append_path. #22
+* Sprockets integration, especially with regard to helper methods, is significantly improved. #22
+* Images and fonts from gems added to the Sprockets load path will now be copied to the build output. #22 
+* Compatibility with newer Sprockets versions.
+
+3.0.10
+===
+
+* No longer expire Sprockets index in development mode. #18
+
