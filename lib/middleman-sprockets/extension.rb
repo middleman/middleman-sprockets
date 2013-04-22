@@ -1,5 +1,6 @@
 require "sprockets"
 require "sprockets-sass"
+require "middleman-sprockets/sass_function_hack"
 
 # Sprockets extension
 module Middleman::Sprockets

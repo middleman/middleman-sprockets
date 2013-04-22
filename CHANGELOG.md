@@ -1,6 +1,8 @@
-3.0.12
+master
 ===
 
+* Hack around infinite recursion between bootstrap-sass and sprockets-sass. middleman/middleman#864
+* Fix for fonts in Sass files having ".font" appended to them. middleman/middleman#866.
 * Enable in-memory caching in Sprockets, so unchanged assets don't get recompiled when other assets change. #25
 * Refuse to serve gem-assets that haven't been added to the Middleman sitemap. #23
 * Allow importing JS/CSS assets from gems by their logical path, using `sprockets.import_asset`. #23
