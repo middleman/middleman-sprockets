@@ -35,6 +35,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
     Given the Server is running at "asset-hash-app"
     When I go to "/"
     Then I should see 'href="stylesheets/site-b7f4d02f.css"'
+    Then I should see 'href="stylesheets/jquery-mobile-f53eedd6.css"'
     And I should see 'src="javascripts/application-df677242.js"'
     And I should see 'src="images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
@@ -49,7 +50,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
     Then I should see "img.src = '/images/100px-5fd6fb90.jpg'"
     When I go to "/stylesheets/site-b7f4d02f.css"
     Then I should see 'background-image: url("../images/100px-5fd6fb90.jpg")'
-    When I go to "/stylesheets/jquery-mobile-67e48856.css"
+    When I go to "/stylesheets/jquery-mobile-f53eedd6.css"
     Then I should see 'background-image: url("../images/jquery-mobile/icons-18-white-4a0ff57b.png")'
 
   Scenario: Enabling an asset host still produces hashed files and references  
