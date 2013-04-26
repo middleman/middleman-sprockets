@@ -8,6 +8,10 @@ rvm:
 
 script: "bundle exec rake test"
 
+gemfile:
+  - Gemfile
+  - Gemfile-3.1
+  
 env: TEST=true
 
 matrix:

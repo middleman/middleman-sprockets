@@ -5,3 +5,4 @@ tmp
 .sass-cache
 pkg
 build
+.ruby-version

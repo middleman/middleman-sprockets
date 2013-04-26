@@ -2,7 +2,7 @@ Feature: Sprockets Gems
   Scenario: Sprockets can pull jQuery from gem
     Given the Server is running at "sprockets-app"
     When I go to "/library/js/jquery_include.js"
-    Then I should see "var jQuery ="
+    Then I should see "window.jQuery ="
   
   Scenario: Sprockets can pull CSS from gem
     Given the Server is running at "sprockets-app"
@@ -51,7 +51,9 @@ Feature: Sprockets Gems
     Given a fixture app "jquery-mobile-app"
     Given a file named "config.rb" with:
       """
-      sprockets.import_asset 'jquery.mobile'
+      after_configuration do
+        sprockets.import_asset 'jquery.mobile'
+      end
       """
     And the Server is running at "jquery-mobile-app"
     When I go to "/javascripts/jquery.mobile.js"
