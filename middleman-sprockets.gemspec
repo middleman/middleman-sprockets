@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
   
   s.add_dependency("middleman-more", [">= 3.0.11"])
   s.add_dependency("sprockets", ["~> 2.1"])
-  s.add_dependency("sprockets-sass", ["~> 0.9.1"])
+  s.add_dependency("sprockets-sass", ["~> 1.0.0"])
 end
