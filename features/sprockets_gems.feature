@@ -3,17 +3,17 @@ Feature: Sprockets Gems
     Given the Server is running at "sprockets-app"
     When I go to "/library/js/jquery_include.js"
     Then I should see "window.jQuery ="
-  
+
   Scenario: Sprockets can pull CSS from gem
     Given the Server is running at "sprockets-app"
     When I go to "/library/css/bootstrap_include.css"
     Then I should see ".btn-mini"
-  
+
   Scenario: Sprockets can pull js from vendored assets
     Given the Server is running at "sprockets-app"
     When I go to "/library/js/vendored_include.js"
     Then I should see "var vendored_js_included = true;"
-  
+
   Scenario: Sprockets can pull js from custom vendor dir
     Given the Server is running at "asset-paths-app"
     When I go to "/javascripts/vendored_include.js"
@@ -57,4 +57,11 @@ Feature: Sprockets Gems
       """
     And the Server is running at "jquery-mobile-app"
     When I go to "/javascripts/jquery.mobile.js"
+    Then I should get a response with status "200"
+
+  Scenario: JS/CSS from gems are accessible when debugging assets and they are required
+    Given the Server is running at "sprockets-app-debug-assets"
+    And the Server is running at "sprockets-app-debug-assets"
+    When I go to "/index.html"
+    When I go to "/javascripts/bootstrap-alert.js?body=1"
     Then I should get a response with status "200"
