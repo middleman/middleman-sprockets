@@ -3,7 +3,7 @@
 # who tries something similar, this redefines sprockets-sass' function to not refer to image_path.
 #
 # See https://github.com/middleman/middleman/issues/864 for more info.
-#x
+#
 module Sass::Script::Functions
   def image_url(source, options = {}, cache_buster = nil)
     # Work with the Compass #image_url API
@@ -16,5 +16,10 @@ module Sass::Script::Functions
       end
     end
     ::Sass::Script::String.new "url(\"#{sprockets_context.image_path(source.value, map_options(options)).to_s}\")"
+  end
+
+  # Also override generated_image_url to use Sprockets a la https://github.com/Compass/compass-rails/blob/98e4b115c8bb6395a1c3351926d574321396778b/lib/compass-rails/patches/3_1.rb
+  def generated_image_url(path, only_path = nil)
+    asset_url(path, Sass::Script::String.new("image"))
   end
 end
