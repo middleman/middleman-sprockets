@@ -3,6 +3,9 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in middleman-sprockets.gemspec
 gemspec
 
+gem "middleman-core", "~> 3.0.13"
+gem "middleman-more", "~> 3.0.13"
+
 # Build and doc tools
 gem "rake",     "~> 10.0.3"
 gem "yard",     "~> 0.8.0"
