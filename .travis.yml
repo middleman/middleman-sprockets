@@ -12,8 +12,3 @@ gemfile:
   - Gemfile-3.1
   
 env: TEST=true
-
-matrix:
-  allow_failures:
-    - rvm: jruby-18mode
-    - rvm: jruby-19mode
