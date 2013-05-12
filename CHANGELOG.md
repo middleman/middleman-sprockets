@@ -1,6 +1,13 @@
 master
 ===
 
+* Compatibility with Middleman 3.1's removal of the middleman-more gem.
+* Add sprockets-helpers to the list of dependencies to fix various path-related bugs. #34
+* Patch generated_image_url so that Compass sprites work. middleman/middleman#890.
+
+3.1.0
+===
+
 * Hack around infinite recursion between bootstrap-sass and sprockets-sass. middleman/middleman#864
 * Fix for fonts in Sass files having ".font" appended to them. middleman/middleman#866.
 * Enable in-memory caching in Sprockets, so unchanged assets don't get recompiled when other assets change. #25
