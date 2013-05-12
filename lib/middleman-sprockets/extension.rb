@@ -222,7 +222,8 @@ module Middleman::Sprockets
       end
       resource = @app.sitemap.find_resource_by_destination_path(request_path)
 
-      if !resource
+      debug_assets = @app.respond_to?(:debug_assets) && @app.debug_assets && !@app.build?
+      if !resource && !debug_assets
         response = ::Rack::Response.new
         response.status = 404
         response.write """<html><body><h1>File Not Found</h1><p>#{request_path}</p>
