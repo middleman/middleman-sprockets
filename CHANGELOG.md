@@ -6,6 +6,7 @@ master
 * Patch generated_image_url so that Compass sprites work. middleman/middleman#890.
 * Output .jst, .eco, and .ejs files with a .js extension. middleman/middleman#888.
 * Fix :debug_assets for files that include scripts from gems. #29.
+* :debug_assets will now expand CSS included via Sprockets requires as well as JavaScript. #30
 
 3.1.0
 ===
