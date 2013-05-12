@@ -17,8 +17,13 @@ module Middleman::Sprockets
 
       ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
       ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
+      ::Tilt.register ::Sprockets::JstProcessor, 'jst'
 
       app.after_configuration do
+        template_extensions :jst => :js, :eco => :js, :ejs => :js 
+
+        sitemap.rebuild_resource_list!
+
         # Add any gems with (vendor|app|.)/assets/javascripts to paths
         # also add similar directories from project root (like in rails)
         try_paths = [
