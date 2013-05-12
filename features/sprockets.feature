@@ -43,7 +43,19 @@ Feature: Sprockets
     Then I should see 'src="/javascripts/dependency2.js?body=1"'
     Then I should see 'src="/javascripts/dependency1.js?body=1"'
     Then I should see 'src="/javascripts/main.js?body=1"'
+
+ Scenario: Sprockets CSS should only contain body when requested
+    Given the Server is running at "sprockets-app-debug-assets"
+    When I go to "/stylesheets/app.css?body=1"
+    Then I should see "body"
     
+  Scenario: Stylesheets tags should be provided individually while debugging assets
+    Given the Server is running at "sprockets-app-debug-assets"
+    When I go to "/index.html"
+    Then I should see 'href="/stylesheets/app.css?body=1"'
+    Then I should see 'href="/stylesheets/dependency1.css?body=1"'
+    Then I should see 'href="/stylesheets/dependency2.css?body=1"'   
+
   Scenario: Multiple engine files should build correctly
     Given a successfully built app at "sprockets-app2"
     When I cd to "build"
