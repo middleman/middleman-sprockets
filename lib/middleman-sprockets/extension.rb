@@ -263,7 +263,10 @@ module Middleman::Sprockets
           dependencies_paths = sprockets[source].to_a.map do |dependency|
             # if sprockets sees "?body=1" it only gives back the body
             # of the script without the dependencies included
-            dependency.logical_path + "?body=1"
+            unless dependency.logical_path.include?("body=1")
+              dependency.logical_path + "?body=1"
+            end
+            dependency.logical_path
           end
 
           super(dependencies_paths, options)
@@ -289,7 +292,7 @@ module Middleman::Sprockets
           dependencies_paths = sprockets[source].to_a.map do |dependency|
             # if sprockets sees "?body=1" it only gives back the body
             # of the script without the dependencies included
-            dependency.logical_path + "?body=1"
+            dependency.logical_path << "?body=1"
           end
 
           super(dependencies_paths, options)
