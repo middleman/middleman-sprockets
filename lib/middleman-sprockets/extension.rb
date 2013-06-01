@@ -322,6 +322,8 @@ module Middleman::Sprockets
 
       resources_list = []
       sprockets.paths.each do |load_path|
+        # next if load_path.start_with?(@app.root)
+
         output_dir = nil
         export_all = false
         if load_path.end_with?('/images')
@@ -344,8 +346,10 @@ module Middleman::Sprockets
 
             base_path = path.sub("#{load_path}/", '')
 
-            new_path = File.join(output_dir, base_path)
-            resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, path.to_s)
+            new_path = File.join(output_dir, base_path).to_s
+
+            next if @app.sitemap.find_resource_by_destination_path(new_path)
+            resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path, path.to_s)
           end
         end
       end
