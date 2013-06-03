@@ -260,7 +260,7 @@ module Middleman::Sprockets
         # loop through all sources and the dependencies and
         # output each as script tag in the correct order
         sources.map do |source|
-          dependencies_paths = sprockets[source].to_a.map do |dependency|
+          dependencies_paths = sprockets[source.to_s].to_a.map do |dependency|
             # if sprockets sees "?body=1" it only gives back the body
             # of the script without the dependencies included
             dependency.logical_path + "?body=1"
@@ -286,7 +286,7 @@ module Middleman::Sprockets
         # output each as script tag in the correct order
         
         sources.map do |source|
-          dependencies_paths = sprockets[source].to_a.map do |dependency|
+          dependencies_paths = sprockets[source.to_s].to_a.map do |dependency|
             # if sprockets sees "?body=1" it only gives back the body
             # of the script without the dependencies included
             dependency.logical_path + "?body=1"
@@ -322,8 +322,6 @@ module Middleman::Sprockets
 
       resources_list = []
       sprockets.paths.each do |load_path|
-        # next if load_path.start_with?(@app.root)
-
         output_dir = nil
         export_all = false
         if load_path.end_with?('/images')
