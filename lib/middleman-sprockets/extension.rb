@@ -260,7 +260,10 @@ module Middleman::Sprockets
         # loop through all sources and the dependencies and
         # output each as script tag in the correct order
         sources.map do |source|
-          dependencies_paths = sprockets[source.to_s].to_a.map do |dependency|
+          source_file_name = source.to_s
+          source_file_name << ".js" unless source_file_name.end_with?(".js")
+
+          dependencies_paths = sprockets[source_file_name].to_a.map do |dependency|
             # if sprockets sees "?body=1" it only gives back the body
             # of the script without the dependencies included
             dependency.logical_path + "?body=1"
@@ -286,7 +289,10 @@ module Middleman::Sprockets
         # output each as script tag in the correct order
         
         sources.map do |source|
-          dependencies_paths = sprockets[source.to_s].to_a.map do |dependency|
+          source_file_name = source.to_s
+          source_file_name << ".css" unless source_file_name.end_with?(".css")
+
+          dependencies_paths = sprockets[source_file_name].to_a.map do |dependency|
             # if sprockets sees "?body=1" it only gives back the body
             # of the script without the dependencies included
             dependency.logical_path + "?body=1"
