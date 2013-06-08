@@ -1,7 +1,14 @@
 master
 ===
 
-* Compatibility with Middleman 3.1's removal of the middleman-more gem.
+
+3.1.2
+===
+* Fix debug_assets for CSS
+
+3.1.1
+===
+
 * Add sprockets-helpers to the list of dependencies to fix various path-related bugs. #34
 * Patch generated_image_url so that Compass sprites work. middleman/middleman#890.
 * Output .jst, .eco, and .ejs files with a .js extension. middleman/middleman#888.
