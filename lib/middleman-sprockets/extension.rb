@@ -58,7 +58,7 @@ module Middleman::Sprockets
 
         map("/#{js_dir}")  { run our_sprockets }
         map("/#{css_dir}") { run our_sprockets }
-        map("/#{images_dir}") { run our_sprockets }
+        # map("/#{images_dir}") { run our_sprockets }
         map("/#{fonts_dir}") { run our_sprockets }
 
         # register resource list manipulator to add assets_load_paths to sitemap
@@ -187,6 +187,11 @@ module Middleman::Sprockets
     def digest
       @digest ||= Digest::SHA1.new.update(version.to_s)
       @digest.dup
+    end
+
+    # In sprockets, this stripes the asset hash. We don't need that.
+    def path_fingerprint(path)
+      nil
     end
 
     # Invalidate sitemap when users mess with the sprockets load paths
