@@ -1,9 +1,14 @@
 master
 ===
 
+3.1.3
+===
+
+* Fix files names like guids, which Sprockets thinks are asset hashes.
 
 3.1.2
 ===
+
 * Fix debug_assets for CSS
 
 3.1.1
