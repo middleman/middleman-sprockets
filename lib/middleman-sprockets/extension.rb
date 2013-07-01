@@ -58,7 +58,7 @@ module Middleman::Sprockets
 
         map("/#{js_dir}")  { run our_sprockets }
         map("/#{css_dir}") { run our_sprockets }
-        # map("/#{images_dir}") { run our_sprockets }
+        map("/#{images_dir}") { run our_sprockets }
         map("/#{fonts_dir}") { run our_sprockets }
 
         # register resource list manipulator to add assets_load_paths to sitemap
