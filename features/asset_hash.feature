@@ -76,7 +76,7 @@ Feature: Assets get a file hash appended to their URL and references to them are
         font-size: 14px
       """
     When I go to "/partials/"
-    Then I should see 'href="../stylesheets/uses_partials-423a00f7.css'
+    Then I should see 'href="../stylesheets/uses_partials-a48be509.css'
     And wait a second
     And the file "source/stylesheets/_partial.sass" has the contents
       """

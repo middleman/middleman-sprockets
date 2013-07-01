@@ -98,6 +98,7 @@ module Middleman::Sprockets
       append_path app.css_dir
       append_path app.images_dir
       append_path app.fonts_dir
+      append_path app.bower_dir if app.respond_to?(:bower_dir)
 
       # add custom assets paths to the scope
       app.js_assets_paths.each do |p|
@@ -189,9 +190,9 @@ module Middleman::Sprockets
       @digest.dup
     end
 
-    # In sprockets, this stripes the asset hash. We don't need that.
+    # Strip our custom 8-char hex/sha
     def path_fingerprint(path)
-      nil
+      path[/-([0-9a-f]{8})\.[^.]+$/, 1]
     end
 
     # Invalidate sitemap when users mess with the sprockets load paths
