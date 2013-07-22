@@ -267,12 +267,18 @@ module Middleman::Sprockets
         # output each as script tag in the correct order
         sources.map do |source|
           source_file_name = source.to_s
-          source_file_name << ".js" unless source_file_name.end_with?(".js")
 
-          dependencies_paths = sprockets[source_file_name].to_a.map do |dependency|
-            # if sprockets sees "?body=1" it only gives back the body
-            # of the script without the dependencies included
-            dependency.logical_path + "?body=1"
+          dependencies_paths = if source_file_name.start_with?('//', 'http')
+            # Don't touch external sources
+            source_file_name
+          else
+            source_file_name << ".js" unless source_file_name.end_with?(".js")
+
+            sprockets[source_file_name].to_a.map do |dependency|
+              # if sprockets sees "?body=1" it only gives back the body
+              # of the script without the dependencies included
+              dependency.logical_path + "?body=1"
+            end
           end
 
           super(dependencies_paths, options)
@@ -296,12 +302,18 @@ module Middleman::Sprockets
         
         sources.map do |source|
           source_file_name = source.to_s
-          source_file_name << ".css" unless source_file_name.end_with?(".css")
 
-          dependencies_paths = sprockets[source_file_name].to_a.map do |dependency|
-            # if sprockets sees "?body=1" it only gives back the body
-            # of the script without the dependencies included
-            dependency.logical_path + "?body=1"
+          dependencies_paths = if source_file_name.start_with?('//', 'http')
+            # Don't touch external sources
+            source_file_name
+          else
+            source_file_name << ".css" unless source_file_name.end_with?(".css")
+
+            dependencies_paths = sprockets[source_file_name].to_a.map do |dependency|
+              # if sprockets sees "?body=1" it only gives back the body
+              # of the script without the dependencies included
+              dependency.logical_path + "?body=1"
+            end
           end
 
           super(dependencies_paths, options)
