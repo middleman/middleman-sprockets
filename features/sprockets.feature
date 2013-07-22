@@ -61,7 +61,14 @@ Feature: Sprockets
     When I go to "/index.html"
     Then I should see 'href="/stylesheets/app.css?body=1"'
     Then I should see 'href="/stylesheets/dependency1.css?body=1"'
-    Then I should see 'href="/stylesheets/dependency2.css?body=1"'   
+    Then I should see 'href="/stylesheets/dependency2.css?body=1"'
+
+  Scenario: External stylesheet tags should not be changed
+    Given the Server is running at "sprockets-app-debug-assets"
+    When I go to "/index.html"
+    Then I should see 'href="//domain.com/styles.css"'
+    Then I should see 'href="http://domain.com/styles.css"'
+    Then I should see 'href="https://domain.com/styles.css"'
 
   Scenario: Multiple engine files should build correctly
     Given a successfully built app at "sprockets-app2"
