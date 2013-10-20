@@ -101,7 +101,7 @@ Feature: Sprockets
     When I go to "/library/css/sprockets_base2.css"
     Then I should see "hello"
 
-Scenario: Sprockets inline Images with asset_path and image_path helpers
+  Scenario: Sprockets inline Images with asset_path and image_path helpers
     Given the Server is running at "sprockets-images-app"
     When I go to "/"
     Then I should see 'src="/library/images/cat.jpg"'
@@ -110,3 +110,20 @@ Scenario: Sprockets inline Images with asset_path and image_path helpers
     Then I should get a response with status "200"
     When I go to "/library/images/cat-2.jpg"
     Then I should get a response with status "200"
+
+  Scenario: Assets built through import_asset are built with wrong extension
+    Given a successfully built app at "sprockets-app"
+    When I cd to "build"
+    # generated file is /library/css/vendored.css.scss
+    Then a file named "library/css/vendored.css" should exist
+    # generated file is /library/css/coffee.js.coffee
+    Then a file named "library/js/coffee.js" should exist
+
+  Scenario: Vendor assets get wrong extension
+    Given the Server is running at "sprockets-app"
+    # generated file is /library/css/vendored.css.scss
+    When I go to "/library/css/vendored.css"
+    And I should see 'background: brown;'
+    # generated file is /library/js/coffee.js.coffee
+    When I go to "/library/js/coffee.js"
+    And I should see 'return console.log("bar");'

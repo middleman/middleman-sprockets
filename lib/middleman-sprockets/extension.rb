@@ -367,11 +367,10 @@ module Middleman::Sprockets
             next unless export_all || imported_assets.include?(path)
 
             base_path = path.sub("#{load_path}/", '')
-
-            new_path = File.join(output_dir, base_path).to_s
+            new_path = @app.sitemap.extensionless_path(File.join(output_dir, base_path))
 
             next if @app.sitemap.find_resource_by_destination_path(new_path)
-            resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path, path.to_s)
+            resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, path.to_s)
           end
         end
       end
