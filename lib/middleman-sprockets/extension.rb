@@ -84,8 +84,9 @@ module Middleman::Sprockets
 
       super app.source_dir
 
-      # By default, sprockets has no cache! Give it an in-memory one using a Hash
-      @cache = {}
+      # By default, sprockets has no cache! Give it a file-based cache so that
+      # the cache is persisted between sessions
+      @cache = ::Sprockets::Cache::FileStore.new(File.join app.root, '.cache')
 
       enhance_context_class!
 
