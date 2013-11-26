@@ -1,1 +1,3 @@
-set :bower_dir, "components"
+ready do
+  sprockets.append_path "components"
+end

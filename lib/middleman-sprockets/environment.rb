@@ -27,11 +27,15 @@ module Middleman
         append_path app.css_dir
         append_path app.images_dir
         append_path app.fonts_dir
-        append_path app.bower_dir if app.respond_to?(:bower_dir)
+
+        if app.respond_to?(:bower_dir)
+          warn ":bower_dir is deprecated. Call sprockets.append_path from a 'ready' block instead."
+          append_path app.bower_dir
+        end
 
         # add custom assets paths to the scope
         app.js_assets_paths.each do |p|
-          warn ":js_assets_paths is deprecated. Call sprockets.append_path instead."
+          warn ":js_assets_paths is deprecated. Call sprockets.append_path from a 'ready' block instead."
           append_path p
         end if app.respond_to?(:js_assets_paths)
 
