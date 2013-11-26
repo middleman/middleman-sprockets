@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.name = "middleman-sprockets"
   s.version = Middleman::Sprockets::VERSION
   s.platform = Gem::Platform::RUBY
-  s.authors = ["Thomas Reynolds"]
-  s.email = ["me@tdreyno.com"]
+  s.authors = ["Thomas Reynolds", "Ben Hollis"]
+  s.email = ["me@tdreyno.com", "ben@benhollis.net"]
   s.homepage = "https://github.com/middleman/middleman-sprockets"
   s.summary = %q{Sprockets support for Middleman}
   s.description = %q{Sprockets support for Middleman}
