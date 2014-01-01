@@ -23,21 +23,21 @@ module Middleman
         unregister_bundle_processor 'text/css', :css_compressor
 
         # configure search paths
-        append_path app.js_dir
-        append_path app.css_dir
-        append_path app.images_dir
-        append_path app.fonts_dir
+        append_path app.config[:js_dir]
+        append_path app.config[:css_dir]
+        append_path app.config[:images_dir]
+        append_path app.config[:fonts_dir]
 
-        if app.respond_to?(:bower_dir)
+        if app.config.respond_to?(:bower_dir)
           warn ":bower_dir is deprecated. Call sprockets.append_path from a 'ready' block instead."
-          append_path app.bower_dir
+          append_path app.config[:bower_dir]
         end
 
         # add custom assets paths to the scope
-        app.js_assets_paths.each do |p|
+        app.config[:js_assets_paths].each do |p|
           warn ":js_assets_paths is deprecated. Call sprockets.append_path from a 'ready' block instead."
           append_path p
-        end if app.respond_to?(:js_assets_paths)
+        end if app.config.respond_to?(:js_assets_paths)
 
         # Stylus support
         if defined?(::Stylus)
