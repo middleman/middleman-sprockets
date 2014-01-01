@@ -42,7 +42,7 @@ module Middleman
         # Stylus support
         if defined?(::Stylus)
           require 'stylus/sprockets'
-          ::Stylus.setup(self, app.styl)
+          ::Stylus.setup(self, app.config[:styl])
         end
       end
 
