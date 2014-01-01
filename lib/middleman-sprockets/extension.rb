@@ -89,15 +89,15 @@ module Middleman
         output_dir = nil
         export_all = false
         if load_path.end_with?('/images')
-          output_dir = @app.images_dir
+          output_dir = @app.config[:images_dir]
           export_all = true
         elsif load_path.end_with?('/fonts')
-          output_dir = @app.fonts_dir
+          output_dir = @app.config[:fonts_dir]
           export_all = true
         elsif load_path.end_with?('/stylesheets')
-          output_dir = @app.css_dir
+          output_dir = @app.config[:css_dir]
         elsif load_path.end_with?('/javascripts')
-          output_dir = @app.js_dir
+          output_dir = @app.config[:js_dir]
         end
 
         if output_dir
