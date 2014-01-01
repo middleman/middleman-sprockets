@@ -57,13 +57,15 @@ module Middleman
       end
 
       # Setup Sprockets Sass options
-      app.sass.each { |k, v| ::Sprockets::Sass.options[k] = v }
+      if app.config.respond_to?(:sass)
+        app.config[:sass].each { |k, v| ::Sprockets::Sass.options[k] = v }
+      end
 
       # Intercept requests to /javascripts and /stylesheets and pass to sprockets
       our_sprockets = app.sprockets
 
-      [app.js_dir, app.css_dir, app.images_dir, app.fonts_dir].each do |dir|
-        app.map("/#{dir}")  { run our_sprockets }
+      [app.config[:js_dir], app.config[:css_dir], app.config[:images_dir], app.config[:fonts_dir]].each do |dir|
+        app.map("/#{dir}") { run our_sprockets }
       end
     end
 
