@@ -1,24 +1,25 @@
 require "sprockets"
 require "sprockets-sass"
+require "middleman-core"
 require "middleman-sprockets/sass_function_hack"
 require "middleman-sprockets/environment"
 require "middleman-sprockets/asset_tag_helpers"
 
 # Sprockets extension
 module Middleman
-  class SprocketsExtension < Extension
+  class Sprockets < ::Middleman::Extension
     option :debug_assets, false, 'Split up each required asset into its own script/style tag instead of combining them (development only)'
 
     helpers do
       # The sprockets environment
-      # @return [Middleman::CoreExtensions::Sprockets::MiddlemanSprocketsEnvironment]
+      # @return [Middleman::MiddlemanSprocketsEnvironment]
       def sprockets
-        @sprockets ||= ::Middleman::Sprockets::MiddlemanSprocketsEnvironment.new(self)
+        @sprockets ||= ::Middleman::MiddlemanSprocketsEnvironment.new(self)
       end
 
 
-      include ::Middleman::Sprockets::JavascriptTagHelper
-      include ::Middleman::Sprockets::StylesheetTagHelper
+      include ::Middleman::SprocketsJavascriptTagHelper
+      include ::Middleman::SprocketsStylesheetTagHelper
     end
 
     def after_configuration
