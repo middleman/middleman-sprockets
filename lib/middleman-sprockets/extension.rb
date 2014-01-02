@@ -29,7 +29,7 @@ module Middleman
       @sprockets ||= ::Middleman::MiddlemanSprocketsEnvironment.new(app)
     end
 
-    def before_configuration
+    def instance_available
       if defined?(::Middleman::ConfigContext)
         app.add_to_config_context :sprockets, &method(:environment)
       end
