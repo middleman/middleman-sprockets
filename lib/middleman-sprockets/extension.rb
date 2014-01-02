@@ -9,13 +9,9 @@ module Middleman
     option :debug_assets, false, 'Split up each required asset into its own script/style tag instead of combining them (development only)'
 
     def initialize(klass, options_hash={}, &block)
-      super
-
       require "middleman-sprockets/sass_function_hack"
 
-      if defined?(::Middleman::ConfigContext)
-        app.add_to_config_context :sprockets, &method(:environment)
-      end
+      super
     end
 
     helpers do
@@ -31,6 +27,12 @@ module Middleman
 
     def environment
       @sprockets ||= ::Middleman::MiddlemanSprocketsEnvironment.new(app)
+    end
+
+    def before_configuration
+      if defined?(::Middleman::ConfigContext)
+        app.add_to_config_context :sprockets, &method(:environment)
+      end
     end
 
     def after_configuration
