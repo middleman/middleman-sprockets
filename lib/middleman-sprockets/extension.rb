@@ -9,24 +9,32 @@ module Middleman
     option :debug_assets, false, 'Split up each required asset into its own script/style tag instead of combining them (development only)'
 
     def initialize(klass, options_hash={}, &block)
+      super
+
       require "middleman-sprockets/sass_function_hack"
 
-      super
+      if defined?(::Middleman::ConfigContext)
+        app.add_to_config_context :sprockets, &method(:environment)
+      end
     end
 
     helpers do
       # The sprockets environment
       # @return [Middleman::MiddlemanSprocketsEnvironment]
       def sprockets
-        @sprockets ||= ::Middleman::MiddlemanSprocketsEnvironment.new(self)
+        extensions[:sprockets].environment
       end
 
       include ::Middleman::SprocketsJavascriptTagHelper
       include ::Middleman::SprocketsStylesheetTagHelper
     end
 
+    def environment
+      @sprockets ||= ::Middleman::MiddlemanSprocketsEnvironment.new(app)
+    end
+
     def after_configuration
-      app.sprockets.options = options
+      self.environment.options = options
 
       ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
       ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
@@ -57,7 +65,7 @@ module Middleman
       ([app.root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
         try_paths.map {|p| File.join(root_path, p) }.
           select {|p| File.directory?(p) }.
-          each {|path| app.sprockets.append_path(path) }
+          each {|path| self.environment.append_path(path) }
       end
 
       # Setup Sprockets Sass options
@@ -66,7 +74,7 @@ module Middleman
       end
 
       # Intercept requests to /javascripts and /stylesheets and pass to sprockets
-      our_sprockets = app.sprockets
+      our_sprockets = self.environment
 
       [app.config[:js_dir], app.config[:css_dir], app.config[:images_dir], app.config[:fonts_dir]].each do |dir|
         app.map("/#{dir}") { run our_sprockets }
@@ -75,7 +83,7 @@ module Middleman
 
     # Add sitemap resource for every image in the sprockets load path
     def manipulate_resource_list(resources)
-      sprockets = @app.sprockets
+      sprockets = self.environment
 
       imported_assets = []
       sprockets.imported_assets.each do |asset_logical_path|
