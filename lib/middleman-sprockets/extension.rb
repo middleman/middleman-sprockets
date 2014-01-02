@@ -4,13 +4,13 @@ module Middleman
     option :debug_assets, false, 'Split up each required asset into its own script/style tag instead of combining them (development only)'
 
     def initialize(klass, options_hash={}, &block)
-      super
-
       require "sprockets"
       require "sprockets-sass"
       require "middleman-sprockets/sass_function_hack"
       require "middleman-sprockets/environment"
       require "middleman-sprockets/asset_tag_helpers"
+
+      super
     end
 
     helpers do
