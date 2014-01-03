@@ -171,7 +171,9 @@ module Middleman
         return response.finish
       end
 
-      @app.current_path = request_path
+      if @app.respond_to?(:current_path=)
+        @app.current_path = request_path
+      end
 
       super
     end
