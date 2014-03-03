@@ -175,6 +175,15 @@ module Middleman
         @app.current_path = request_path
       end
 
+      # Fix https://github.com/sstephenson/sprockets/issues/533
+      if resource && File.basename(resource.path) == 'bower.json'
+        file = ::Rack::File.new nil
+        file.path = resource.source_file
+        response = file.serving({})
+        response[1]['Content-Type'] = resource.content_type
+        return response
+      end
+
       super
     end
 

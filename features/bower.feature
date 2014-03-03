@@ -10,3 +10,10 @@ Feature: Bower
     Then the following files should exist:
       | javascripts/get_jquery.js |
     And the file "javascripts/get_jquery.js" should contain "window.jQuery ="
+
+  Scenario: Sprockets should not mess with bower.json
+    Given a successfully built app at "bower-json-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | javascripts/bower.json |
+    And the file "javascripts/bower.json" should contain '"name": "my-project",'
