@@ -1,70 +1,56 @@
 module Middleman
-  module SprocketsJavascriptTagHelper
+  module SprocketsAssetTagHelpers
 
     # extend padrinos javascript_include_tag with debug functionality
     # splits up script dependencies in individual files when
     # configuration variable :debug_assets is set to true
     def javascript_include_tag(*sources)
-      if !build? && (sprockets.options.debug_assets || (respond_to?(:debug_assets) && debug_assets))
+      if debug_assets?
         options = sources.extract_options!.symbolize_keys
-
-        # loop through all sources and the dependencies and
-        # output each as script tag in the correct order
         sources.map do |source|
-          source_file_name = source.to_s
-
-          dependencies_paths = if source_file_name.start_with?('//', 'http')
-                                 # Don't touch external sources
-                                 source_file_name
-                               else
-                                 source_file_name << ".js" unless source_file_name.end_with?(".js")
-
-                                 sprockets[source_file_name].to_a.map do |dependency|
-              # if sprockets sees "?body=1" it only gives back the body
-              # of the script without the dependencies included
-              dependency.logical_path + "?body=1"
-            end
-                               end
-
-          super(dependencies_paths, options)
+          super(dependencies_paths('.js', source), options)
         end.join("").gsub("body=1.js", "body=1")
       else
         super
       end
     end
-  end
-
-  module SprocketsStylesheetTagHelper
 
     # extend padrinos stylesheet_link_tag with debug functionality
     # splits up stylesheets dependencies in individual files when
     # configuration variable :debug_assets is set to true
     def stylesheet_link_tag(*sources)
-      if !build? && (sprockets.options.debug_assets || (respond_to?(:debug_assets) && debug_assets))
+      if debug_assets?
         options = sources.extract_options!.symbolize_keys
-        # loop through all sources and the dependencies and
-        # output each as script tag in the correct order
-
         sources.map do |source|
-          source_file_name = source.to_s
-
-          dependencies_paths = if source_file_name.start_with?('//', 'http')
-                                 # Don't touch external sources
-                                 source_file_name
-                               else
-                                 source_file_name << ".css" unless source_file_name.end_with?(".css")
-
-                                 dependencies_paths = sprockets[source_file_name].to_a.map do |dependency|
-              # if sprockets sees "?body=1" it only gives back the body
-              # of the script without the dependencies included
-              dependency.logical_path + "?body=1"
-            end
-                               end
-
-          super(dependencies_paths, options)
+          super(dependencies_paths('.css', source), options)
         end.join("").gsub("body=1.css", "body=1")
       else
         super
+      end
+    end
+
+    private
+
+    # Should we "debug assets" by outputting each as an individual script tag instead of combining them?
+    def debug_assets?
+      !build? && (sprockets.options.debug_assets || (respond_to?(:debug_assets) && debug_assets))
+    end
+
+    # Find the paths for all the dependencies of a given source file.
+    def dependencies_paths(extension, source)
+      source_file_name = source.to_s
+
+      if source_file_name.start_with?('//', 'http')
+        # Don't touch external sources
+        source_file_name
+      else
+        source_file_name << extension unless source_file_name.end_with?(extension)
+
+        dependencies_paths = sprockets[source_file_name].to_a.map do |dependency|
+          # if sprockets sees "?body=1" it only gives back the body
+          # of the script without the dependencies included
+          dependency.logical_path + "?body=1"
+        end
       end
     end
   end

@@ -21,8 +21,7 @@ module Middleman
         extensions[:sprockets].environment
       end
 
-      include ::Middleman::SprocketsJavascriptTagHelper
-      include ::Middleman::SprocketsStylesheetTagHelper
+      include ::Middleman::SprocketsAssetTagHelpers
     end
 
     def environment
