@@ -4,7 +4,7 @@ require "middleman-sprockets/version"
 
 Gem::Specification.new do |s|
   s.name = "middleman-sprockets"
-  s.version = Middleman::SprocketsVersion::VERSION
+  s.version = Middleman::Sprockets::VERSION
   s.platform = Gem::Platform::RUBY
   s.authors = ["Thomas Reynolds", "Ben Hollis"]
   s.email = ["me@tdreyno.com", "ben@benhollis.net"]

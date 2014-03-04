@@ -5,7 +5,7 @@ require "middleman-sprockets/asset_tag_helpers"
 
 # Sprockets extension
 module Middleman
-  class Sprockets < ::Middleman::Extension
+  class SprocketsExtension < Extension
     option :debug_assets, false, 'Split up each required asset into its own script/style tag instead of combining them (development only)'
 
     def initialize(klass, options_hash={}, &block)
@@ -21,11 +21,11 @@ module Middleman
         extensions[:sprockets].environment
       end
 
-      include ::Middleman::SprocketsAssetTagHelpers
+      include ::Middleman::Sprockets::AssetTagHelpers
     end
 
     def environment
-      @sprockets ||= ::Middleman::MiddlemanSprocketsEnvironment.new(app)
+      @sprockets ||= ::Middleman::Sprockets::Environment.new(app)
     end
 
     def instance_available
