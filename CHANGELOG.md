@@ -1,5 +1,19 @@
-master
+3.3.0
 ===
+
+* Prep work for Middleman v4.
+* Work around sstephenson/sprockets#533 by serving bower.json directly, skipping Sprockets.
+* Only attempt to patch up Sass if Sass is present.
+* :bower_dir is deprecated in favor of just adding your bower_components folder to the sprockets load path.
+* Convert to a new-style Middleman extension. #48
+* Use a file-based cache to persist compiled assets between sessions #47
+
+3.2.0
+===
+
+* Require Middleman 3.2 or later.
+* No longer require 'middleman-more'
+* Fix import_asset. #38
 
 3.1.3
 ===
@@ -37,11 +51,10 @@ master
 * When `:debug_assets` is on, do not add `?body=1` multiple times. #24
 * :js_assets_paths configuration is deprecated in favor of just calling sprockets.append_path. #22
 * Sprockets integration, especially with regard to helper methods, is significantly improved. #22
-* Images and fonts from gems added to the Sprockets load path will now be copied to the build output. #22 
+* Images and fonts from gems added to the Sprockets load path will now be copied to the build output. #22
 * Compatibility with newer Sprockets versions.
 
 3.0.10
 ===
 
 * No longer expire Sprockets index in development mode. #18
-
