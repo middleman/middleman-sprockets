@@ -1,4 +1,4 @@
-master
+3.3.1
 ===
 
 Fix import_asset for Bower and other import paths that don't end in /javascripts, /stylesheets, etc.
