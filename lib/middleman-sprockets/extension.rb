@@ -94,7 +94,7 @@ module Middleman
           @app.logger.debug "== Importing Sprockets asset #{asset}"
         end
         raise ::Sprockets::FileNotFound, "couldn't find asset '#{asset_logical_path}'" if assets.empty?
-        imported_assets.concat(assets)
+        imported_assets += assets
       end
 
       resources_list = []
@@ -113,18 +113,34 @@ module Middleman
           output_dir = @app.config[:js_dir]
         end
 
-        if output_dir
-          sprockets.each_entry(load_path) do |path|
-            next unless path.file?
-            next if path.basename.to_s.start_with?('_')
-            next unless export_all || imported_assets.include?(path)
+        sprockets.each_entry(load_path) do |path|
+          next unless path.file?
+          next if path.basename.to_s.start_with?('_')
 
-            base_path = path.sub("#{load_path}/", '')
-            new_path = @app.sitemap.extensionless_path(File.join(output_dir, base_path))
+          next unless export_all || imported_assets.include?(path)
 
-            next if @app.sitemap.find_resource_by_destination_path(new_path)
-            resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, path.to_s)
+          # For all imported assets that aren't in an obvious directory, figure out their
+          # type (and thus output directory) via extension.
+          output_dir ||= case File.extname(path)
+                         when '.js', '.coffee'
+                           @app.config[:js_dir]
+                         when '.css', '.sass', '.scss', '.styl', '.less'
+                           @app.config[:css_dir]
+                         when '.gif', '.png', '.jpg', '.jpeg', '.svg', '.svg.gz'
+                           @app.config[:images_dir]
+                         when '.ttf', '.woff', '.eot', '.otf'
+                           @app.config[:fonts_dir]
+                         end
+
+          if !output_dir
+            raise ::Sprockets::FileNotFound, "couldn't find an appropriate output directory for '#{path}' - halting because it was explicitly requested via 'import_asset'"
           end
+
+          base_path = path.sub("#{load_path}/", '')
+          new_path = @app.sitemap.extensionless_path(File.join(output_dir, base_path))
+
+          next if @app.sitemap.find_resource_by_destination_path(new_path)
+          resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, path.to_s)
         end
       end
       resources + resources_list

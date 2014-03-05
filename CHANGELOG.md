@@ -1,3 +1,8 @@
+master
+===
+
+Fix import_asset for Bower and other import paths that don't end in /javascripts, /stylesheets, etc.
+
 3.3.0
 ===
 
