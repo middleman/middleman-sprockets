@@ -1,5 +1,6 @@
 require "sprockets"
 require "sprockets-sass"
+require "middleman-sprockets/config_only_environment"
 require "middleman-sprockets/environment"
 require "middleman-sprockets/asset_tag_helpers"
 
@@ -8,24 +9,32 @@ module Middleman
   class SprocketsExtension < Extension
     option :debug_assets, false, 'Split up each required asset into its own script/style tag instead of combining them (development only)'
 
-    def initialize(klass, options_hash={}, &block)
-      require "middleman-sprockets/sass_function_hack"
+    attr_reader :environment
 
-      super
-    end
-
-    helpers do
+    # This module gets mixed into both the Middleman instance and the Middleman class,
+    # so that it's available in config.rb
+    module SprocketsAccessor
       # The sprockets environment
       # @return [Middleman::MiddlemanSprocketsEnvironment]
       def sprockets
         extensions[:sprockets].environment
       end
-
-      include ::Middleman::Sprockets::AssetTagHelpers
     end
 
-    def environment
-      @sprockets ||= ::Middleman::Sprockets::Environment.new(app)
+    def initialize(app, options_hash={}, &block)
+      require "middleman-sprockets/sass_function_hack"
+
+      super
+
+      # Start out with a stub environment that can only be configured (paths and such)
+      @environment = ::Middleman::Sprockets::ConfigOnlyEnvironment.new
+
+      app.send :include, SprocketsAccessor
+    end
+
+    helpers do
+      include SprocketsAccessor
+      include ::Middleman::Sprockets::AssetTagHelpers
     end
 
     def instance_available
@@ -35,42 +44,24 @@ module Middleman
     end
 
     def after_configuration
-      self.environment.options = options
-
       ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
       ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
       ::Tilt.register ::Sprockets::JstProcessor, 'jst'
       app.template_extensions :jst => :js, :eco => :js, :ejs => :js
 
-      app.sitemap.rebuild_resource_list!
-
-      # Add any gems with (vendor|app|.)/assets/javascripts to paths
-      # also add similar directories from project root (like in rails)
-      try_paths = [
-                   %w{ assets },
-                   %w{ app },
-                   %w{ app assets },
-                   %w{ vendor },
-                   %w{ vendor assets },
-                   %w{ lib },
-                   %w{ lib assets }
-                  ].inject([]) do |sum, v|
-        sum + [
-               File.join(v, 'javascripts'),
-               File.join(v, 'stylesheets'),
-               File.join(v, 'images'),
-               File.join(v, 'fonts')
-              ]
+      if app.config.defines_setting?(:debug_assets) && !options.setting(:debug_assets).value_set?
+        options[:debug_assets] = app.config[:debug_assets]
       end
 
-      ([app.root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
-        try_paths.map {|p| File.join(root_path, p) }.
-          select {|p| File.directory?(p) }.
-          each {|path| self.environment.append_path(path) }
-      end
+      config_environment = @environment
+      debug_assets = !app.build? && options[:debug_assets]
+      @environment = ::Middleman::Sprockets::Environment.new(app, :debug_assets => debug_assets)
+      config_environment.apply_to_environment(@environment)
+
+      add_assets_from_gems
 
       # Setup Sprockets Sass options
-      if app.config.respond_to?(:sass)
+      if app.config.defines_setting?(:sass)
         app.config[:sass].each { |k, v| ::Sprockets::Sass.options[k] = v }
       end
 
@@ -84,12 +75,10 @@ module Middleman
 
     # Add sitemap resource for every image in the sprockets load path
     def manipulate_resource_list(resources)
-      sprockets = self.environment
-
       imported_assets = []
-      sprockets.imported_assets.each do |asset_logical_path|
+      environment.imported_assets.each do |asset_logical_path|
         assets = []
-        sprockets.resolve(asset_logical_path) do |asset|
+        environment.resolve(asset_logical_path) do |asset|
           assets << asset
           @app.logger.debug "== Importing Sprockets asset #{asset}"
         end
@@ -98,7 +87,7 @@ module Middleman
       end
 
       resources_list = []
-      sprockets.paths.each do |load_path|
+      environment.paths.each do |load_path|
         output_dir = nil
         export_all = false
         if load_path.end_with?('/images')
@@ -113,7 +102,7 @@ module Middleman
           output_dir = @app.config[:js_dir]
         end
 
-        sprockets.each_entry(load_path) do |path|
+        environment.each_entry(load_path) do |path|
           next unless path.file?
           next if path.basename.to_s.start_with?('_')
 
@@ -144,6 +133,34 @@ module Middleman
         end
       end
       resources + resources_list
+    end
+
+    private
+
+    # Add any directories from gems with Rails-like paths to sprockets load path
+    def add_assets_from_gems
+      try_paths = [
+                   %w{ assets },
+                   %w{ app },
+                   %w{ app assets },
+                   %w{ vendor },
+                   %w{ vendor assets },
+                   %w{ lib },
+                   %w{ lib assets }
+                  ].inject([]) do |sum, v|
+        sum + [
+               File.join(v, 'javascripts'),
+               File.join(v, 'stylesheets'),
+               File.join(v, 'images'),
+               File.join(v, 'fonts')
+              ]
+      end
+
+      ([app.root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
+        try_paths.map {|p| File.join(root_path, p) }.
+          select {|p| File.directory?(p) }.
+          each {|path| self.environment.append_path(path) }
+      end
     end
   end
 end

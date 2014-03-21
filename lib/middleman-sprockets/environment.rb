@@ -2,13 +2,18 @@ module Middleman
   module Sprockets
     # Generic Middleman Sprockets env
     class Environment < ::Sprockets::Environment
-      attr_accessor :options
+      # Whether or not we should debug assets by splitting them all out into individual includes
+      attr_reader :debug_assets
+
+      # A list of Sprockets logical paths for assets that should be brought into the
+      # Middleman application and built.
+      attr_reader :imported_assets
 
       # Setup
-      def initialize(app)
+      def initialize(app, options={})
         @imported_assets = []
         @app = app
-        @options = {}
+        @debug_assets = options.fetch(:debug_assets, false)
 
         super app.source_dir
 
@@ -129,13 +134,15 @@ module Middleman
       end
 
       # Invalidate sitemap when users mess with the sprockets load paths
-      def append_path(*args)
+      def append_path(path)
         @app.sitemap.rebuild_resource_list!(:sprockets_paths)
+
         super
       end
 
-      def prepend_path(*args)
+      def prepend_path(path)
         @app.sitemap.rebuild_resource_list!(:sprockets_paths)
+
         super
       end
 
@@ -162,7 +169,6 @@ module Middleman
         end
         resource = @app.sitemap.find_resource_by_destination_path(request_path)
 
-        debug_assets = !@app.build? && (@options.debug_assets || (@app.respond_to?(:debug_assets) && @app.debug_assets))
         if !resource && !debug_assets
           response = ::Rack::Response.new
           response.status = 404
@@ -188,13 +194,10 @@ module Middleman
         super
       end
 
-      # A list of Sprockets logical paths for assets that should be brought into the
-      # Middleman application and built.
-      attr_accessor :imported_assets
-
       # Tell Middleman to build this asset, referenced as a logical path.
       def import_asset(asset_logical_path)
         imported_assets << asset_logical_path
+        @app.sitemap.rebuild_resource_list!(:sprockets_import_asset)
       end
     end
   end
