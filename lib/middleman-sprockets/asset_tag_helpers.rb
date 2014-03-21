@@ -6,7 +6,7 @@ module Middleman
       # splits up script dependencies in individual files when
       # configuration variable :debug_assets is set to true
       def javascript_include_tag(*sources)
-        if debug_assets?
+        if sprockets.debug_assets
           options = sources.extract_options!.symbolize_keys
           sources.map do |source|
             super(dependencies_paths('.js', source), options)
@@ -20,7 +20,7 @@ module Middleman
       # splits up stylesheets dependencies in individual files when
       # configuration variable :debug_assets is set to true
       def stylesheet_link_tag(*sources)
-        if debug_assets?
+        if sprockets.debug_assets
           options = sources.extract_options!.symbolize_keys
           sources.map do |source|
             super(dependencies_paths('.css', source), options)
@@ -31,11 +31,6 @@ module Middleman
       end
 
       private
-
-      # Should we "debug assets" by outputting each as an individual script tag instead of combining them?
-      def debug_assets?
-        !build? && (sprockets.options.debug_assets || (respond_to?(:debug_assets) && debug_assets))
-      end
 
       # Find the paths for all the dependencies of a given source file.
       def dependencies_paths(extension, source)
