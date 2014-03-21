@@ -1,5 +1,6 @@
 require "sprockets"
 require "sprockets-sass"
+require "middleman-sprockets/config_only_environment"
 require "middleman-sprockets/environment"
 require "middleman-sprockets/asset_tag_helpers"
 
@@ -10,19 +11,29 @@ module Middleman
 
     attr_reader :environment
 
-    def initialize(app, options_hash={}, &block)
-      require "middleman-sprockets/sass_function_hack"
-
-      super
-    end
-
-    helpers do
+    # This module gets mixed into both the Middleman instance and the Middleman class,
+    # so that it's available in config.rb
+    module SprocketsAccessor
       # The sprockets environment
       # @return [Middleman::MiddlemanSprocketsEnvironment]
       def sprockets
         extensions[:sprockets].environment
       end
+    end
 
+    def initialize(app, options_hash={}, &block)
+      require "middleman-sprockets/sass_function_hack"
+
+      super
+
+      # Start out with a stub environment that can only be configured (paths and such)
+      @environment = ::Middleman::Sprockets::ConfigOnlyEnvironment.new
+
+      app.send :include, SprocketsAccessor
+    end
+
+    helpers do
+      include SprocketsAccessor
       include ::Middleman::Sprockets::AssetTagHelpers
     end
 
@@ -45,6 +56,7 @@ module Middleman
       config_environment = @environment
       debug_assets = !app.build? && options[:debug_assets]
       @environment = ::Middleman::Sprockets::Environment.new(app, :debug_assets => debug_assets)
+      config_environment.apply_to_environment(@environment)
 
       add_assets_from_gems
 
@@ -59,8 +71,6 @@ module Middleman
       [app.config[:js_dir], app.config[:css_dir], app.config[:images_dir], app.config[:fonts_dir]].each do |dir|
         app.map("/#{dir}") { run our_sprockets }
       end
-
-      app.sitemap.rebuild_resource_list!
     end
 
     # Add sitemap resource for every image in the sprockets load path

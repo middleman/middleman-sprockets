@@ -7,7 +7,7 @@ module Middleman
 
       # A list of Sprockets logical paths for assets that should be brought into the
       # Middleman application and built.
-      attr_accessor :imported_assets
+      attr_reader :imported_assets
 
       # Setup
       def initialize(app, options={})
@@ -134,13 +134,15 @@ module Middleman
       end
 
       # Invalidate sitemap when users mess with the sprockets load paths
-      def append_path(*args)
+      def append_path(path)
         @app.sitemap.rebuild_resource_list!(:sprockets_paths)
+
         super
       end
 
-      def prepend_path(*args)
+      def prepend_path(path)
         @app.sitemap.rebuild_resource_list!(:sprockets_paths)
+
         super
       end
 
