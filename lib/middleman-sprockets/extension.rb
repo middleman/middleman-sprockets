@@ -37,7 +37,7 @@ module Middleman
       include ::Middleman::Sprockets::AssetTagHelpers
     end
 
-    def instance_available
+    def before_configuration
       if defined?(::Middleman::ConfigContext)
         app.add_to_config_context :sprockets, &method(:environment)
       end
@@ -47,7 +47,10 @@ module Middleman
       ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
       ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
       ::Tilt.register ::Sprockets::JstProcessor, 'jst'
-      app.template_extensions :jst => :js, :eco => :js, :ejs => :js
+
+      if app.respond_to?(:template_extensions)
+        app.template_extensions :jst => :js, :eco => :js, :ejs => :js
+      end
 
       if app.config.defines_setting?(:debug_assets) && !options.setting(:debug_assets).value_set?
         options[:debug_assets] = app.config[:debug_assets]

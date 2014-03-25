@@ -4,6 +4,10 @@ rvm:
   - 2.1.1
   - jruby-19mode
 
+gemfile:
+  - Gemfile
+  - gemfiles/v3
+
 script: "bundle exec rake test"
 
 env: TEST=true
