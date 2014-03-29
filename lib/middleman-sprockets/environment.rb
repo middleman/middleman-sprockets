@@ -17,10 +17,6 @@ module Middleman
 
         super app.source_dir
 
-        # By default, sprockets has no cache! Give it a file-based cache so that
-        # the cache is persisted between sessions
-        @cache = ::Sprockets::Cache::FileStore.new(File.join app.root, '.cache')
-
         enhance_context_class!
 
         # Remove compressors, we handle these with middleware

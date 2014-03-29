@@ -1,7 +1,13 @@
+3.3.2
+===
+
+* Remove file-based cache (`.cache` folder), which did not invalidate correctly and led to a lot of problems with assets not updating.
+* It is now possible to configure Sprockets via `sprockets.append_path` and `sprockets.import_asset` without having to wrap it in a `ready` block.
+
 3.3.1
 ===
 
-Fix import_asset for Bower and other import paths that don't end in /javascripts, /stylesheets, etc.
+* Fix import_asset for Bower and other import paths that don't end in /javascripts, /stylesheets, etc.
 
 3.3.0
 ===
