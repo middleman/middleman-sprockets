@@ -17,6 +17,11 @@ module Middleman
 
         super app.source_dir
 
+        # By default, sprockets has no cache! Give it an in-memory one using a Hash
+        # There is also a Sprockets::Cache::FileStore option, but it is fraught with cache-invalidation
+        # peril, so we choose not to use it.
+        @cache = {}
+
         enhance_context_class!
 
         # Remove compressors, we handle these with middleware
