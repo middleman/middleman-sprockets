@@ -1,8 +1,6 @@
 source "https://rubygems.org"
 
-gem "middleman-cli", :github => "middleman/middleman", :branch => "master"
-gem "middleman-core", :github => "middleman/middleman", :branch => "master"
-gem "middleman-templates", :github => "middleman/middleman", :branch => "master"
+gem "middleman-core", :github => "middleman/middleman", :branch => "v3-stable"
 
 # Specify your gem's dependencies in middleman-sprockets.gemspec
 gemspec
@@ -24,7 +22,7 @@ gem "jquery-rails", "3.1.0", :require => false
 gem "bootstrap-sass", "3.1.1.0", :require => false
 
 gem "jquery_mobile_rails", "1.4.1", :require => false
-# gem "sprockets", "~> 2.12.0", :require => false
+# gem "sprockets", "~> 2.2.1", :require => false
 
 gem "ejs", "~> 1.1.1"
 gem "eco", "~> 1.0.0"
