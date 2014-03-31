@@ -12,9 +12,9 @@ gem "yard", "~> 0.8.0", :require => false
 
 # Test tools
 gem "cucumber"
-gem "fivemat"
+gem "fivemat", "~> 1.2.1"
 gem "aruba"
-gem "rspec"
+gem "rspec", "~> 2.14"
 gem "builder", "~> 3.1.0"
 
 # For actual tests

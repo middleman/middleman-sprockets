@@ -1,5 +1,6 @@
 .DS_Store
 Gemfile.lock
+Gemfile-v4.lock
 tmp
 .rbenv-*
 .sass-cache

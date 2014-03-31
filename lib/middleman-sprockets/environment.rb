@@ -9,6 +9,9 @@ module Middleman
       # Middleman application and built.
       attr_reader :imported_assets
 
+      # The current path, useful when inside helper methods
+      attr_reader :last_request_path
+
       # Setup
       def initialize(app, options={})
         @imported_assets = []
@@ -55,16 +58,19 @@ module Middleman
       # Add our own customizations to the Sprockets context class
       def enhance_context_class!
         app = @app
+        env = self
 
         # Make the app context available to Sprockets
         context_class.send(:define_method, :app) { app }
+        context_class.send(:define_method, :env) { env }
 
         context_class.class_eval do
           def asset_path(path, options={})
             # Handle people calling with the Middleman/Padrino asset path signature
             if path.is_a?(::Symbol) && !options.is_a?(::Hash)
-              return app.asset_path(path, options)
-            end
+              kind = path
+              path = options
+            else
 
             kind = case options[:type]
                    when :image then :images
@@ -73,8 +79,18 @@ module Middleman
                    when :stylesheet then :css
                    else options[:type]
                    end
+            end
 
-            app.asset_path(kind, path)
+            # If Middleman v4, we don't have a global for current path, so pass it in.
+            if self.env.last_request_path
+              app.asset_path(kind, path, {
+                :current_resource => app.sitemap.find_resource_by_destination_path(
+                  self.env.last_request_path
+                )
+              })
+            else 
+              app.asset_path(kind, path)
+            end
           end
 
           # These helpers are already defined in later versions of Sprockets, but we define
@@ -181,6 +197,8 @@ module Middleman
 
         if @app.respond_to?(:current_path=)
           @app.current_path = request_path
+        else
+          @last_request_path = request_path
         end
 
         # Fix https://github.com/sstephenson/sprockets/issues/533
