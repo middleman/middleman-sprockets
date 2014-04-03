@@ -13,7 +13,7 @@ gem "cucumber"
 gem "fivemat", "~> 1.2.1"
 gem "aruba"
 gem "rspec", "~> 2.14"
-gem "builder", "~> 3.1.0"
+gem "builder", "~> 3.0"
 
 # For actual tests
 # Make sure to lock down the versions of the asset gems
@@ -22,7 +22,6 @@ gem "jquery-rails", "3.1.0", :require => false
 gem "bootstrap-sass", "3.1.1.0", :require => false
 
 gem "jquery_mobile_rails", "1.4.1", :require => false
-# gem "sprockets", "~> 2.2.1", :require => false
 
 gem "ejs", "~> 1.1.1"
 gem "eco", "~> 1.0.0"
