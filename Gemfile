@@ -19,7 +19,7 @@ gem "builder", "~> 3.0"
 # For actual tests
 # Make sure to lock down the versions of the asset gems
 # so they don't cause asset hashes to change.
-gem "railties", "~> 4.0.0"
+gem "railties", "~> 4.1.0"
 gem "jquery-rails", "3.1.0", :require => false
 gem "bootstrap-sass", "3.1.1.0", :require => false
 gem "jquery_mobile_rails", "1.4.1", :require => false
