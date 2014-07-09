@@ -6,7 +6,6 @@ rvm:
 
 gemfile:
   - Gemfile
-  - Gemfile-v4
 
 script: "bundle exec rake test"
 
