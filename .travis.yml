@@ -5,8 +5,7 @@ rvm:
   - jruby-19mode
 
 gemfile:
-  - Gemfile
-  - Gemfile-v4
+  - Gemfile\
 
 script: "bundle exec rake test"
 

@@ -57,11 +57,11 @@ module Middleman
 
       # Add our own customizations to the Sprockets context class
       def enhance_context_class!
-        app = @app
+        template_context = @app.template_context_class.new(@app)
         env = self
 
         # Make the app context available to Sprockets
-        context_class.send(:define_method, :app) { app }
+        context_class.send(:define_method, :middleman_template_context) { template_context }
         context_class.send(:define_method, :env) { env }
 
         context_class.class_eval do
@@ -81,16 +81,12 @@ module Middleman
                    end
             end
 
-            # If Middleman v4, we don't have a global for current path, so pass it in.
-            if self.env.last_request_path
-              app.asset_path(kind, path, {
-                :current_resource => app.sitemap.find_resource_by_destination_path(
-                  self.env.last_request_path
-                )
-              })
-            else 
-              app.asset_path(kind, path)
-            end
+            # We don't have a global for current path, so pass it in.
+            ::Middleman::Util.asset_path(middleman_template_context.app, kind, path, {
+              :current_resource => middleman_template_context.sitemap.find_resource_by_destination_path(
+                self.env.last_request_path
+              )
+            })
           end
 
           # These helpers are already defined in later versions of Sprockets, but we define
@@ -120,8 +116,9 @@ module Middleman
 
           def method_missing(*args)
             name = args.first
-            if app.respond_to?(name)
-              app.send(*args)
+
+            if middleman_template_context.respond_to?(name)
+              middleman_template_context.send(*args)
             else
               super
             end
@@ -129,7 +126,7 @@ module Middleman
 
           # Needed so that method_missing makes sense
           def respond_to?(method, include_private = false)
-            super || app.respond_to?(method, include_private)
+            super || middleman_template_context.respond_to?(method, include_private)
           end
         end
       end
@@ -195,11 +192,7 @@ module Middleman
           return response.finish
         end
 
-        if @app.respond_to?(:current_path=)
-          @app.current_path = request_path
-        else
-          @last_request_path = request_path
-        end
+        @last_request_path = request_path
 
         # Fix https://github.com/sstephenson/sprockets/issues/533
         if resource && File.basename(resource.path) == 'bower.json'

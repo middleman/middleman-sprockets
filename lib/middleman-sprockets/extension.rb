@@ -3,6 +3,19 @@ require "sprockets-sass"
 require "middleman-sprockets/config_only_environment"
 require "middleman-sprockets/environment"
 require "middleman-sprockets/asset_tag_helpers"
+require "middleman-core/auto_gem_extensions"
+
+class Sprockets::Sass::SassTemplate
+  # Get the default, global Sass options. Start with Compass's
+  # options, if it's available.
+  def default_sass_options
+    if defined?(Compass) && defined?(Compass.configuration)
+      merge_sass_options Compass.configuration.to_sass_engine_options.dup, Sprockets::Sass.options
+    else
+      Sprockets::Sass.options.dup
+    end
+  end
+end
 
 # Sprockets extension
 module Middleman
@@ -10,16 +23,6 @@ module Middleman
     option :debug_assets, false, 'Split up each required asset into its own script/style tag instead of combining them (development only)'
 
     attr_reader :environment
-
-    # This module gets mixed into both the Middleman instance and the Middleman class,
-    # so that it's available in config.rb
-    module SprocketsAccessor
-      # The sprockets environment
-      # @return [Middleman::MiddlemanSprocketsEnvironment]
-      def sprockets
-        extensions[:sprockets].environment
-      end
-    end
 
     def initialize(app, options_hash={}, &block)
       require "middleman-sprockets/sass_function_hack"
@@ -29,28 +32,21 @@ module Middleman
       # Start out with a stub environment that can only be configured (paths and such)
       @environment = ::Middleman::Sprockets::ConfigOnlyEnvironment.new
 
-      app.send :include, SprocketsAccessor
+      app.add_to_config_context :sprockets, &method(:environment)
     end
 
     helpers do
-      include SprocketsAccessor
-      include ::Middleman::Sprockets::AssetTagHelpers
-    end
-
-    def before_configuration
-      if defined?(::Middleman::ConfigContext)
-        app.add_to_config_context :sprockets, &method(:environment)
+      def sprockets
+        extensions[:sprockets].environment
       end
     end
+
+    helpers ::Middleman::Sprockets::AssetTagHelpers
 
     def after_configuration
       ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
       ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
       ::Tilt.register ::Sprockets::JstProcessor, 'jst'
-
-      if app.respond_to?(:template_extensions)
-        app.template_extensions :jst => :js, :eco => :js, :ejs => :js
-      end
 
       if app.config.defines_setting?(:debug_assets) && !options.setting(:debug_assets).value_set?
         options[:debug_assets] = app.config[:debug_assets]
