@@ -83,18 +83,18 @@ module Middleman
 
       resources_list = []
       environment.paths.each do |load_path|
-        output_dir = nil
+        candidate_dir = nil
         export_all = false
         if load_path.end_with?('/images')
-          output_dir = @app.config[:images_dir]
+          candidate_dir = @app.config[:images_dir]
           export_all = true
         elsif load_path.end_with?('/fonts')
-          output_dir = @app.config[:fonts_dir]
+          candidate_dir = @app.config[:fonts_dir]
           export_all = true
         elsif load_path.end_with?('/stylesheets')
-          output_dir = @app.config[:css_dir]
+          candidate_dir = @app.config[:css_dir]
         elsif load_path.end_with?('/javascripts')
-          output_dir = @app.config[:js_dir]
+          candidate_dir = @app.config[:js_dir]
         end
 
         environment.each_entry(load_path) do |path|
@@ -105,7 +105,10 @@ module Middleman
 
           # For all imported assets that aren't in an obvious directory, figure out their
           # type (and thus output directory) via extension.
-          output_dir ||= case File.extname(path)
+          output_dir = if candidate_dir
+                         candidate_dir
+                       else
+                         case File.extname(path)
                          when '.js', '.coffee'
                            @app.config[:js_dir]
                          when '.css', '.sass', '.scss', '.styl', '.less'
@@ -115,6 +118,7 @@ module Middleman
                          when '.ttf', '.woff', '.eot', '.otf'
                            @app.config[:fonts_dir]
                          end
+                       end
 
           if !output_dir
             raise ::Sprockets::FileNotFound, "couldn't find an appropriate output directory for '#{path}' - halting because it was explicitly requested via 'import_asset'"
