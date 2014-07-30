@@ -14,9 +14,37 @@ middleman init MY_PROJECT
 If you already have a Middleman project: Add `gem "middleman-sprockets"` to your `Gemfile` and run `bundle install`
 
 ## Configuration
+<a name="configuration"></a>
 
 ```
 activate :sprockets
+```
+
+## Usage
+
+If you want to use, `middleman-sprockets` you need to configure it first - See
+[Configuration](#configuration). If you want to use `middleman-sprockets` with
+bower, you need to import assets first. The path is relative to your
+`bower`-directory.
+
+```
+sprockets.import_asset <path>
+```
+
+Given `vendor/assets/components` as `bower`-directory and `jquery` as
+component-name, you would import the `jquery` production version with:
+
+```
+sprockets.append_path 'vendor/assets/components'
+sprockets.import_asset 'jquery/dist/jquery'
+```
+
+If you tell `sprockets` just about the name of the component, it will make thos
+files available which are given in the `main`-section of the `bower.json`-file.
+
+```
+sprockets.append_path 'vendor/assets/components'
+sprockets.import_asset 'jquery'
 ```
 
 ## Build & Dependency Status
