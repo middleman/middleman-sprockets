@@ -47,6 +47,23 @@ sprockets.append_path 'vendor/assets/components'
 sprockets.import_asset 'jquery'
 ```
 
+If you need to tell `sprockets` to use an individual output path for your
+asset, you can pass `#import_asset` a block. This block gets the logical path
+as
+[`Pathname`](http://rdoc.info/stdlib/pathname/frames)
+and needs to return the relative output path for the asset as `String` or
+`Pathname`.
+
+```
+sprockets.append_path 'vendor/assets/components'
+
+# return logical path
+sprockets.import_asset 'jquery/dist/jquery' do |logical_path|
+  # => prefix/jquery/dist/jquery
+  Pathname.new('prefix') + logical_path
+end
+```
+
 ## Build & Dependency Status
 
 [![Gem Version](https://badge.fury.io/rb/middleman-sprockets.png)][gem]
@@ -77,7 +94,7 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 
 ## License
 
-Copyright (c) 2012-2013 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
+Copyright (c) 2012-2014 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman-sprockets

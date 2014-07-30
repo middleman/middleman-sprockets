@@ -214,8 +214,13 @@ module Middleman
       end
 
       # Tell Middleman to build this asset, referenced as a logical path.
-      def import_asset(asset_logical_path)
-        imported_assets << asset_logical_path
+      def import_asset(asset_logical_path, &determine_output_dir)
+        args = []
+        args << asset_logical_path
+        args << determine_output_dir if block_given?
+
+        imported_assets << ImportedAsset.new(*args)
+
         @app.sitemap.rebuild_resource_list!(:sprockets_import_asset)
       end
     end
