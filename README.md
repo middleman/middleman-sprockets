@@ -14,9 +14,54 @@ middleman init MY_PROJECT
 If you already have a Middleman project: Add `gem "middleman-sprockets"` to your `Gemfile` and run `bundle install`
 
 ## Configuration
+<a name="configuration"></a>
 
 ```
 activate :sprockets
+```
+
+## Usage
+
+If you want to use, `middleman-sprockets` you need to configure it first - See
+[Configuration](#configuration). If you want to use `middleman-sprockets` with
+bower, you need to import assets first. The path is relative to your
+`bower`-directory.
+
+```
+sprockets.import_asset <path>
+```
+
+Given `vendor/assets/components` as `bower`-directory and `jquery` as
+component-name, you would import the `jquery` production version with:
+
+```
+sprockets.append_path 'vendor/assets/components'
+sprockets.import_asset 'jquery/dist/jquery'
+```
+
+If you tell `sprockets` just about the name of the component, it will make thos
+files available which are given in the `main`-section of the `bower.json`-file.
+
+```
+sprockets.append_path 'vendor/assets/components'
+sprockets.import_asset 'jquery'
+```
+
+If you need to tell `sprockets` to use an individual output path for your
+asset, you can pass `#import_asset` a block. This block gets the logical path
+as
+[`Pathname`](http://rdoc.info/stdlib/pathname/frames)
+and needs to return the relative output path for the asset as `String` or
+`Pathname`.
+
+```
+sprockets.append_path 'vendor/assets/components'
+
+# return logical path
+sprockets.import_asset 'jquery/dist/jquery' do |logical_path|
+  # => prefix/jquery/dist/jquery
+  Pathname.new('prefix') + logical_path
+end
 ```
 
 ## Build & Dependency Status
@@ -49,7 +94,7 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 
 ## License
 
-Copyright (c) 2012-2013 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
+Copyright (c) 2012-2014 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman-sprockets

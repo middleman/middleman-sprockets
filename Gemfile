@@ -12,9 +12,9 @@ gem "yard", "~> 0.8.0", :require => false
 gem "cucumber"
 gem "fivemat", "~> 1.2.1"
 gem "aruba"
-gem "rspec", "~> 2.14"
+gem "rspec"
 gem "builder", "~> 3.0"
-
+gem "simplecov"
 
 # For actual tests
 # Make sure to lock down the versions of the asset gems

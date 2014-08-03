@@ -28,3 +28,10 @@ Feature: Bower
     When I cd to "build"
     Then a file named "images/lightbox2/img/close.png" should exist
     Then a file named "javascripts/lightbox2/js/lightbox.js" should exist
+
+  Scenario: Assets can have an individual output directory
+    Given a successfully built app at "bower-individual-outputdir-app"
+    When I cd to "build"
+    Then a file named "underscore.js" should exist
+    And a file named "hello_world/lightbox2/img/close.png" should exist
+    And a file named "javascripts/lightbox2/js/lightbox.js" should exist
