@@ -105,7 +105,7 @@ module Middleman
             asset.destination_directory = @app.config[:css_dir]
           end
 
-          new_path = @app.sitemap.extensionless_path(asset.destination_path)
+          new_path = @app.sitemap.extensionless_path(asset.destination_path.to_s)
 
           next if @app.sitemap.find_resource_by_destination_path(new_path.to_s)
           resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, path.to_s)
