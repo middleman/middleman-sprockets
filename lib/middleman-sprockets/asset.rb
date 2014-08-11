@@ -58,7 +58,7 @@ module Middleman
       def destination_path
         return @destination_path if @destination_path
 
-        fail ::Sprockets::FileNotFound, "Couldn't find an appropriate output directory for '#{destination_directory}' - halting because it was explicitly requested via 'import_asset'" unless destination_directory
+        fail ::Sprockets::FileNotFound, "Couldn't find an appropriate output directory for '#{source_path}'. Halting because it was explicitly requested via 'import_asset'" unless destination_directory
 
         destination_directory + relative_source_path
       end
@@ -105,17 +105,17 @@ module Middleman
       end
 
       def type
-        if is_in_images_directory? or is_image?
-          :image
-        elsif is_in_scripts_directory? or is_script?
-          :script
-        elsif is_in_stylesheets_directory? or is_stylesheet?
-          :stylesheet
-        elsif is_in_fonts_directory? or is_font?
-          :font
-        else
-          :unknown
-        end
+        @type ||= if is_image?
+                    :image
+                  elsif is_script?
+                    :script
+                  elsif is_stylesheet?
+                    :stylesheet
+                  elsif is_font?
+                    :font
+                  else
+                    :unknown
+                  end
       end
 
       def file?
@@ -123,7 +123,7 @@ module Middleman
       end
 
       def partial?
-        base_name.start_with? '_'
+        base_name.to_s.start_with? '_'
       end
 
       # Is it a valid asset
@@ -142,42 +142,66 @@ module Middleman
       end
 
       def extname
-        source_path.extname
-      end
-
-      def has_real_path?(path)
-        real_path == path
-      end
-
-      def is_in_images_directory?
-        source_directory.end_with?('images', 'img') 
-      end
-
-      def is_in_fonts_directory?
-        source_directory.end_with?('fonts') 
-      end
-
-      def is_in_scripts_directory?
-        source_directory.end_with?('javascripts', 'js')
-      end
-
-      def is_in_stylesheets_directory?
-        source_directory.end_with?('stylesheets', 'css') 
+        source_path.basename.to_s[/(\.[^.]+)/]
       end
 
       def is_image?
-        has_extname?('.gif', '.png', '.jpg', '.jpeg', '.svg', '.svg.gz')
+        is_image_by_path? || (is_image_by_extension? && !is_font_by_path?)
+      end
+
+      def is_image_by_path?
+        source_directory.to_s.end_with?('images')    || \
+        source_directory.to_s.end_with?('img')       || \
+        source_path.dirname.to_s.end_with?('images') || \
+        source_path.dirname.to_s.end_with?('img')
+      end
+      alias_method :is_in_images_directory?, :is_image_by_path?
+
+      def is_image_by_extension?
+        has_extname?('.gif', '.png', '.jpg', '.jpeg', '.svg', '.svgz')
       end
 
       def is_stylesheet?
+        is_stylesheet_by_path? || is_stylesheet_by_extension?
+      end
+
+      def is_stylesheet_by_extension?
         has_extname?('.css', '.sass', '.scss', '.styl', '.less')
       end
 
+      def is_stylesheet_by_path?
+        source_directory.to_s.end_with?('stylesheets')    || \
+        source_directory.to_s.end_with?('css')       || \
+        source_path.dirname.to_s.end_with?('stylesheets') || \
+        source_path.dirname.to_s.end_with?('css')
+      end
+
       def is_font?
-        has_extname?('.ttf', '.woff', '.eot', '.otf')
+        is_font_by_path? || is_font_by_extension?
+      end
+
+      def is_font_by_path?
+        source_directory.to_s.end_with?('fonts') || \
+        source_path.dirname.to_s.end_with?('fonts')
+      end
+      alias_method :is_in_fonts_directory?, :is_font_by_path?
+
+      def is_font_by_extension?
+        has_extname?('.ttf', '.woff', '.eot', '.otf', '.svg', '.svgz')
       end
 
       def is_script?
+        is_script_by_path? || is_script_by_extension?
+      end
+
+      def is_script_by_path?
+        source_directory.to_s.end_with?('javascripts')    || \
+        source_directory.to_s.end_with?('js')             || \
+        source_path.dirname.to_s.end_with?('javascripts') || \
+        source_path.dirname.to_s.end_with?('js')
+      end
+
+      def is_script_by_extension?
         has_extname?('.js', '.coffee')
       end
     end
