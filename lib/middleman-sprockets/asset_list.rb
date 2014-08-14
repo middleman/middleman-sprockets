@@ -2,11 +2,7 @@
 module Middleman
   module Sprockets
     class AssetList
-      private
-
       attr_reader :assets
-
-      public
 
       def initialize(assets = [])
         @assets = Array(assets)

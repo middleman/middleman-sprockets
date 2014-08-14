@@ -3,14 +3,7 @@ module Middleman
   module Sprockets
     # Asset 
     class Asset
-
-      private
-
-      attr_reader :relative_source_path, :base_name, :destination_directory, :source_directory
-
-      public
-
-      attr_reader :source_path
+      attr_reader :source_path, :relative_source_path, :base_name, :destination_directory, :source_directory
 
       # Create instance
       #
@@ -24,12 +17,12 @@ module Middleman
 
         fail ArgumentError, 'Missing argument source_directory' unless source_directory
 
-        @source_directory     = source_directory
+        @source_directory = source_directory
 
-        @source_path          = Pathname.new(source_path)
+        @source_path = Pathname.new(source_path)
         @relative_source_path = @source_path.relative_path_from(Pathname.new(source_directory))
-        @base_name            = @source_path.basename
-        @import_it            = false
+        @base_name = @source_path.basename
+        @import_it = false
       end
 
       # Should the asset imported?
@@ -150,15 +143,15 @@ module Middleman
       end
 
       def is_image_by_path?
-        source_directory.to_s.end_with?('images')    || \
-        source_directory.to_s.end_with?('img')       || \
-        source_path.dirname.to_s.end_with?('images') || \
+        source_directory.to_s.end_with?('images') ||
+        source_directory.to_s.end_with?('img') ||
+        source_path.dirname.to_s.end_with?('images') ||
         source_path.dirname.to_s.end_with?('img')
       end
       alias_method :is_in_images_directory?, :is_image_by_path?
 
       def is_image_by_extension?
-        has_extname?('.gif', '.png', '.jpg', '.jpeg', '.svg', '.svgz')
+        has_extname? *%w(.gif .png .jpg .jpeg .webp .svg .svgz)
       end
 
       def is_stylesheet?
@@ -166,13 +159,13 @@ module Middleman
       end
 
       def is_stylesheet_by_extension?
-        has_extname?('.css', '.sass', '.scss', '.styl', '.less')
+        has_extname? *%w(.css .sass .scss .styl .less)
       end
 
       def is_stylesheet_by_path?
-        source_directory.to_s.end_with?('stylesheets')    || \
-        source_directory.to_s.end_with?('css')       || \
-        source_path.dirname.to_s.end_with?('stylesheets') || \
+        source_directory.to_s.end_with?('stylesheets') ||
+        source_directory.to_s.end_with?('css') ||
+        source_path.dirname.to_s.end_with?('stylesheets') ||
         source_path.dirname.to_s.end_with?('css')
       end
 
@@ -181,13 +174,13 @@ module Middleman
       end
 
       def is_font_by_path?
-        source_directory.to_s.end_with?('fonts') || \
+        source_directory.to_s.end_with?('fonts') ||
         source_path.dirname.to_s.end_with?('fonts')
       end
       alias_method :is_in_fonts_directory?, :is_font_by_path?
 
       def is_font_by_extension?
-        has_extname?('.ttf', '.woff', '.eot', '.otf', '.svg', '.svgz')
+        has_extname? *%w(.ttf .woff .eot .otf .svg .svgz)
       end
 
       def is_script?
@@ -195,9 +188,9 @@ module Middleman
       end
 
       def is_script_by_path?
-        source_directory.to_s.end_with?('javascripts')    || \
-        source_directory.to_s.end_with?('js')             || \
-        source_path.dirname.to_s.end_with?('javascripts') || \
+        source_directory.to_s.end_with?('javascripts') ||
+        source_directory.to_s.end_with?('js') ||
+        source_path.dirname.to_s.end_with?('javascripts') ||
         source_path.dirname.to_s.end_with?('js')
       end
 
