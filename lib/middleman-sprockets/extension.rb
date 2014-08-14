@@ -1,6 +1,5 @@
 require "sprockets"
 require "sprockets-sass"
-require "middleman-sprockets/pathname_extensions"
 require "middleman-sprockets/asset"
 require "middleman-sprockets/imported_asset"
 require "middleman-sprockets/asset_list"

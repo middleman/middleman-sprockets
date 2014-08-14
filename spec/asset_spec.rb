@@ -10,6 +10,11 @@ RSpec.describe Asset do
       asset = Asset.new('/source/path/to/images/image.xz', source_directory: '/source/path/to/images')
       expect(asset).to have_type :image
     end
+
+    it 'finds type by double extension' do
+      asset = Asset.new('/source/path/to/image.png.xz', source_directory: '/source/path/to')
+      expect(asset).to have_type :image
+    end
   end
 
   context '#import?, #import_it' do
@@ -112,5 +117,4 @@ RSpec.describe Asset do
       end
     end
   end
-
 end
