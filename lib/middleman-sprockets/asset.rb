@@ -131,11 +131,11 @@ module Middleman
       end
 
       def has_extname?(*exts)
-        exts.any? { |e| extname == e }
+        exts.any? { |e| extname.include? e }
       end
 
       def extname
-        source_path.basename.to_s[/(\.[^.]+)/]
+        source_path.basename.to_s.scan(/(\.[^.]+)/).flatten
       end
 
       def is_image?
