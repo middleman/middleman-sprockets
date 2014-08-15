@@ -1,9 +1,11 @@
 require "sprockets"
 require "sprockets-sass"
+require "middleman-sprockets/asset"
+require "middleman-sprockets/imported_asset"
+require "middleman-sprockets/asset_list"
 require "middleman-sprockets/config_only_environment"
 require "middleman-sprockets/environment"
 require "middleman-sprockets/asset_tag_helpers"
-require "middleman-core/auto_gem_extensions"
 
 class Sprockets::Sass::SassTemplate
   # Get the default, global Sass options. Start with Compass's
@@ -31,7 +33,6 @@ module Middleman
 
       # Start out with a stub environment that can only be configured (paths and such)
       @environment = ::Middleman::Sprockets::ConfigOnlyEnvironment.new
-
       app.add_to_config_context :sprockets, &method(:environment)
     end
 
@@ -57,8 +58,6 @@ module Middleman
       @environment = ::Middleman::Sprockets::Environment.new(app, :debug_assets => debug_assets)
       config_environment.apply_to_environment(@environment)
 
-      add_assets_from_gems
-
       # Setup Sprockets Sass options
       if app.config.defines_setting?(:sass)
         app.config[:sass].each { |k, v| ::Sprockets::Sass.options[k] = v }
@@ -74,92 +73,45 @@ module Middleman
 
     # Add sitemap resource for every image in the sprockets load path
     def manipulate_resource_list(resources)
-      imported_assets = []
-      environment.imported_assets.each do |asset_logical_path|
-        assets = []
-        environment.resolve(asset_logical_path) do |asset|
-          assets << asset
-          @app.logger.debug "== Importing Sprockets asset #{asset}"
-        end
-        raise ::Sprockets::FileNotFound, "couldn't find asset '#{asset_logical_path}'" if assets.empty?
-        imported_assets += assets
+      imported_assets = Middleman::Sprockets::AssetList.new
+
+      environment.imported_assets.each do |asset|
+        asset.resolve_path_with environment
+        @app.logger.debug "== Importing Sprockets asset #{asset.real_path}"
+
+        imported_assets << asset
       end
 
       resources_list = []
       environment.paths.each do |load_path|
-        output_dir = nil
-        export_all = false
-        if load_path.end_with?('/images')
-          output_dir = @app.config[:images_dir]
-          export_all = true
-        elsif load_path.end_with?('/fonts')
-          output_dir = @app.config[:fonts_dir]
-          export_all = true
-        elsif load_path.end_with?('/stylesheets')
-          output_dir = @app.config[:css_dir]
-        elsif load_path.end_with?('/javascripts')
-          output_dir = @app.config[:js_dir]
-        end
-
         environment.each_entry(load_path) do |path|
-          next unless path.file?
-          next if path.basename.to_s.start_with?('_')
+          asset = Middleman::Sprockets::Asset.new(path, source_directory: load_path)
 
-          next unless export_all || imported_assets.include?(path)
-
-          # For all imported assets that aren't in an obvious directory, figure out their
-          # type (and thus output directory) via extension.
-          output_dir ||= case File.extname(path)
-                         when '.js', '.coffee'
-                           @app.config[:js_dir]
-                         when '.css', '.sass', '.scss', '.styl', '.less'
-                           @app.config[:css_dir]
-                         when '.gif', '.png', '.jpg', '.jpeg', '.svg', '.svg.gz'
-                           @app.config[:images_dir]
-                         when '.ttf', '.woff', '.eot', '.otf'
-                           @app.config[:fonts_dir]
-                         end
-
-          if !output_dir
-            raise ::Sprockets::FileNotFound, "couldn't find an appropriate output directory for '#{path}' - halting because it was explicitly requested via 'import_asset'"
+          imported_assets.lookup(asset) do |candidate, found_asset| 
+            candidate.destination_path = found_asset.output_path if found_asset.output_path
+            candidate.import_it
           end
 
-          base_path = path.sub("#{load_path}/", '')
-          new_path = @app.sitemap.extensionless_path(File.join(output_dir, base_path))
+          next unless asset.import?
 
-          next if @app.sitemap.find_resource_by_destination_path(new_path)
+          if asset.has_type? :image
+            asset.destination_directory = @app.config[:images_dir]
+          elsif asset.has_type? :script
+            asset.destination_directory = @app.config[:js_dir]
+          elsif asset.has_type? :font
+            asset.destination_directory = @app.config[:fonts_dir]
+          elsif asset.has_type? :stylesheet
+            asset.destination_directory = @app.config[:css_dir]
+          end
+
+          new_path = @app.sitemap.extensionless_path(asset.destination_path.to_s)
+
+          next if @app.sitemap.find_resource_by_destination_path(new_path.to_s)
+          
           resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, path.to_s)
         end
       end
       resources + resources_list
-    end
-
-    private
-
-    # Add any directories from gems with Rails-like paths to sprockets load path
-    def add_assets_from_gems
-      try_paths = [
-                   %w{ assets },
-                   %w{ app },
-                   %w{ app assets },
-                   %w{ vendor },
-                   %w{ vendor assets },
-                   %w{ lib },
-                   %w{ lib assets }
-                  ].inject([]) do |sum, v|
-        sum + [
-               File.join(v, 'javascripts'),
-               File.join(v, 'stylesheets'),
-               File.join(v, 'images'),
-               File.join(v, 'fonts')
-              ]
-      end
-
-      ([app.root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
-        try_paths.map {|p| File.join(root_path, p) }.
-          select {|p| File.directory?(p) }.
-          each {|path| self.environment.append_path(path) }
-      end
     end
   end
 end

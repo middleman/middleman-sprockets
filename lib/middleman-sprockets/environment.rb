@@ -18,7 +18,7 @@ module Middleman
         @app = app
         @debug_assets = options.fetch(:debug_assets, false)
 
-        super app.source_dir
+        super app.config[:source]
 
         # By default, sprockets has no cache! Give it an in-memory one using a Hash
         # There is also a Sprockets::Cache::FileStore option, but it is fraught with cache-invalidation
@@ -207,8 +207,13 @@ module Middleman
       end
 
       # Tell Middleman to build this asset, referenced as a logical path.
-      def import_asset(asset_logical_path)
-        imported_assets << asset_logical_path
+      def import_asset(asset_logical_path, &determine_output_dir)
+        args = []
+        args << asset_logical_path
+        args << determine_output_dir if block_given?
+
+        imported_assets << ImportedAsset.new(*args)
+
         @app.sitemap.rebuild_resource_list!(:sprockets_import_asset)
       end
     end

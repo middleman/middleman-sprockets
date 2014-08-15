@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "middleman-cli", :github => "middleman/middleman", :branch => "master"
 gem "middleman-core", :github => "middleman/middleman", :branch => "master"
+# gem "middleman-core", :path => "~/Sites/middleman"
 
 # Specify your gem's dependencies in middleman-sprockets.gemspec
 gemspec
@@ -17,6 +18,7 @@ gem 'rspec', '~> 3.0', require: false
 gem 'fivemat', '~> 1.3', require: false
 gem 'cucumber', '~> 1.3', require: false
 gem 'contracts', '~> 0.4', require: false
+gem 'simplecov'
 
 # For actual tests
 # Make sure to lock down the versions of the asset gems

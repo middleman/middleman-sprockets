@@ -21,8 +21,8 @@ module Middleman
       end
 
       def apply_to_environment(environment)
-        @imported_assets.each do |asset|
-          environment.import_asset asset
+        @imported_assets.each do |(path, directory)|
+          environment.import_asset path, &directory
         end
 
         @appended_paths.each do |path|
@@ -34,8 +34,8 @@ module Middleman
         end
       end
 
-      def import_asset(asset_logical_path)
-        @imported_assets << asset_logical_path
+      def import_asset(asset_logical_path, &output_directory)
+        @imported_assets << [asset_logical_path, output_directory]
       end
 
       def append_path(path)

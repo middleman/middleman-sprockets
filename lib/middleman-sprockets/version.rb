@@ -1,5 +1,5 @@
 module Middleman
   module Sprockets
-    VERSION = "3.3.3"
+    VERSION = "4.0.0.alpha.1"
   end
 end

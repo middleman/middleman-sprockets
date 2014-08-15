@@ -2,6 +2,7 @@ require 'bundler'
 Bundler::GemHelper.install_tasks
 
 require 'cucumber/rake/task'
+require 'rspec/core/rake_task'
 
 require 'middleman-core/version'
 
@@ -12,9 +13,11 @@ Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
   t.cucumber_opts = "--color #{exempt_tags.join(" ")} --strict --format #{ENV['CUCUMBER_FORMAT'] || 'Fivemat'}"
 end
 
+RSpec::Core::RakeTask.new(:spec)
+
 require 'rake/clean'
 
-task :test => [:destroy_sass_cache, "cucumber"]
+task :test => [:destroy_sass_cache, "cucumber", "spec"]
 
 desc "Build HTML documentation"
 task :doc do
