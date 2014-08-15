@@ -139,3 +139,10 @@ Feature: Sprockets
     Then a file named "images/fontawesome-webfont-source.svg" should not exist
     Then a file named "images/drawing-source.svg" should exist
     Then a file named "images/blub/images/drawing-bower.svg" should exist
+
+  Scenario: Assets with multiple extensions
+    Given a successfully built app at "sprockets-multiple-extensions-app"
+    When I cd to "build"
+    Then a file named "fonts/font-awesome/fonts/fontawesome-webfont-bower.svg.gz" should exist
+    Then a file named "javascripts/jquery/jquery.min.js" should exist
+    Then a file named "javascripts/jquery/jquery.asdf.asdf.js.min.asdf" should exist
