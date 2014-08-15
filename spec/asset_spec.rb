@@ -15,6 +15,11 @@ RSpec.describe Asset do
       asset = Asset.new('/source/path/to/image.png.xz', source_directory: '/source/path/to')
       expect(asset).to have_type :image
     end
+
+    it 'finds type in an unlimited number of extensions' do
+      asset = Asset.new('/source/path/to/image.asdf.png.asdf.xz', source_directory: '/source/path/to')
+      expect(asset).to have_type :image
+    end
   end
 
   context '#import?, #import_it' do

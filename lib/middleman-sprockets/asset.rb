@@ -131,7 +131,7 @@ module Middleman
       end
 
       def has_extname?(*exts)
-        exts.any? { |e| extname.include? e }
+        !(extname & exts).empty?
       end
 
       def extname
@@ -151,7 +151,7 @@ module Middleman
       alias_method :is_in_images_directory?, :is_image_by_path?
 
       def is_image_by_extension?
-        has_extname? *%w(.gif .png .jpg .jpeg .webp .svg .svgz)
+        has_extname?(*%w(.gif .png .jpg .jpeg .webp .svg .svgz))
       end
 
       def is_stylesheet?
@@ -159,7 +159,7 @@ module Middleman
       end
 
       def is_stylesheet_by_extension?
-        has_extname? *%w(.css .sass .scss .styl .less)
+        has_extname?(*%w(.css .sass .scss .styl .less))
       end
 
       def is_stylesheet_by_path?
@@ -180,7 +180,7 @@ module Middleman
       alias_method :is_in_fonts_directory?, :is_font_by_path?
 
       def is_font_by_extension?
-        has_extname? *%w(.ttf .woff .eot .otf .svg .svgz)
+        has_extname?(*%w(.ttf .woff .eot .otf .svg .svgz))
       end
 
       def is_script?
@@ -195,7 +195,7 @@ module Middleman
       end
 
       def is_script_by_extension?
-        has_extname?('.js', '.coffee')
+        has_extname?(*%w(.js .coffee))
       end
     end
   end

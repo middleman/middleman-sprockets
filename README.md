@@ -64,6 +64,13 @@ sprockets.import_asset 'jquery/dist/jquery' do |logical_path|
 end
 ```
 
+Be careful if you are using `bower`-components which place their assets in
+*non-standard*-directories. Fonts should be placed in `fonts`, Stylesheets in
+`stylesheets` or `css`, JavaScript-files in `javascripts` or `js` and images in
+`images`. If you have got a `svg`-font in a *non*-standard-directory you might
+need to use the `#import_asset`-call with the block to place it in the correct
+directory.
+
 ## Build & Dependency Status
 
 [![Gem Version](https://badge.fury.io/rb/middleman-sprockets.png)][gem]
