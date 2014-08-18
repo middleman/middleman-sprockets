@@ -18,7 +18,7 @@ module Middleman
         @app = app
         @debug_assets = options.fetch(:debug_assets, false)
 
-        super app.config[:source]
+        super File.expand_path(app.config[:source], app.root)
 
         # By default, sprockets has no cache! Give it an in-memory one using a Hash
         # There is also a Sprockets::Cache::FileStore option, but it is fraught with cache-invalidation
@@ -197,7 +197,7 @@ module Middleman
         # Fix https://github.com/sstephenson/sprockets/issues/533
         if resource && File.basename(resource.path) == 'bower.json'
           file = ::Rack::File.new nil
-          file.path = resource.source_file
+          file.path = resource.source_file[:full_path]
           response = file.serving({})
           response[1]['Content-Type'] = resource.content_type
           return response

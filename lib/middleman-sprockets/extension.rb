@@ -108,7 +108,10 @@ module Middleman
 
           next if @app.sitemap.find_resource_by_destination_path(new_path.to_s)
           
-          resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, path.to_s)
+          source_file = ::Middleman::SourceFile.new(
+            new_path, path, Pathname(load_path), :asset)
+
+          resources_list << ::Middleman::Sitemap::Resource.new(@app.sitemap, new_path.to_s, source_file)
         end
       end
       resources + resources_list
