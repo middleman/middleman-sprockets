@@ -91,8 +91,6 @@ module Middleman
         @import_it = true # single =
       end
 
-      private
-
       def in_trusted_source_directory?
         is_in_images_directory? || is_in_fonts_directory?
       end
@@ -143,10 +141,10 @@ module Middleman
       end
 
       def is_image_by_path?
-        source_directory.to_s.end_with?('images') ||
-        source_directory.to_s.end_with?('img') ||
-        source_path.dirname.to_s.end_with?('images') ||
-        source_path.dirname.to_s.end_with?('img')
+        File.basename(source_directory.to_s) == 'images' ||
+        File.basename(source_directory.to_s) == 'img' ||
+        source_path.dirname.basename.to_s == 'images' ||
+        source_path.dirname.basename.to_s == 'img'
       end
       alias_method :is_in_images_directory?, :is_image_by_path?
 
@@ -163,10 +161,10 @@ module Middleman
       end
 
       def is_stylesheet_by_path?
-        source_directory.to_s.end_with?('stylesheets') ||
-        source_directory.to_s.end_with?('css') ||
-        source_path.dirname.to_s.end_with?('stylesheets') ||
-        source_path.dirname.to_s.end_with?('css')
+        File.basename(source_directory.to_s) == 'stylesheets' ||
+        File.basename(source_directory.to_s) == 'css' ||
+        source_path.dirname.basename.to_s == 'stylesheets' ||
+        source_path.dirname.basename.to_s == 'css'
       end
 
       def is_font?
@@ -174,8 +172,8 @@ module Middleman
       end
 
       def is_font_by_path?
-        source_directory.to_s.end_with?('fonts') ||
-        source_path.dirname.to_s.end_with?('fonts')
+        File.basename(source_directory.to_s) == 'fonts' ||
+        source_path.dirname.basename.to_s == 'fonts'
       end
       alias_method :is_in_fonts_directory?, :is_font_by_path?
 
@@ -188,10 +186,10 @@ module Middleman
       end
 
       def is_script_by_path?
-        source_directory.to_s.end_with?('javascripts') ||
-        source_directory.to_s.end_with?('js') ||
-        source_path.dirname.to_s.end_with?('javascripts') ||
-        source_path.dirname.to_s.end_with?('js')
+        File.basename(source_directory.to_s) == 'javascripts' ||
+        File.basename(source_directory.to_s) == 'js' ||
+        source_path.dirname.basename.to_s == 'javascripts' ||
+        source_path.dirname.basename.to_s == 'js'
       end
 
       def is_script_by_extension?
