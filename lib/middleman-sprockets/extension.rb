@@ -128,8 +128,11 @@ module Middleman
                   ].inject([]) do |sum, v|
         sum + [
                File.join(v, 'javascripts'),
+               File.join(v, 'js'),
                File.join(v, 'stylesheets'),
+               File.join(v, 'css'),
                File.join(v, 'images'),
+               File.join(v, 'img'),
                File.join(v, 'fonts')
               ]
       end
