@@ -117,27 +117,13 @@ module Middleman
 
     # Add any directories from gems with Rails-like paths to sprockets load path
     def append_paths_from_gems
-      try_paths = [
-                   %w{ assets },
-                   %w{ app },
-                   %w{ app assets },
-                   %w{ vendor },
-                   %w{ vendor assets },
-                   %w{ lib },
-                   %w{ lib assets }
-                  ].inject([]) do |sum, v|
-        sum + [
-               File.join(v, 'javascripts'),
-               File.join(v, 'stylesheets'),
-               File.join(v, 'images'),
-               File.join(v, 'fonts')
-              ]
-      end
+      root_paths = ::Middleman.rubygems_latest_specs.map(&:full_gem_path) << app.root
+      base_paths = %w[assets app app/assets vendor vendor/assets lib lib/assets]
+      asset_dirs = %w[javascripts js stylesheets css images img fonts]
 
-      ([app.root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
-        try_paths.map {|p| File.join(root_path, p) }.
-          select {|p| File.directory?(p) }.
-          each {|path| self.environment.append_path(path) }
+      root_paths.product(base_paths.product(asset_dirs)).each do |root, (base, asset)|
+        path = File.join(root, base, asset)
+        environment.append_path(path) if File.directory?(path)
       end
     end
   end
