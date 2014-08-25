@@ -178,6 +178,11 @@ module Middleman
         super
       end
 
+      # Never return 304s, downstream may want to manipulate data.
+      def etag_match?(asset, env)
+        false
+      end
+
       def call(env)
         # Set the app current path based on the full URL so that helpers work
         request_path = URI.decode(File.join(env['SCRIPT_NAME'], env['PATH_INFO']))
