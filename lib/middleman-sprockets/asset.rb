@@ -92,7 +92,8 @@ module Middleman
       end
 
       def in_trusted_source_directory?
-        is_in_images_directory? || is_in_fonts_directory?
+        source_directory.end_with?('images') ||
+        source_directory.end_with?('fonts')
       end
 
       def type
