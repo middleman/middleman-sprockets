@@ -29,6 +29,11 @@ Feature: Bower
     Then a file named "images/lightbox2/img/close.png" should exist
     Then a file named "javascripts/lightbox2/js/lightbox.js" should exist
 
+  Scenario: Assets which haven't been imported don't appear in output directory
+    Given a successfully built app at "bower-multiple-assets-app"
+    When I cd to "build"
+    Then a file named "images/lightbox2/img/open.png" should not exist
+
   Scenario: Assets can have an individual output directory
     Given a successfully built app at "bower-individual-outputdir-app"
     When I cd to "build"
