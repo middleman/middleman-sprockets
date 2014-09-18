@@ -1,72 +1,42 @@
 # encoding: utf-8
-RSpec.describe ImportedAsset do
-  context '#output_path' do
-    it 'uses block as second argument on initialize to get path' do
-      asset = ImportedAsset.new 'source/to/asset/image.png', proc { 'hello/world.png' }
+RSpec.describe Middleman::Sprockets::ImportedAsset do
 
-      expect(asset.output_path.to_s).to eq 'hello/world.png'
+  describe "#initialize" do
+    it "sets #logical_path to a pathname based on given path" do
+      subject = described_class.new "logical"
+      expect( subject.logical_path ).to eq Pathname.new("logical")
+    end
+
+    it "sets #output_path to nil if no block given" do
+      subject = described_class.new "logical"
+      expect( subject.output_path ).to be_nil
+    end
+
+    it "sets #output_path based on return of passed block" do
+      subject = described_class.new "logical", -> { "hello" }
+      expect( subject.output_path ).to eq Pathname.new("hello")
+    end
+
+    it "passes #logical_path to the output_path block if it accepts an argument" do
+      output_double = proc { |arg| "hello" }
+      expect( output_double ).to receive(:call).with(Pathname.new("logical"))
+
+      described_class.new "logical", output_double
+    end
+
+    it "passes #logical_path to the output_path block if it accepts an argument and has a default" do
+      output_double = lambda { |arg=3| "hello" }
+      expect( output_double ).to receive(:call).with(Pathname.new("logical"))
+
+      described_class.new "logical", output_double
+    end
+
+    it "calls output_path block with no args it it accepts none" do
+      output_double = -> { "hello" }
+      expect( output_double ).to receive(:call).with no_args()
+
+      described_class.new "logical", output_double
     end
   end
 
-  context '#resolve_path_with' do
-    it 'resolves path' do
-      in_current_dir do
-        relative_path = 'source/path/to/image.xz'
-        file_path = File.expand_path(relative_path)
-
-        resolver = double('Environment')
-        expect(resolver).to receive(:resolve).with(Pathname.new(relative_path)).and_return file_path 
-
-        asset = ImportedAsset.new relative_path
-        asset.resolve_path_with resolver
-      end
-    end
-
-    it 'raises an error if path could not be resolved' do
-      in_current_dir do
-        relative_path = 'source/path/to/image.xz'
-
-        resolver = double('Environment')
-        allow(resolver).to receive(:resolve).with(Pathname.new(relative_path)).and_return nil
-
-        asset = ImportedAsset.new relative_path
-
-        expect {
-          asset.resolve_path_with resolver
-        }.to raise_error ::Sprockets::FileNotFound
-      end
-    end
-  end
-
-  context '#match?' do
-    it 'succeeds if real path matches' do
-      in_current_dir do
-        relative_path = 'source/path/to/image.xz'
-        file_path = File.expand_path(relative_path)
-
-        resolver = double('Environment')
-        allow(resolver).to receive(:resolve).and_return file_path
-
-        asset = ImportedAsset.new relative_path
-        asset.resolve_path_with resolver
-
-        expect(asset).to be_match file_path
-      end
-    end
-
-    it 'fails if does not match' do
-      in_current_dir do
-        relative_path = 'source/path/to/image.xz'
-        file_path = File.expand_path(relative_path)
-
-        resolver = double('Environment')
-        allow(resolver).to receive(:resolve).and_return file_path + 'fail'
-
-        asset = ImportedAsset.new relative_path
-        asset.resolve_path_with resolver
-
-        expect(asset).not_to be_match file_path
-      end
-    end
-  end
 end

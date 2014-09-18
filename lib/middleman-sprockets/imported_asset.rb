@@ -1,9 +1,9 @@
 # encoding: utf-8
 module Middleman
   module Sprockets
-    # ImportedAsset 
+    # ImportedAsset
     class ImportedAsset
-      attr_reader :logical_path, :output_path, :real_path
+      attr_reader :logical_path, :output_path
 
       # Create instance
       #
@@ -12,45 +12,18 @@ module Middleman
       #
       # @param [proc] output_dir
       #   An individual output directory for that particular asset
-      def initialize(logical_path, determine_output_path = proc { nil })
-        @logical_path = Pathname.new(logical_path)
-        @output_path  = if output_path = determine_output_path.call(@logical_path)
-                          Pathname.new(output_path)
-                        else
-                          nil
-                        end
-      end
+      def initialize logical_path, output_path = nil
+        @logical_path = Pathname.new logical_path
 
-      # Resolve logical path to real path
-      # 
-      # @param [#resolve] resolver
-      #   The objects which is able to resolve a logical path
-      def resolve_path_with(resolver)
-        @real_path = resolver.resolve(logical_path)
+        if output_path.respond_to? :call
+          if output_path.arity.abs == 1
+            output_path = output_path.call(@logical_path)
+          else
+            output_path = output_path.call
+          end
+        end
 
-        raise ::Sprockets::FileNotFound, "Couldn't find asset '#{logical_path}'" if real_path == nil || real_path == ''
-      end
-
-      # String representation of asset
-      #
-      # @return [String]
-      #   The logical path as string
-      def to_s
-        logical_path.to_s
-      end
-
-      # Does the given patch matches asset
-      # 
-      # @param [Pathname] path
-      #   The path to be checked
-      def match?(path)
-        has_real_path? path
-      end
-
-      private
-
-      def has_real_path?(path)
-        real_path == path
+        @output_path = Pathname.new output_path if output_path
       end
     end
   end
