@@ -13,7 +13,11 @@ Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
   t.cucumber_opts = "--color #{exempt_tags.join(" ")} --strict --format #{ENV['CUCUMBER_FORMAT'] || 'Fivemat'}"
 end
 
-RSpec::Core::RakeTask.new(:spec)
+RSpec::Core::RakeTask.new(:spec) do |t|
+  if RUBY_VERSION < '2.0'
+    t.rspec_opts = '--tag ~@skip:one-nine'
+  end
+end
 
 require 'rake/clean'
 

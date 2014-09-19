@@ -24,7 +24,7 @@ RSpec.describe Middleman::Sprockets::ImportedAsset do
       described_class.new "logical", output_double
     end
 
-    it "passes #logical_path to the output_path block if it accepts an argument and has a default" do
+    it "passes #logical_path to the output_path block if it accepts an argument and has a default", skip: '1.9' do
       output_double = lambda { |arg=3| "hello" }
       expect( output_double ).to receive(:call).with(Pathname.new("logical"))
 
