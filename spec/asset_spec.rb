@@ -1,6 +1,4 @@
 # encoding: utf-8
-require 'thor/core_ext/hash_with_indifferent_access'
-
 RSpec.describe Middleman::Sprockets::Asset do
 
   def build_subject_asset logical_path, source_dir
@@ -8,7 +6,7 @@ RSpec.describe Middleman::Sprockets::Asset do
     @sprockets_double = instance_double("Middleman::Sprockets::Environment")
     @app_double = double("Middleman::Application",
                          sprockets: @sprockets_double,
-                         config: Thor::CoreExt::HashWithIndifferentAccess.new(images_dir: 'images'))
+                         config: ::Middleman::Util.recursively_enhance(images_dir: 'images'))
     @asset_double = instance_double("Sprockets::BundledAsset",
                                     pathname: Pathname.new(source_path),
                                     logical_path: logical_path)
