@@ -146,3 +146,15 @@ Feature: Sprockets
     Then a file named "fonts/font-awesome/fonts/fontawesome-webfont-bower.svg.gz" should exist
     Then a file named "javascripts/jquery/jquery.min.js" should exist
     Then a file named "javascripts/jquery/jquery.asdf.asdf.js.min.asdf" should exist
+
+  Scenario: Imported Asset matches multiple sprockets paths
+    Given a successfully built app at "sprockets-imported-assets-match-multiple-paths-app"
+    When I cd to "build"
+    Then a file named "assets/css/test.css" should exist
+    And a file named "assets/css/css/test.css" should not exist
+
+  Scenario: Imported Asset has a different 'asset type' directory than in config
+    Given a successfully built app at "sprockets-imported-asset-path-conflicts-app"
+    When I cd to "build"
+    Then a file named "assets/css/test.css" should exist
+    And a file named "assets/css/stylesheets/test.css" should not exist

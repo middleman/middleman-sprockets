@@ -215,6 +215,14 @@ module Middleman
           return response
         end
 
+        if resource
+          # incase the path has been rewrite, let sprockets know the original so it can find it
+          logical_path = resource.metadata.fetch(:options, {})
+                                          .fetch(:sprockets, {})
+                                          .fetch(:logical_path, nil)
+          env['PATH_INFO'] = logical_path.to_s if logical_path
+        end
+
         super
       end
 

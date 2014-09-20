@@ -12,7 +12,7 @@ gem "yard", "~> 0.8.0", :require => false
 gem "cucumber"
 gem "fivemat", "~> 1.2.1"
 gem "aruba"
-gem "rspec"
+gem "rspec", "~> 3.0"
 gem "builder", "~> 3.0"
 gem "simplecov"
 
