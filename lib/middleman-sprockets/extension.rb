@@ -25,6 +25,7 @@ module Middleman
 
     def initialize(app, options_hash={}, &block)
       require "middleman-sprockets/sass_function_hack"
+      require "middleman-sprockets/sass_utils"
 
       super
 
