@@ -5,7 +5,7 @@ if defined?(Sass)
     ##
     # A reference to the Middleman::Application object.
     #
-    def app
+    def middleman_app
       options[:custom][:sprockets_context].app
     end
 
