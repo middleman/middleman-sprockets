@@ -44,11 +44,11 @@ module Middleman
       # Start out with a stub environment that can only be configured (paths and such)
       @environment = ::Middleman::Sprockets::ConfigOnlyEnvironment.new
 
-      if app.respond_to? :include
-        app.send :include, SprocketsAccessor
-      else
-        # v4
+      # v4
+      if app.respond_to? :add_to_config_context
         app.add_to_config_context :sprockets, &method(:environment)
+      else
+        app.send :include, SprocketsAccessor
       end
     end
 
