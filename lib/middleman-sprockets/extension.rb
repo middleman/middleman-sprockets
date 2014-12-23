@@ -6,6 +6,18 @@ require "middleman-sprockets/config_only_environment"
 require "middleman-sprockets/environment"
 require "middleman-sprockets/asset_tag_helpers"
 
+class Sprockets::Sass::SassTemplate
+  # Get the default, global Sass options. Start with Compass's
+  # options, if it's available.
+  def default_sass_options
+    if defined?(Compass) && defined?(Compass.configuration)
+      merge_sass_options Compass.configuration.to_sass_engine_options.dup, Sprockets::Sass.options
+    else
+      Sprockets::Sass.options.dup
+    end
+  end
+end
+
 # Sprockets extension
 module Middleman
   class SprocketsExtension < Extension
@@ -32,7 +44,12 @@ module Middleman
       # Start out with a stub environment that can only be configured (paths and such)
       @environment = ::Middleman::Sprockets::ConfigOnlyEnvironment.new
 
-      app.send :include, SprocketsAccessor
+      if app.respond_to? :include
+        app.send :include, SprocketsAccessor
+      else
+        # v4
+        app.add_to_config_context :sprockets, &method(:environment)
+      end
     end
 
     helpers do
@@ -45,7 +62,9 @@ module Middleman
       ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
       ::Tilt.register ::Sprockets::JstProcessor, 'jst'
 
-      app.template_extensions :jst => :js, :eco => :js, :ejs => :js
+      if app.respond_to?(:template_extensions)
+        app.template_extensions :jst => :js, :eco => :js, :ejs => :js
+      end
 
       if app.config.defines_setting?(:debug_assets) && !options.setting(:debug_assets).value_set?
         options[:debug_assets] = app.config[:debug_assets]
@@ -77,7 +96,7 @@ module Middleman
       resources_list = []
 
       environment.imported_assets.each do |imported_asset|
-        asset = Middleman::Sprockets::Asset.new @app, imported_asset.logical_path
+        asset = Middleman::Sprockets::Asset.new @app, imported_asset.logical_path, environment
         if imported_asset.output_path
           destination = imported_asset.output_path
         else
@@ -99,13 +118,27 @@ module Middleman
 
     # Add any directories from gems with Rails-like paths to sprockets load path
     def append_paths_from_gems
-      root_paths = ::Middleman.rubygems_latest_specs.map(&:full_gem_path) << app.root
+      root_paths = rubygems_latest_specs.map(&:full_gem_path) << app.root
       base_paths = %w[assets app app/assets vendor vendor/assets lib lib/assets]
       asset_dirs = %w[javascripts js stylesheets css images img fonts]
 
       root_paths.product(base_paths.product(asset_dirs)).each do |root, (base, asset)|
         path = File.join(root, base, asset)
         environment.append_path(path) if File.directory?(path)
+      end
+    end
+
+    # Backwards compatible means of finding all the latest gemspecs
+    # available on the system
+    #
+    # @private
+    # @return [Array] Array of latest Gem::Specification
+    def rubygems_latest_specs
+      # If newer Rubygems
+      if ::Gem::Specification.respond_to? :latest_specs
+        ::Gem::Specification.latest_specs(true)
+      else
+        ::Gem.source_index.latest_specs
       end
     end
 

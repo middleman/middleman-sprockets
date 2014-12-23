@@ -6,9 +6,9 @@ module Middleman
 
       attr_reader :app, :sprockets, :asset
 
-      def initialize app, lookup_path
+      def initialize app, lookup_path, sprockets = app.sprockets
         @app       = app
-        @sprockets = @app.sprockets
+        @sprockets = sprockets
         @asset     = sprockets[ sprockets.resolve(lookup_path) ]
 
         raise ::Sprockets::FileNotFound, "Couldn't find asset '#{lookup_path}'" if @asset.nil?
