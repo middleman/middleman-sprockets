@@ -185,7 +185,8 @@ module Middleman
 
       def call(env)
         # Set the app current path based on the full URL so that helpers work
-        script_name = env['SCRIPT_NAME'].gsub(/^#{@app.config[:http_prefix]}/i, '') if @app.config[:http_prefix]
+        script_name = env['SCRIPT_NAME'].dup
+        script_name.gsub!(/^#{@app.config[:http_prefix]}/i, '') if @app.config[:http_prefix]
         request_path = URI.decode(File.join(script_name, env['PATH_INFO']))
         if request_path.respond_to? :force_encoding
           request_path.force_encoding('UTF-8')
