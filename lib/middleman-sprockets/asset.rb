@@ -108,7 +108,7 @@ module Middleman
       alias_method :is_in_fonts_directory?, :is_font_by_path?
 
       def is_font_by_extension?
-        has_extname?(*%w(.ttf .woff .eot .otf .svg .svgz))
+        has_extname?(*%w(.ttf .woff .woff2 .eot .otf .svg .svgz))
       end
 
       def font_paths
