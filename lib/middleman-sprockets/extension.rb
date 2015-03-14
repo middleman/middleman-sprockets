@@ -95,6 +95,7 @@ module Middleman
     def manipulate_resource_list(resources)
       resources_list = []
 
+      environment.prune_imported_assets!
       environment.imported_assets.each do |imported_asset|
         asset = Middleman::Sprockets::Asset.new @app, imported_asset.logical_path, environment
         if imported_asset.output_path
@@ -143,8 +144,10 @@ module Middleman
     end
 
     def import_images_and_fonts_from_gems
-      trusted_paths = environment.paths.select { |p| p.end_with?('images') || p.end_with?('fonts') }
-      trusted_paths.each do |load_path|
+      environment.paths
+          .reject { |p| p.start_with?(app.source_dir) }
+          .select { |p| p.end_with?('images') || p.end_with?('fonts') }
+          .each do |load_path|
         environment.each_entry(load_path) do |path|
           if path.file? && !path.basename.to_s.start_with?('_')
             logical_path = path.sub /^#{load_path}/, ''

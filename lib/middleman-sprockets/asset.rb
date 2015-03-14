@@ -37,6 +37,10 @@ module Middleman
         asset.pathname
       end
 
+      def exist?
+        File.exist?(asset.pathname)
+      end
+
       def type
         @type ||= if is_image?
                     :image
