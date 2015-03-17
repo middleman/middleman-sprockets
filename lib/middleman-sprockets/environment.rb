@@ -25,7 +25,7 @@ module Middleman
         # By default, sprockets has no cache! Give it an in-memory one using a Hash
         # There is also a Sprockets::Cache::FileStore option, but it is fraught with cache-invalidation
         # peril, so we choose not to use it.
-        @cache = {}
+        @cache = FakeCache.new
 
         enhance_context_class!
 
@@ -252,6 +252,38 @@ module Middleman
 
         @app.sitemap.rebuild_resource_list!(:sprockets_import_asset)
       end
+
+      # Sprocket 3 API change :()
+      def files_in_paths(load_paths)
+        if self.respond_to?(:each_entry)
+          load_paths.flat_map do |path|
+            output = []
+
+            self.each_entry(path).each do |p|
+              output << [p, path]
+            end
+
+            output
+          end
+        else
+          logical_paths.map do |_, path|
+            found_path = load_paths.find do |load_path|
+              path.start_with?(load_path)
+            end
+
+            if found_path
+              [Pathname(path), found_path]
+            else
+              nil
+            end
+          end.reject(&:nil?)
+        end
+      end
+    end
+
+    class FakeCache < Hash
+      alias_method :_get, :[]
+      alias_method :_set, :[]=
     end
   end
 end

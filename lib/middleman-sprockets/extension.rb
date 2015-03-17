@@ -58,8 +58,18 @@ module Middleman
     end
 
     def after_configuration
-      ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
-      ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
+      begin
+        require 'ejs'
+        ::Tilt.register ::Sprockets::EjsTemplate, 'ejs'
+      rescue LoadError
+      end
+
+      begin
+        require 'eco'
+        ::Tilt.register ::Sprockets::EcoTemplate, 'eco'
+      rescue LoadError
+      end
+
       ::Tilt.register ::Sprockets::JstProcessor, 'jst'
 
       if app.respond_to?(:template_extensions)
@@ -144,15 +154,14 @@ module Middleman
     end
 
     def import_images_and_fonts_from_gems
-      environment.paths
+      valid_paths = environment.paths
           .reject { |p| p.start_with?(app.source_dir) }
           .select { |p| p.end_with?('images') || p.end_with?('fonts') }
-          .each do |load_path|
-        environment.each_entry(load_path) do |path|
-          if path.file? && !path.basename.to_s.start_with?('_')
-            logical_path = path.sub /^#{load_path}/, ''
-            environment.imported_assets << Middleman::Sprockets::ImportedAsset.new(logical_path)
-          end
+
+      environment.files_in_paths(valid_paths).each do |(path, load_path)|
+        if path.file? && !path.basename.to_s.start_with?('_')
+          logical_path = path.sub /^#{load_path}/, ''
+          environment.imported_assets << Middleman::Sprockets::ImportedAsset.new(logical_path)
         end
       end
     end

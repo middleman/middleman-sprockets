@@ -8,6 +8,10 @@ gemspec
 gem "rake", "~> 10.0.3", :require => false
 gem "yard", "~> 0.8.0", :require => false
 
+# gem "sprockets", "3.0.0.beta.3"
+# gem 'sprockets-helpers', path: '~/Sites/sprockets-helpers'
+# gem 'sprockets-sass', path: '~/Sites/sprockets-sass'
+
 # Test tools
 gem "cucumber"
 gem "fivemat", "~> 1.2.1"
