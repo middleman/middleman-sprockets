@@ -18,7 +18,6 @@ matrix:
 gemfile:
   - Gemfile
   - Gemfile-v3
-  - Gemfile-Sprockets3
 
 script: "bundle exec rake test"
 
