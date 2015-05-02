@@ -18,12 +18,19 @@ class Sprockets::Sass::SassTemplate
   end
 end
 
+IS_V4 = ::Middleman::Extension.respond_to? :expose_to_config
+
 # Sprockets extension
 module Middleman
   class SprocketsExtension < Extension
     option :debug_assets, false, 'Split up each required asset into its own script/style tag instead of combining them (development only)'
 
     attr_reader :environment
+
+    if IS_V4
+      expose_to_config sprockets: :environment
+      expose_to_template sprockets: :environment
+    end
 
     # This module gets mixed into both the Middleman instance and the Middleman class,
     # so that it's available in config.rb
@@ -44,16 +51,12 @@ module Middleman
       # Start out with a stub environment that can only be configured (paths and such)
       @environment = ::Middleman::Sprockets::ConfigOnlyEnvironment.new
 
-      # v4
-      if app.respond_to? :add_to_config_context
-        app.add_to_config_context :sprockets, &method(:environment)
-      else
-        app.send :include, SprocketsAccessor
-      end
+      # v3
+      app.send :include, SprocketsAccessor if !IS_V4
     end
 
     helpers do
-      include SprocketsAccessor
+      include SprocketsAccessor if !IS_V4
       include ::Middleman::Sprockets::AssetTagHelpers
     end
 
@@ -108,13 +111,14 @@ module Middleman
       environment.prune_imported_assets!
       environment.imported_assets.each do |imported_asset|
         asset = Middleman::Sprockets::Asset.new @app, imported_asset.logical_path, environment
+
         if imported_asset.output_path
           destination = imported_asset.output_path
         else
           destination = @app.sitemap.extensionless_path( asset.destination_path.to_s )
         end
 
-        next if @app.sitemap.find_resource_by_destination_path destination.to_s
+        # next if @app.sitemap.find_resource_by_destination_path destination.to_s
 
         resource = ::Middleman::Sitemap::Resource.new( @app.sitemap, destination.to_s, asset.source_path.to_s )
         resource.add_metadata options: { sprockets: { logical_path: imported_asset.logical_path }}
@@ -155,7 +159,7 @@ module Middleman
 
     def import_images_and_fonts_from_gems
       valid_paths = environment.paths
-          .reject { |p| p.start_with?(app.source_dir) }
+          .reject { |p| p.start_with?(app.source_dir.to_s) }
           .select { |p| p.end_with?('images') || p.end_with?('fonts') }
 
       environment.files_in_paths(valid_paths).each do |(path, load_path)|

@@ -225,7 +225,11 @@ module Middleman
         # Fix https://github.com/sstephenson/sprockets/issues/533
         if resource && File.basename(resource.path) == 'bower.json'
           file = ::Rack::File.new nil
-          file.path = resource.source_file
+          file.path = if resource.source_file.is_a? String
+            resource.source_file
+          else
+            resource.source_file[:full_path]
+          end
           response = file.serving({})
           response[1]['Content-Type'] = resource.content_type
           return response
@@ -253,7 +257,7 @@ module Middleman
         @app.sitemap.rebuild_resource_list!(:sprockets_import_asset)
       end
 
-      # Sprocket 3 API change :()
+      # Sprocket 3 API change :(
       def files_in_paths(load_paths)
         if self.respond_to?(:each_entry)
           load_paths.flat_map do |path|
