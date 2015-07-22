@@ -10,7 +10,7 @@ Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
   exempt_tags = ["--tags ~@wip"]
   exempt_tags << "--tags ~@new " unless Middleman::VERSION.start_with?("3.1")
   exempt_tags << "--tags ~@old " unless Middleman::VERSION.start_with?("3.0")
-  t.cucumber_opts = "--color #{exempt_tags.join(" ")} --strict --format #{ENV['CUCUMBER_FORMAT'] || 'Fivemat'}"
+  t.cucumber_opts = "--color #{exempt_tags.join(" ")} --strict"
 end
 
 RSpec::Core::RakeTask.new(:spec) do |t|
