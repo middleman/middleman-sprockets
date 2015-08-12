@@ -107,9 +107,9 @@ Feature: Sprockets
     Then I should see 'src="/library/images/cat.jpg"'
     And I should see 'src="/library/images/cat-2.jpg"'
     When I go to "/library/images/cat.jpg"
-    Then I should get a response with status "200"
+    Then the status code should be "200"
     When I go to "/library/images/cat-2.jpg"
-    Then I should get a response with status "200"
+    Then the status code should be "200"
 
   Scenario: Assets built through import_asset are built with the right extension
     Given a successfully built app at "sprockets-app"

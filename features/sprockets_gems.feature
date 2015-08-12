@@ -45,7 +45,7 @@ Feature: Sprockets Gems
   Scenario: JS/CSS from gems aren't aumatically in the site
     Given the Server is running at "jquery-mobile-app"
     When I go to "/javascripts/jquery.mobile.js"
-    Then I should get a response with status "404"
+    Then the status code should be "404"
 
   Scenario: JS/CSS from gems can be declared to be accessible
     Given a fixture app "jquery-mobile-app"
@@ -57,11 +57,11 @@ Feature: Sprockets Gems
       """
     And the Server is running at "jquery-mobile-app"
     When I go to "/javascripts/jquery.mobile.js"
-    Then I should get a response with status "200"
+    Then the status code should be "200"
 
   Scenario: JS/CSS from gems are accessible when debugging assets and they are required
     Given the Server is running at "sprockets-app-debug-assets"
     And the Server is running at "sprockets-app-debug-assets"
     When I go to "/index.html"
     When I go to "/javascripts/bootstrap/alert.js?body=1"
-    Then I should get a response with status "200"
+    Then the status code should be "200"
