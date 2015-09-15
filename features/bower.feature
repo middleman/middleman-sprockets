@@ -21,13 +21,13 @@ Feature: Bower
   Scenario: Assets can be added to the build with import_asset from bower dir
     Given a successfully built app at "bower-app"
     When I cd to "build"
-    Then a file named "javascripts/underscore/underscore.js" should exist
+    Then a file named "assets/underscore/underscore.js" should exist
 
   Scenario: Multiple assets can be added to the build with import_asset from bower dir and are placed in the correct directory
     Given a successfully built app at "bower-multiple-assets-app"
     When I cd to "build"
-    Then a file named "images/lightbox2/img/close.png" should exist
-    Then a file named "javascripts/lightbox2/js/lightbox.js" should exist
+    Then a file named "assets/lightbox2/img/close.png" should exist
+    Then a file named "assets/lightbox2/js/lightbox.js" should exist
 
   Scenario: Assets which haven't been imported don't appear in output directory
     Given a successfully built app at "bower-multiple-assets-app"
@@ -37,6 +37,6 @@ Feature: Bower
   Scenario: Assets can have an individual output directory
     Given a successfully built app at "bower-individual-outputdir-app"
     When I cd to "build"
-    Then a file named "underscore.js" should exist
-    And a file named "hello_world/lightbox2/img/close.png" should exist
-    And a file named "javascripts/lightbox2/js/lightbox.js" should exist
+    Then a file named "assets/underscore/underscore.js" should exist
+    And a file named "assets/lightbox2/img/close.png" should exist
+    And a file named "assets/lightbox2/js/lightbox.js" should exist

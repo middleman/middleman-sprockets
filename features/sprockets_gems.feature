@@ -22,15 +22,15 @@ Feature: Sprockets Gems
   Scenario: Proper reference to images from a gem, in preview
     Given the Server is running at "jquery-mobile-app"
     When I go to "/stylesheets/base.css"
-    Then I should see 'url("/images/jquery-mobile/ajax-loader.gif")'
+    Then I should see 'url("/assets/jquery-mobile/ajax-loader.gif")'
 
   Scenario: Proper reference to images from a gem, in build
     Given a successfully built app at "jquery-mobile-app"
     When I cd to "build"
     Then the following files should exist:
       | stylesheets/base.css |
-      | images/jquery-mobile/ajax-loader.gif |
-    And the file "stylesheets/base.css" should contain 'url("/images/jquery-mobile/ajax-loader.gif")'
+      | assets/jquery-mobile/ajax-loader.gif |
+    And the file "stylesheets/base.css" should contain 'url(/assets/jquery-mobile/ajax-loader.gif)'
 
   Scenario: Same thing, but with :relative_assets on
     Given a fixture app "jquery-mobile-app"
@@ -40,28 +40,9 @@ Feature: Sprockets Gems
       """
     Given the Server is running at "jquery-mobile-app"
     When I go to "/stylesheets/base.css"
-    Then I should see 'url("../images/jquery-mobile/ajax-loader.gif")'
-
-  Scenario: JS/CSS from gems aren't aumatically in the site
-    Given the Server is running at "jquery-mobile-app"
-    When I go to "/javascripts/jquery.mobile.js"
-    Then the status code should be "404"
+    Then I should see 'url("../assets/jquery-mobile/ajax-loader.gif")'
 
   Scenario: JS/CSS from gems can be declared to be accessible
-    Given a fixture app "jquery-mobile-app"
-    Given a file named "config.rb" with:
-      """
-      after_configuration do
-        sprockets.import_asset 'jquery.mobile'
-      end
-      """
-    And the Server is running at "jquery-mobile-app"
-    When I go to "/javascripts/jquery.mobile.js"
-    Then the status code should be "200"
-
-  Scenario: JS/CSS from gems are accessible when debugging assets and they are required
-    Given the Server is running at "sprockets-app-debug-assets"
-    And the Server is running at "sprockets-app-debug-assets"
-    When I go to "/index.html"
-    When I go to "/javascripts/bootstrap/alert.js?body=1"
+    Given the Server is running at "jquery-mobile-app"
+    When I go to "/assets/jquery.mobile.js"
     Then the status code should be "200"

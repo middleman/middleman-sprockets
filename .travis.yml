@@ -1,17 +1,23 @@
 rvm:
-  - 2.0
-  - 2.1
-  - 2.2
   - ruby-head
-
+  - jruby-head
+  - jruby-19mode
+  - 2.2.2
+  - 2.1
+  - 2.0
+os:
+  - linux
+  - osx
 sudo: false
-
+matrix:
+  fast_finish: true
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby-19mode
+    - rvm: jruby-head
 gemfile:
   - Gemfile
 
 script: "bundle exec rake test"
 
 env: TEST=true
-
-matrix:
-  fast_finish: true

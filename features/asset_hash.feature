@@ -1,4 +1,3 @@
-@new
 Feature: Assets get a file hash appended to their URL and references to them are updated
   Scenario: Hashed-asset files are produced, and HTML, CSS, and JavaScript gets rewritten to reference the new files
     Given a successfully built app at "asset-hash-app"
@@ -9,7 +8,7 @@ Feature: Assets get a file hash appended to their URL and references to them are
       | images/100px-5fd6fb90.jpg |
       | images/100px-5fd6fb90.gif |
       | javascripts/application-df677242.js |
-      | stylesheets/site-b7f4d02f.css |
+      | stylesheets/site-2f4798cc.css |
       | index.html |
       | subdir/index.html |
       | other/index.html |
@@ -21,14 +20,14 @@ Feature: Assets get a file hash appended to their URL and references to them are
       | stylesheets/site.css |
       
     And the file "javascripts/application-df677242.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
-    And the file "stylesheets/site-b7f4d02f.css" should contain 'background-image: url("../images/100px-5fd6fb90.jpg")'
-    And the file "index.html" should contain 'href="stylesheets/site-b7f4d02f.css"'
+    And the file "stylesheets/site-2f4798cc.css" should contain 'background-image: url(../images/100px-5fd6fb90.jpg)'
+    And the file "index.html" should contain 'href="stylesheets/site-2f4798cc.css"'
     And the file "index.html" should contain 'src="javascripts/application-df677242.js"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
-    And the file "subdir/index.html" should contain 'href="../stylesheets/site-b7f4d02f.css"'
+    And the file "subdir/index.html" should contain 'href="../stylesheets/site-2f4798cc.css"'
     And the file "subdir/index.html" should contain 'src="../javascripts/application-df677242.js"'
     And the file "subdir/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
-    And the file "other/index.html" should contain 'href="../stylesheets/site-b7f4d02f.css"'
+    And the file "other/index.html" should contain 'href="../stylesheets/site-2f4798cc.css"'
     And the file "other/index.html" should contain 'src="../javascripts/application-df677242.js"'
     And the file "other/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
     
