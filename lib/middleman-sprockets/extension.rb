@@ -56,8 +56,17 @@ module Middleman
       end
     end
 
+    def base_resource?(r)
+      r.class.ancestors.first == ::Middleman::Sitemap::Resource
+    end
+
     def js?(r)
-      r.source_file.start_with?((app.source_dir + app.config[:js_dir]).to_s)
+      begin
+        r.source_file.start_with?((app.source_dir + app.config[:js_dir]).to_s)
+      rescue
+        require 'pry'
+        binding.pry
+      end
     end
 
     def css?(r)
@@ -75,7 +84,7 @@ module Middleman
 
     def manipulate_resource_list(resources)
       sprockets, non_sprockets = resources.partition do |r|
-        js?(r) || css?(r)
+        base_resource?(r) && (js?(r) || css?(r))
       end
 
       non_sprockets + sprockets.reduce([]) do |sum, r|
@@ -85,24 +94,112 @@ module Middleman
           r.path.sub(%r{^#{app.config[:css_dir]}\/}, '')
         end
 
-        sprockets_resource = SprocketsResource.new(app.sitemap, r.path, r.source_file, sprockets_path, environment)
+        sprockets_resource = generate_resource(r.path, r.source_file, sprockets_path)
         sum << sprockets_resource
 
-        sprockets_resource.sprockets_asset.links.each do |a|
-          asset = environment[a]
-          path = "#{app.config[:sprockets_imported_asset_path]}/#{asset.logical_path}"
-          sum << SprocketsResource.new(app.sitemap, path, asset.filename, asset.logical_path, environment)
+        if sprockets_resource.respond_to?(:sprockets_asset)
+          sprockets_resource.sprockets_asset.links.each do |a|
+            asset = environment[a]
+            path = "#{app.config[:sprockets_imported_asset_path]}/#{asset.logical_path}"
+            sum << generate_resource(path, asset.filename, asset.logical_path)
+          end
         end
 
         sum
       end + @inline_asset_references.map do |path|
         asset = environment[path]
         path = "#{app.config[:sprockets_imported_asset_path]}/#{asset.logical_path}"  
-        SprocketsResource.new(app.sitemap, path, asset.filename, asset.logical_path, environment)
+        generate_resource(path, asset.filename, asset.logical_path)
       end
     end
 
     private
+
+    def generate_resource(path, source_file, sprockets_path)
+      begin
+        SprocketsResource.new(app.sitemap, path, source_file, sprockets_path, environment)
+      rescue Exception => e
+        raise e if app.build?
+
+        ext = File.extname(path)
+        error_message = if ext == '.css'
+          css_exception_response(e)
+        elsif ext == '.js'
+          javascript_exception_response(e)
+        else
+          e.to_s
+        end
+
+        ::Middleman::Sitemap::StringResource.new(app.sitemap, path, error_message)
+      end
+    end
+
+    # Returns a JavaScript response that re-throws a Ruby exception
+    # in the browser
+    def javascript_exception_response(exception)
+      err  = "#{exception.class.name}: #{exception.message}\n  (in #{exception.backtrace[0]})"
+      "throw Error(#{err.inspect})"
+    end
+
+    # Returns a CSS response that hides all elements on the page and
+    # displays the exception
+    def css_exception_response(exception)
+      message   = "\n#{exception.class.name}: #{exception.message}"
+      backtrace = "\n  #{exception.backtrace.first}"
+
+      <<-CSS
+        html {
+          padding: 18px 36px;
+        }
+
+        head {
+          display: block;
+        }
+
+        body {
+          margin: 0;
+          padding: 0;
+        }
+
+        body > * {
+          display: none !important;
+        }
+
+        head:after, body:before, body:after {
+          display: block !important;
+        }
+
+        head:after {
+          font-family: sans-serif;
+          font-size: large;
+          font-weight: bold;
+          content: "Error compiling CSS asset";
+        }
+
+        body:before, body:after {
+          font-family: monospace;
+          white-space: pre-wrap;
+        }
+
+        body:before {
+          font-weight: bold;
+          content: "#{escape_css_content(message)}";
+        }
+
+        body:after {
+          content: "#{escape_css_content(backtrace)}";
+        }
+      CSS
+    end
+
+    # Escape special characters for use inside a CSS content("...") string
+    def escape_css_content(content)
+      content.
+        gsub('\\', '\\\\005c ').
+        gsub("\n", '\\\\000a ').
+        gsub('"',  '\\\\0022 ').
+        gsub('/',  '\\\\002f ')
+    end
 
     # Backwards compatible means of finding all the latest gemspecs
     # available on the system
@@ -135,6 +232,7 @@ module Middleman
         @path = path
         @sprockets_path = sprockets_path
         @environment = environment
+        @source = sprockets_asset.source
 
         super(store, path, source_file)
       end
@@ -144,7 +242,7 @@ module Middleman
       end
 
       def render(*)
-        sprockets_asset.source
+        @source
       end
 
       def sprockets_asset
