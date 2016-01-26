@@ -61,12 +61,7 @@ module Middleman
     end
 
     def js?(r)
-      begin
-        r.source_file.start_with?((app.source_dir + app.config[:js_dir]).to_s)
-      rescue
-        require 'pry'
-        binding.pry
-      end
+      r.source_file.start_with?((app.source_dir + app.config[:js_dir]).to_s)
     end
 
     def css?(r)
