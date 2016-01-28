@@ -92,7 +92,7 @@ module Middleman
         sprockets_resource = generate_resource(r.path, r.source_file, sprockets_path)
         sum << sprockets_resource
 
-        if sprockets_resource.respond_to?(:sprockets_asset)
+        if sprockets_resource.respond_to?(:sprockets_asset) && !sprockets_resource.errored?
           sprockets_resource.sprockets_asset.links.each do |a|
             asset = environment[a]
             path = "#{app.config[:sprockets_imported_asset_path]}/#{asset.logical_path}"
@@ -125,7 +125,7 @@ module Middleman
           e.to_s
         end
 
-        ::Middleman::Sitemap::StringResource.new(app.sitemap, path, error_message)
+        SprocketsResource.new(app.sitemap, path, source_file, sprockets_path, environment, error_message: error_message)
       end
     end
 
@@ -223,13 +223,18 @@ module Middleman
     end
 
     class SprocketsResource < ::Middleman::Sitemap::Resource
-      def initialize(store, path, source_file, sprockets_path, environment)
+      def initialize(store, path, source_file, sprockets_path, environment, error_message: '')
         @path = path
         @sprockets_path = sprockets_path
         @environment = environment
-        @source = sprockets_asset.source
+        @error_message = error_message
+        @source = errored? ? @error_message : sprockets_asset.source
 
         super(store, path, source_file)
+      end
+
+      def errored?
+        !@error_message.empty?
       end
 
       def template?
