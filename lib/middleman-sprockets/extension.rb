@@ -48,7 +48,7 @@ module Middleman
           end
 
           if app.extensions[:sprockets].check_asset(path)
-            "/#{app.config[:sprockets_imported_asset_path]}/#{path}"
+            app.extensions[:sprockets].sprockets_asset_path( environment[path] )
           else
             app.asset_path(kind, path)
           end
@@ -69,7 +69,7 @@ module Middleman
     end
 
     def check_asset(path)
-      if asset = environment[path]
+      if environment[path]
         @inline_asset_references << path
         true
       else
@@ -95,17 +95,19 @@ module Middleman
         if sprockets_resource.respond_to?(:sprockets_asset) && !sprockets_resource.errored?
           sprockets_resource.sprockets_asset.links.each do |a|
             asset = environment[a]
-            path = "#{app.config[:sprockets_imported_asset_path]}/#{asset.logical_path}"
-            sum << generate_resource(path, asset.filename, asset.logical_path)
+            sum << generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
           end
         end
 
         sum
       end + @inline_asset_references.map do |path|
         asset = environment[path]
-        path = "#{app.config[:sprockets_imported_asset_path]}/#{asset.logical_path}"  
-        generate_resource(path, asset.filename, asset.logical_path)
+        generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
       end
+    end
+
+    def sprockets_asset_path sprockets_asset
+      File.join( app.config[:sprockets_imported_asset_path], sprockets_asset.logical_path)
     end
 
     private
