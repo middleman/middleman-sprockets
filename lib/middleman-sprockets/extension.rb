@@ -18,6 +18,7 @@ module Middleman
     end
 
     def after_configuration
+
       @environment.append_path((app.source_dir + app.config[:js_dir]).to_s)
       @environment.append_path((app.source_dir + app.config[:css_dir]).to_s)
 
@@ -48,7 +49,7 @@ module Middleman
           end
 
           if app.extensions[:sprockets].check_asset(path)
-            app.extensions[:sprockets].sprockets_asset_path( environment[path] )
+            app.extensions[:sprockets].sprockets_asset_path( environment[path] ).sub(/^\/?/, '/')
           else
             app.asset_path(kind, path)
           end
