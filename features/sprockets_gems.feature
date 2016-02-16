@@ -22,7 +22,7 @@ Feature: Sprockets Gems
   Scenario: Proper reference to images from a gem, in preview
     Given the Server is running at "jquery-mobile-app"
     When I go to "/stylesheets/base.css"
-    Then I should see 'url("/assets/jquery-mobile/ajax-loader.gif")'
+    Then I should see 'url(/assets/jquery-mobile/ajax-loader.gif)'
 
   Scenario: Proper reference to images from a gem, in build
     Given a successfully built app at "jquery-mobile-app"
@@ -40,7 +40,7 @@ Feature: Sprockets Gems
       """
     Given the Server is running at "jquery-mobile-app"
     When I go to "/stylesheets/base.css"
-    Then I should see 'url("../assets/jquery-mobile/ajax-loader.gif")'
+    Then I should see 'url(../assets/jquery-mobile/ajax-loader.gif)'
 
   Scenario: JS/CSS from gems can be declared to be accessible
     Given the Server is running at "jquery-mobile-app"
