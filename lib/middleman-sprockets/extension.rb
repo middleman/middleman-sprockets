@@ -57,6 +57,15 @@ module Middleman
       end
     end
 
+    def manipulate_resource_list(resources)
+      resources.map do |resource|
+        process_candidate_sprockets_resource(resource)
+      end + @inline_asset_references.map do |path|
+        asset = environment[path]
+        generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
+      end
+    end
+
     def base_resource?(r)
       r.class.ancestors.first == ::Middleman::Sitemap::Resource
     end
@@ -78,40 +87,29 @@ module Middleman
       end
     end
 
-    def manipulate_resource_list(resources)
-      sprockets, non_sprockets = resources.partition do |r|
-        base_resource?(r) && (js?(r) || css?(r))
-      end
-
-      non_sprockets + sprockets.reduce([]) do |sum, r|
-        sprockets_path = if js?(r)
-          r.path.sub(%r{^#{app.config[:js_dir]}\/}, '')
-        else
-          r.path.sub(%r{^#{app.config[:css_dir]}\/}, '')
-        end
-
-        sprockets_resource = generate_resource(r.path, r.source_file, sprockets_path)
-        sum << sprockets_resource
-
-        if sprockets_resource.respond_to?(:sprockets_asset) && !sprockets_resource.errored?
-          sprockets_resource.sprockets_asset.links.each do |a|
-            asset = environment[a]
-            sum << generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
-          end
-        end
-
-        sum
-      end + @inline_asset_references.map do |path|
-        asset = environment[path]
-        generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
-      end
-    end
-
     def sprockets_asset_path sprockets_asset
       File.join( app.config[:sprockets_imported_asset_path], sprockets_asset.logical_path)
     end
 
     private
+
+    def process_candidate_sprockets_resource resource
+      return resource unless base_resource?(resource) && (js?(resource) || css?(resource))
+
+      sprockets_path = if js?(resource)
+        resource.path.sub(%r{^#{app.config[:js_dir]}\/}, '')
+      else
+        resource.path.sub(%r{^#{app.config[:css_dir]}\/}, '')
+      end
+
+      sprockets_resource = generate_resource(resource.path, resource.source_file, sprockets_path)
+
+      if sprockets_resource.respond_to?(:sprockets_asset) && !sprockets_resource.errored?
+        @inline_asset_references.merge sprockets_resource.sprockets_asset.links
+      end
+
+      sprockets_resource
+    end
 
     def generate_resource(path, source_file, sprockets_path)
       begin
