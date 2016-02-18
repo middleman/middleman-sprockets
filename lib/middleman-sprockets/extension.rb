@@ -55,6 +55,8 @@ module Middleman
           end
         end
       end
+
+      app.files.on_change :source, &method(:file_watcher)
     end
 
     def manipulate_resource_list(resources)
@@ -92,6 +94,13 @@ module Middleman
     end
 
     private
+
+    # an overzealous method to ensure the sprockets cache
+    # gets updated when middleman updates files
+    #
+    def file_watcher updated_files, removed_files
+      environment.cache = ::Sprockets::Cache::MemoryStore.new
+    end
 
     def process_candidate_sprockets_resource resource
       return resource unless base_resource?(resource) && (js?(resource) || css?(resource))
@@ -255,4 +264,5 @@ module Middleman
       end
     end
   end
+
 end

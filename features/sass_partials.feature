@@ -14,12 +14,12 @@ Feature: Sass partials should work with Sprockets
       body
         font-size: 14px
       """
+
     When I go to "/stylesheets/main2.css"
     Then I should see "color: red;"
     Then I should see "font-size: 14px"
-    And wait a second
-    And wait a second
-    And the file "source/stylesheets/main2.css.sass" has the contents
+
+    Given the file "source/stylesheets/main2.css.sass" has the contents
       """
       //= require "_partial2.css.sass"
 
@@ -31,7 +31,7 @@ Feature: Sass partials should work with Sprockets
       body
         font-size: 18px
       """
-    When I go to "/stylesheets/main2.css"
+
     When I go to "/stylesheets/main2.css"
     Then I should see "color: blue;"
     Then I should see "font-size: 18px"
