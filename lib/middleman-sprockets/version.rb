@@ -1,5 +1,5 @@
 module Middleman
   module Sprockets
-    VERSION = "4.0.0.rc.1"
+    VERSION = '4.0.0.rc.1'.freeze
   end
 end
