@@ -7,8 +7,10 @@ module Middleman
 
     expose_to_config sprockets: :environment
 
-    option :imported_asset_path,    'assets', 'Where under source imported assets should be placed.'
-    option :expose_middleman_helpers,  false, 'Whether to expose middleman helpers to sprockets.'
+    option :supported_output_extensions, ['.css', '.js'], 'Output extensions sprockets should process'
+    option :imported_asset_path,                'assets', 'Where under source imported assets should be placed.'
+    option :expose_middleman_helpers,              false, 'Whether to expose middleman helpers to sprockets.'
+
 
     def initialize app, options_hash={}, &block
       super
@@ -74,6 +76,12 @@ module Middleman
       r.class.ancestors.first == ::Middleman::Sitemap::Resource
     end
 
+    def processible? r
+      *template_exts, target_ext = Middleman::Util.collect_extensions(r.source_file)
+
+      options[:supported_output_extensions].include?(target_ext) && (template_exts - environment.engines.keys).empty?
+    end
+
     def js? r
       r.source_file.start_with?((app.source_dir + app.config[:js_dir]).to_s)
     end
@@ -131,7 +139,7 @@ module Middleman
 
 
       def process_candidate_sprockets_resource resource
-        return resource unless base_resource?(resource) && (js?(resource) || css?(resource))
+        return resource unless base_resource?(resource) && processible?(resource)
 
         sprockets_path = if js?(resource)
           resource.path.sub(%r{^#{app.config[:js_dir]}\/}, '')
