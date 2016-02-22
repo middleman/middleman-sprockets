@@ -15,10 +15,10 @@ If you already have a Middleman project: Add `gem "middleman-sprockets"` to your
 
 ## Build & Dependency Status
 
-[![Gem Version](https://badge.fury.io/rb/middleman-sprockets.png)][gem]
-[![Build Status](https://travis-ci.org/middleman/middleman-sprockets.png)][travis]
-[![Dependency Status](https://gemnasium.com/middleman/middleman-sprockets.png?travis)][gemnasium]
-[![Code Quality](https://codeclimate.com/github/middleman/middleman-sprockets.png)][codeclimate]
+[![Gem Version](https://badge.fury.io/rb/middleman-sprockets.svg)][gem]
+[![Build Status](https://travis-ci.org/middleman/middleman-sprockets.svg)][travis]
+[![Dependency Status](https://gemnasium.com/middleman/middleman-sprockets.svg?travis)][gemnasium]
+[![Code Quality](https://codeclimate.com/github/middleman/middleman-sprockets.svg)][codeclimate]
 
 ## Community
 
