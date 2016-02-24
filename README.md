@@ -22,6 +22,8 @@ activate :sprockets
 
 ### Configuration
 
+There are currently two options for configuration, `imported_asset_path` and `expose_middleman_helpers`.
+
 **`imported_asset_path` [default: 'assets']**
 
 This is the path imported/linked assets will be added to the sitemap. For example, in the bower fixture app, the `/javascripts/core.js` file has `//= link "lightbox2/img/close.png"`. This linked asset will be added to the sitemap at `/assets/lightbox2/img/close.png`.
@@ -31,6 +33,19 @@ To configure, in `config.rb`:
 ```ruby
 activate :sprockets do |c|
   c.imported_asset_path = YOUR_PATH
+end
+```
+
+
+**`expose_middleman_helpers` [default: false]**
+
+Sometimes you might need sprockets to have access helpers (for example using different keys depending on deployment environment). Getting this to happen is bound to be full of edge cases, so for now it's behind a configuration option.
+
+If you need [Middleman helpers in your Sprockets](http://i.imgur.com/fINMSsz.jpg), in `config.rb`:
+
+```ruby
+activate :sprockets do |c|
+  c.expose_middleman_helpers = true
 end
 ```
 

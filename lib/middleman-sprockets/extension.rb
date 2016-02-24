@@ -8,6 +8,7 @@ module Middleman
     expose_to_config sprockets: :environment
 
     option :imported_asset_path,    'assets', 'Where under source imported assets should be placed.'
+    option :expose_middleman_helpers,  false, 'Whether to expose middleman helpers to sprockets.'
 
     def initialize app, options_hash={}, &block
       super
@@ -50,6 +51,11 @@ module Middleman
             app.asset_path(kind, path)
           end
         end
+
+      end
+
+      if options[:expose_middleman_helpers]
+        expose_app_helpers_to_sprockets!
       end
 
       app.files.on_change :source, &method(:file_watcher)
@@ -97,6 +103,32 @@ module Middleman
       def file_watcher _updated_files, _removed_files
         environment.cache = ::Sprockets::Cache::MemoryStore.new
       end
+
+      def expose_app_helpers_to_sprockets!
+        @environment.context_class.class_eval do
+          def current_resource
+            app.logger.error "The use of `current_resource` in sprockets assets isn't currently implemented"
+            nil
+          end
+
+          def mm_context
+            @_mm_context ||= app.template_context_class.new(app)
+          end
+
+          def method_missing method, *args, &block
+            if mm_context.respond_to?(method)
+              return mm_context.send method, *args, &block
+            end
+
+            super
+          end
+
+          def respond_to? method, include_private=false
+            super || mm_context.respond_to?(method, include_private)
+          end
+        end
+      end
+
 
       def process_candidate_sprockets_resource resource
         return resource unless base_resource?(resource) && (js?(resource) || css?(resource))
