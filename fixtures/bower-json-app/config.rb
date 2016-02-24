@@ -1,1 +1,1 @@
-
+activate :sprockets

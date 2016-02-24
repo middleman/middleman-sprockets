@@ -2,6 +2,7 @@
 
 `middleman-sprockets` is an extension for the [Middleman] static site generator that allows support for [Sprockets](https://github.com/sstephenson/sprockets) in your assets.
 
+
 ## Installation
 
 If you're just getting started, install the `middleman` gem and generate a new project:
@@ -11,7 +12,28 @@ gem install middleman
 middleman init MY_PROJECT
 ```
 
-If you already have a Middleman project: Add `gem "middleman-sprockets"` to your `Gemfile` and run `bundle install`
+Then add `gem "middleman-sprockets"` to your `Gemfile` and run `bundle install`
+
+To activate the extension, in your `config.rb` add:
+
+```ruby
+activate :sprockets
+```
+
+### Configuration
+
+**`imported_asset_path` [default: 'assets']**
+
+This is the path imported/linked assets will be added to the sitemap. For example, in the bower fixture app, the `/javascripts/core.js` file has `//= link "lightbox2/img/close.png"`. This linked asset will be added to the sitemap at `/assets/lightbox2/img/close.png`.
+
+To configure, in `config.rb`:
+
+```ruby
+activate :sprockets do |c|
+  c.imported_asset_path = YOUR_PATH
+end
+```
+
 
 ## Build & Dependency Status
 
@@ -20,15 +42,18 @@ If you already have a Middleman project: Add `gem "middleman-sprockets"` to your
 [![Dependency Status](https://gemnasium.com/middleman/middleman-sprockets.svg?travis)][gemnasium]
 [![Code Quality](https://codeclimate.com/github/middleman/middleman-sprockets.svg)][codeclimate]
 
+
 ## Community
 
 The official community forum is available at: http://forum.middlemanapp.com
+
 
 ## Bug Reports
 
 Github Issues are used for managing bug reports and feature requests. If you run into issues, please search the issues and submit new problems: https://github.com/middleman/middleman-sprockets/issues
 
 The best way to get quick responses to your issues and swift fixes to your bugs is to submit detailed bug reports, include test cases and respond to developer questions in a timely manner. Even better, if you know Ruby, you can submit [Pull Requests](https://help.github.com/articles/using-pull-requests) containing Cucumber Features which describe how your feature should work or exploit the bug you are submitting.
+
 
 ## How to Run Cucumber Tests
 
@@ -37,13 +62,15 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 3. Run `bundle install` inside the project root to install the gem dependencies.
 4. Run test cases: `bundle exec rake test`
 
+
 ## Donate
 
 [Click here to lend your support to Middleman](https://spacebox.io/s/4dXbHBorC3)
 
+
 ## License
 
-Copyright (c) 2012-2014 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
+Copyright (c) 2012-2016 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman-sprockets

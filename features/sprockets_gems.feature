@@ -36,6 +36,7 @@ Feature: Sprockets Gems
     Given a fixture app "jquery-mobile-app"
     And a file named "config.rb" with:
       """
+      activate :sprockets
       activate :relative_assets
       """
     Given the Server is running at "jquery-mobile-app"

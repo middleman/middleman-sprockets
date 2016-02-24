@@ -7,14 +7,13 @@ module Middleman
 
     expose_to_config sprockets: :environment
 
+    option :imported_asset_path,    'assets', 'Where under source imported assets should be placed.'
+
     def initialize app, options_hash={}, &block
       super
 
       @inline_asset_references = Set.new
-
-      @environment = ::Sprockets::Environment.new
-
-      app.config.define_setting :sprockets_imported_asset_path, 'assets', 'Where under source should imported assets be placed.'
+      @environment             = ::Sprockets::Environment.new
     end
 
     def after_configuration
@@ -26,9 +25,9 @@ module Middleman
       the_app = app
       the_env = environment
 
-      @environment.context_class.send(:define_method, :app) { the_app }
+      @environment.context_class.send(:define_method, :app)  { the_app }
       @environment.context_class.send(:define_method, :data) { the_app.data }
-      @environment.context_class.send(:define_method, :env) { the_env }
+      @environment.context_class.send(:define_method, :env)  { the_env }
 
       @environment.context_class.class_eval do
         def asset_path path, options={}
@@ -87,7 +86,7 @@ module Middleman
     end
 
     def sprockets_asset_path sprockets_asset
-      File.join(app.config[:sprockets_imported_asset_path], sprockets_asset.logical_path)
+      File.join(options[:imported_asset_path], sprockets_asset.logical_path)
     end
 
     private
