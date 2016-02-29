@@ -22,6 +22,8 @@ gem 'jquery-rails',        '3.1.0',   require: false
 gem 'bootstrap-sass',      '3.1.1.0', require: false
 gem 'jquery_mobile_rails', '1.4.1',   require: false
 gem 'sass-globbing',       '1.1.1',   require: false
+gem 'assets_gem', path: 'fixtures/gems/assets_gem',
+                  require: false
 
 gem 'ejs',    '~> 1.1.1'
 gem 'eco',    '~> 1.0.0'
