@@ -2,8 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'middleman-cli',  github: 'middleman/middleman', branch: 'master'
-gem 'middleman-core', github: 'middleman/middleman', branch: 'master'
+gem 'middleman'
 
 # Build and doc tools
 gem 'rake', '~> 10.3',  require: false

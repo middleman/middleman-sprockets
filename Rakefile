@@ -8,14 +8,14 @@ require 'rubocop/rake_task'
 
 require 'middleman-core/version'
 
+Dir["./tasks/*.rake"].each { |f| load f }
+
 Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
-  exempt_tags = ['--tags ~@wip']
+  exempt_tags     = ['--tags ~@wip']
   t.cucumber_opts = "--color #{exempt_tags.join(' ')} --strict"
 end
 
-RSpec::Core::RakeTask.new(:spec) do |t|
-  t.rspec_opts = '--tag ~@skip:one-nine' if RUBY_VERSION < '2.0'
-end
+RSpec::Core::RakeTask.new(:spec)
 
 desc 'Run RuboCop on the lib & spec directory'
 RuboCop::RakeTask.new(:rubocop) do |task|
@@ -27,6 +27,12 @@ RuboCop::RakeTask.new(:rubocop) do |task|
 end
 
 task test: [:destroy_sass_cache, :rubocop, :cucumber, :spec]
+task :default => :test
+
+
+
+## removal candidates
+## ------------------------------------
 
 desc 'Build HTML documentation'
 task :doc do

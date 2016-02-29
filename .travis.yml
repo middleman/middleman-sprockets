@@ -1,6 +1,7 @@
 language: ruby
 cache: bundler
 sudo: false
+env: TEST=true
 
 rvm:
   - 2.0.0
@@ -11,16 +12,21 @@ rvm:
   - jruby-19mode
   - jruby-head
 
+gemfile:
+  - gemfiles/middleman-4.1.gemfile
+
 matrix:
-  fast_finish: true
+  include:
+  - rvm: 2.2
+    gemfile: gemfiles/middleman-4.0.gemfile
+  - rvm: 2.2
+    gemfile: gemfiles/middleman-head.gemfile
+  - rvm: 2.2
+    gemfile: gemfiles/sprockets-4.0.gemfile
+
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-19mode
     - rvm: jruby-head
-
-gemfile:
-  - Gemfile
-
-script: "bundle exec rake test"
-
-env: TEST=true
+    - rvm: 2.2
+      gemfile: gemfiles/sprockets-4.0.gemfile

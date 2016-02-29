@@ -10,3 +10,4 @@ build
 .ruby-version
 .ruby-gemset
 .cache
+gemfiles/*.lock
