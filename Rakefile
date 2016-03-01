@@ -8,7 +8,7 @@ require 'rubocop/rake_task'
 
 require 'middleman-core/version'
 
-Dir["./tasks/*.rake"].each { |f| load f }
+Dir['./tasks/*.rake'].each { |f| load f }
 
 Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
   exempt_tags     = ['--tags ~@wip']
@@ -27,9 +27,7 @@ RuboCop::RakeTask.new(:rubocop) do |task|
 end
 
 task test: [:destroy_sass_cache, :rubocop, :cucumber, :spec]
-task :default => :test
-
-
+task default: :test
 
 ## removal candidates
 ## ------------------------------------

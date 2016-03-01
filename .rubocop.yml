@@ -6,8 +6,7 @@ AllCops:
 
 Style/FileName:
   Exclude:
-    - lib/slack-notifier.rb
-    - spec/lib/slack-notifier_spec.rb
+    - lib/middleman-sprockets.rb
 
 Style/MultilineOperationIndentation:
   EnforcedStyle: aligned

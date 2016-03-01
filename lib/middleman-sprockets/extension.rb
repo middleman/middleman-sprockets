@@ -8,9 +8,8 @@ module Middleman
     expose_to_config sprockets: :environment
 
     option :supported_output_extensions, ['.css', '.js'], 'Output extensions sprockets should process'
-    option :imported_asset_path,                'assets', 'Where under source imported assets should be placed.'
-    option :expose_middleman_helpers,              false, 'Whether to expose middleman helpers to sprockets.'
-
+    option :imported_asset_path,         'assets',        'Where under source imported assets should be placed.'
+    option :expose_middleman_helpers,    false,           'Whether to expose middleman helpers to sprockets.'
 
     def initialize app, options_hash={}, &block
       super
@@ -53,12 +52,9 @@ module Middleman
             app.asset_path(kind, path)
           end
         end
-
       end
 
-      if options[:expose_middleman_helpers]
-        expose_app_helpers_to_sprockets!
-      end
+      expose_app_helpers_to_sprockets! if options[:expose_middleman_helpers]
 
       app.files.on_change :source, &method(:file_watcher)
     end
@@ -137,7 +133,6 @@ module Middleman
         end
       end
 
-
       def process_candidate_sprockets_resource resource
         return resource unless base_resource?(resource) && processible?(resource)
 
@@ -158,7 +153,7 @@ module Middleman
 
       def generate_resource path, source_file, sprockets_path
         SprocketsResource.new(app.sitemap, path, source_file, sprockets_path, environment)
-      rescue Exception => e
+      rescue StandardError => e
         raise e if app.build?
 
         ext = File.extname(path)
