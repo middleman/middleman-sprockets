@@ -30,3 +30,5 @@ matrix:
     - rvm: jruby-head
     - rvm: 2.2
       gemfile: gemfiles/sprockets-4.0.gemfile
+    - rvm: 2.2
+      gemfile: gemfiles/middleman-4.0.gemfile
