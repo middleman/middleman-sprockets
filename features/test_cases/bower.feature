@@ -43,7 +43,7 @@ Feature: Bower
         "main": "application.js"
       }
       """
-    And a the Server is running
+    And the Server is running
 
     When I go to "/javascripts/bower.json"
     Then I should see '"name": "my-project",'
