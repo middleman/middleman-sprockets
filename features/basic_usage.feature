@@ -14,21 +14,21 @@ Feature: Basic Usage
       """
       activate :sprockets
       """
-    And a file named "source/stylesheets/_partial.scss" with:
+    And a file named "source/stylesheets/_lib/partial.scss" with:
       """
       body { background: #fd0; }
       """
     And a file named "source/stylesheets/site.css.scss" with:
       """
-      //= require '_partial'
+      //= require '_lib/partial'
       """
-    And a file named "source/javascripts/_partial.js" with:
+    And a file named "source/javascripts/_lib/partial.js" with:
       """
       console.log('hello');
       """
     And a file named "source/javascripts/site.js" with:
       """
-      //= require '_partial'
+      //= require '_lib/partial'
       """
     And the Server is running
 
@@ -41,6 +41,7 @@ Feature: Basic Usage
 
     When I go to "/javascripts/site.js"
     Then I should see "console.log('hello');"
+
 
   Scenario: The default :css_dir or :js_dir are appended to Sprockets lookup paths
     Given a fixture app "base-app"
