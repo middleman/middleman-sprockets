@@ -4,9 +4,9 @@ module Middleman
       def initialize store, path, source_file, sprockets_path, environment, error_message: ''
         @path = path
         @sprockets_path = sprockets_path
-        @environment = environment
-        @error_message = error_message
-        @source = errored? ? @error_message : sprockets_asset.source
+        @environment    = environment
+        @error_message  = error_message
+        render()
 
         super(store, path, source_file)
       end
@@ -20,7 +20,7 @@ module Middleman
       end
 
       def render *_args
-        @source
+        errored? ? @error_message : sprockets_asset.source
       end
 
       def sprockets_asset

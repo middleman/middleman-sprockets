@@ -1,37 +1,49 @@
 Feature: Sass partials should work with Sprockets
+  Confirm that changing assets will be reflected in a files output, even if it is included as a partial.
 
-  Scenario: The preview server should update stylesheets when Sprockets partials change
-    Given the Server is running at "preview-app"
-    And the file "source/stylesheets/main2.css.sass" has the contents
+  Background:
+    Given a fixture app "base-app"
+    And a file named "config.rb" with:
       """
-      //= require "_partial2.css.sass"
-
-      red
-        color: red
+      activate :sprockets
       """
-    And the file "source/stylesheets/_partial2.css.sass" has the contents
+    And a file named "source/stylesheets/_partial.scss" with:
       """
-      body
-        font-size: 14px
+      body { color: red; }
       """
 
-    When I go to "/stylesheets/main2.css"
+  Scenario: The stylesheet shows updated content when Sprockets partials change
+    Given a file named "source/stylesheets/main.css.scss" with:
+      """
+      //= require _partial
+      """
+    And the Server is running
+
+    When I go to "/stylesheets/main.css"
     Then I should see "color: red;"
-    Then I should see "font-size: 14px"
 
-    Given the file "source/stylesheets/main2.css.sass" has the contents
+    And the file "source/stylesheets/_partial.scss" has the contents
       """
-      //= require "_partial2.css.sass"
-
-      red
-        color: blue
-      """
-    And the file "source/stylesheets/_partial2.css.sass" has the contents
-      """
-      body
-        font-size: 18px
+      body { color: blue; }
       """
 
-    When I go to "/stylesheets/main2.css"
+    When I go to "/stylesheets/main.css"
     Then I should see "color: blue;"
-    Then I should see "font-size: 18px"
+
+  Scenario: The stylesheet shows updated content when an imported partial changes
+    Given a file named "source/stylesheets/main.css.scss" with:
+      """
+      @import "partial";
+      """
+    And the Server is running
+
+    When I go to "/stylesheets/main.css"
+    Then I should see "color: red;"
+
+    And the file "source/stylesheets/_partial.scss" has the contents
+      """
+      body { color: blue; }
+      """
+
+    When I go to "/stylesheets/main.css"
+    Then I should see "color: blue;"
