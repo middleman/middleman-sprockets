@@ -1,4 +1,5 @@
 Feature: Access to Middleman helpers
+
   Sprockets is given an `asset_path` helper that is able to use the Middleman sitemap. This allows Sprockets methods like `image-url` to work for Middleman assets.
 
   By default helpers other than asset_path that are added to Middleman aren't available in Sprockets' rendering context. They can, however, be added through a configuration option. There is a caveat though that `current_resource` is unavailable so look out for helpers that depend on it.

@@ -20,6 +20,13 @@ To activate the extension, in your `config.rb` add:
 activate :sprockets
 ```
 
+### Usage
+
+- [Basic Usage](features/basic_usage.feature)
+- [With Asset Gems](features/asset_gems.feature)
+- [Linked Assets](features/linked_assets.feature)
+- [Helpers](features/middleman_helpers.feature)
+
 ### Configuration
 
 There are currently two options for configuration, `imported_asset_path` and `expose_middleman_helpers`.

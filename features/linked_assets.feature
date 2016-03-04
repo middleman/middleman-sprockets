@@ -1,4 +1,5 @@
 Feature: Linked assets are included in the sitemap
+
   Assets that are linked, either through a `//= link` directive or with an asset url helper (like `asset_path`) will be included in the sitemap & built automatically. The path these assets are placed at is configurable with the `:imported_asset_path` option.
 
   Note that we're taking advantage of the fact that the `assets_gem` is included in the sprockets paths with these examples.
