@@ -53,3 +53,63 @@ Feature: Linked assets are included in the sitemap
 
     When I go to "/linked/logo.png"
     Then the status code should be "200"
+
+
+  Scenario: Linked assets can be rendered
+    Given a fixture app "base-app"
+    And a file named "config.rb" with:
+      """
+      activate :sprockets
+      """
+    And a file named "vendor/css/vendored.css.sass" with:
+      """
+      body
+        color: red
+      """
+    And a file named "vendor/js/vendored.js.coffee" with:
+      """
+      console.log 'hello'
+      """
+    And a file named "source/javascripts/manifest.js" with:
+      """
+      //= link 'vendored.css'
+      //= link 'vendored.js'
+      """
+    And the Server is running
+
+    When I go to "/assets/vendored.css"
+    Then I should see "color: red;"
+
+    When I go to "/assets/vendored.js"
+    Then I should see "console.log('hello')"
+
+
+  Scenario: Linking to Sprockets assets from Middleman
+    You can do this, but you need to make sure that the asset is imported into the sitemap. If the asset is linked via a Sprockets directive or path helper no worries -- otherwise you could create a manifest file that contains links to assets you need.
+
+    In this test case, remember the `assets_gem` is available.
+
+    Given a fixture app "base-app"
+    And a file named "config.rb" with:
+      """
+      activate :sprockets
+      """
+    And a file named "source/index.html.erb" with:
+      """
+      <%= image_tag('assets/logo.png') %>
+      """
+    And the Server is running
+
+    When I go to "/assets/logo.png"
+    Then the status code should be "404"
+
+    And the file "source/javascripts/manifest.js" has the contents
+      """
+      //= link 'logo.png'
+      """
+
+    When I go to "/assets/logo.png"
+    Then the status code should be "200"
+
+    When I go to "/"
+    Then I should see '<img src="/assets/logo.png" />'

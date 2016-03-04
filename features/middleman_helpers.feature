@@ -38,6 +38,25 @@ Feature: Access to Middleman helpers
         background: url(/winterfell/images/img.svg); }
       """
 
+  Scenario: Sprockets has access to Middleman data
+    Given a fixture app "base-app"
+    And a file named "config.rb" with:
+      """
+      activate :sprockets
+      """
+    And a file named "data/test.yml" with:
+      """
+      foo: bar
+      """
+    And a file named "source/javascripts/data_accessor.js.coffee.erb" with:
+      """
+      console.log '<%= data.test.foo %>'
+      """
+    And the Server is running
+
+    When I go to "/javascripts/data_accessor.js"
+    Then I should see "console.log('bar')"
+
   Scenario: Using a helper from a Sprockets asset
     Given a fixture app "base-app"
     And a file named "config.rb" with:

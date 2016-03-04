@@ -68,3 +68,29 @@ Feature: Basic Usage
 
     Then sprockets paths should include "source/assets/css"
     And sprockets paths should include "source/assets/scripts"
+
+  Scenario: Css can use either a Sprockets require or Sass import
+    Given a fixture app "base-app"
+    And a file named "config.rb" with:
+      """
+      activate :sprockets
+      """
+    And a file named "source/stylesheets/_lib/import.scss" with:
+      """
+      body { content: 'imported'; }
+      """
+    And a file named "source/stylesheets/sprockets.css.scss" with:
+      """
+      //= require _lib/import
+      """
+    And a file named "source/stylesheets/sass_import.css.scss" with:
+      """
+      @import '_lib/import';
+      """
+    And the Server is running
+
+    When I go to "/stylesheets/sprockets.css"
+    Then I should see "content: 'imported';"
+
+    When I go to "/stylesheets/sass_import.css"
+    Then I should see "content: 'imported';"
