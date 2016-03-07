@@ -29,6 +29,7 @@ gem 'ejs',    '~> 1.1.1'
 gem 'eco',    '~> 1.0.0'
 gem 'erubis', '~> 2.7.0'
 gem 'haml',   '~> 4.0', require: false
+gem 'sassc', require: false
 
 # Code Quality
 group :test do
