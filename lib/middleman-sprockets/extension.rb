@@ -3,7 +3,8 @@ require 'middleman-core/sitemap/resource'
 
 module Middleman
   class SprocketsExtension < Extension
-    attr_reader :environment
+    attr_reader :environment,
+                :interface
 
     expose_to_config sprockets: :environment
 
@@ -16,6 +17,7 @@ module Middleman
 
       @inline_asset_references = Set.new
       @environment             = ::Sprockets::Environment.new
+      @interface               = Interface.new options, @environment
     end
 
     def after_configuration
@@ -73,9 +75,7 @@ module Middleman
     end
 
     def processible? r
-      *template_exts, target_ext = Middleman::Util.collect_extensions(r.source_file)
-
-      options[:supported_output_extensions].include?(target_ext) && (template_exts - environment.engines.keys).empty?
+      interface.processible?(r.source_file)
     end
 
     def js? r
@@ -209,3 +209,4 @@ module Middleman
 end
 
 require_relative 'resource'
+require_relative 'interface'
