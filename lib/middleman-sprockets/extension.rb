@@ -18,6 +18,17 @@ module Middleman
       @inline_asset_references = Set.new
       @environment             = ::Sprockets::Environment.new
       @interface               = Interface.new options, @environment
+
+      begin
+        if defined?(::SassC)
+          require 'sprockets/sassc_processor'
+          environment.register_transformer 'text/sass', 'text/css', ::Sprockets::SasscProcessor.new
+          environment.register_transformer 'text/scss', 'text/css', ::Sprockets::ScsscProcessor.new
+
+          logger.info '== Sprockets will render css with SassC'
+        end
+      rescue LoadError => e
+      end
     end
 
     def after_configuration
