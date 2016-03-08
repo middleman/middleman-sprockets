@@ -1,32 +1,19 @@
 module Middleman
   class SprocketsExtension
     class Interface
-      attr_reader :options, :environment
+      attr_reader :options,
+                  :environment,
+                  :extensions
 
       def initialize options, environment
         @options     = options
         @environment = environment
-
-        @processible = if ::Sprockets::VERSION >= '4.0'
-          ProcessibleFour.new(environment, options)
-        else
-          ProcessibleThree.new(environment)
-        end
+        setup!
       end
 
-      def processible? filename
-        @processible.call(filename, options[:supported_output_extensions])
-      end
 
-      class ProcessibleFour
-        attr_reader :extensions,
-                    :environment,
-                    :options
-
-        def initialize environment, options
-          @options     = options
-          @environment = environment
-
+      module Sprockets4
+        def setup!
           acceptable_mimes = options[:supported_output_extensions].map do |ext|
             environment.config[:mime_exts][ext]
           end
@@ -40,25 +27,29 @@ module Middleman
                         end
         end
 
-        def call filename, output_exts
+        def processible? filename
           file_ext, _mime = ::Sprockets::PathUtils.match_path_extname(filename, environment.config[:mime_exts])
           extensions.include?(file_ext)
         end
 
       end
 
-      class ProcessibleThree
 
-        attr_reader :extensions
-
-        def initialize environment
+      module Sprockets3
+        def setup!
           @extensions = environment.engines.keys
         end
 
-        def call filename, output_exts
+        def processible? filename
           *template_exts, target_ext = Middleman::Util.collect_extensions(filename)
-          output_exts.include?(target_ext) && (template_exts - extensions).empty?
+          options[:supported_output_extensions].include?(target_ext) && (template_exts - extensions).empty?
         end
+      end
+
+      if ::Sprockets::VERSION >= '4.0'
+        include Sprockets4
+      else
+        include Sprockets3
       end
 
     end
