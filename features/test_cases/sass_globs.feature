@@ -31,7 +31,25 @@ Feature: Sass should glob partials like sass-rails
       .d3s2 { content: 'd3'; }
       """
 
+  @sprockets3
   Scenario: Sass globbing should work
+    Given the Server is running
+    When I go to "/stylesheets/main.css"
+    Then I should see ".d1s1"
+    And I should see ".d2s1"
+    And I should see ".d3s1"
+    And I should see ".d3s2"
+
+  @sprockets4
+  Scenario: Sass globbing should work
+    Sass globbing does not work with SassC, but does still work with Sprockets 4 if using ruby Sass.
+
+    Given a file named "config.rb" with:
+      """
+      Object.send :remove_const, :SassC # simulate not having sassc
+      require 'sass-globbing'
+      activate :sprockets
+      """
     Given the Server is running
     When I go to "/stylesheets/main.css"
     Then I should see ".d1s1"
