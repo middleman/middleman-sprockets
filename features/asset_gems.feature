@@ -26,7 +26,7 @@ Feature: Make Gem assets available to Sprocket's lookup paths
       """
     And a file named "source/stylesheets/site.css.scss" with:
       """
-      //= require test
+      @import "test";
       """
     And the Server is running
 
@@ -39,8 +39,7 @@ Feature: Make Gem assets available to Sprocket's lookup paths
     Then I should see:
       """
       body {
-        background: #fd0;
-      }
+        background: #fd0; }
       """
 
   Scenario: Manually appending a gem's paths

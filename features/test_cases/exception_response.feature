@@ -9,7 +9,7 @@ Feature: Exception response for assets
       """
     And a file named "source/stylesheets/site.css.scss" with:
       """
-      body { color: $missing_variable; }
+      body { color: $missing-variable; }
       """
     And a file named "source/javascripts/site.js.coffee" with:
       """
@@ -20,7 +20,7 @@ Feature: Exception response for assets
     Given the Server is running
 
     When going to "/stylesheets/site.css" should not raise an exception
-    And I should see 'Error: Undefined variable: "$missing_variable"'
+    And I should see 'Error: Undefined variable: "$missing-variable"'
 
     When going to "/javascripts/site.js" should not raise an exception
     And I should see 'throw Error("ExecJS::RuntimeError: SyntaxError:'

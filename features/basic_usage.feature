@@ -20,7 +20,7 @@ Feature: Basic Usage
       """
     And a file named "source/stylesheets/site.css.scss" with:
       """
-      //= require '_lib/partial'
+      @import '_lib/partial';
       """
     And a file named "source/javascripts/_lib/partial.js" with:
       """
@@ -69,6 +69,7 @@ Feature: Basic Usage
     Then sprockets paths should include "source/assets/css"
     And sprockets paths should include "source/assets/scripts"
 
+  @sprockets3
   Scenario: Css can use either a Sprockets require or Sass import
     Given a fixture app "base-app"
     And a file named "config.rb" with:
@@ -81,7 +82,7 @@ Feature: Basic Usage
       """
     And a file named "source/stylesheets/sprockets.css.scss" with:
       """
-      //= require _lib/import
+      //= require '_lib/import.css'
       """
     And a file named "source/stylesheets/sass_import.css.scss" with:
       """

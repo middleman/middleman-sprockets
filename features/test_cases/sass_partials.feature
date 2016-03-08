@@ -15,7 +15,7 @@ Feature: Sass partials should work with Sprockets
   Scenario: The stylesheet shows updated content when Sprockets partials change
     Given a file named "source/stylesheets/main.css.scss" with:
       """
-      //= require _partial
+      @import "partial";
       """
     And the Server is running
 

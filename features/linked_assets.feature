@@ -10,7 +10,7 @@ Feature: Linked assets are included in the sitemap
       """
       activate :sprockets
       """
-    And a file named "source/stylesheets/site.css.scss" with:
+    And a file named "source/stylesheets/manifest.js" with:
       """
       //= link logo.png
       """
@@ -27,6 +27,10 @@ Feature: Linked assets are included in the sitemap
       activate :sprockets
       """
     And a file named "source/stylesheets/site.css.scss" with:
+      """
+      @import 'import';
+      """
+    And a file named "source/stylesheets/_import.scss" with:
       """
       body {
         background: image-url('logo.png');
@@ -46,7 +50,7 @@ Feature: Linked assets are included in the sitemap
         c.imported_asset_path = 'linked'
       end
       """
-    And a file named "source/stylesheets/site.css.scss" with:
+    And a file named "source/javascripts/manifest.js" with:
       """
       //= link logo.png
       """
