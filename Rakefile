@@ -7,11 +7,24 @@ require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
 
 require 'middleman-core/version'
+require 'sprockets/version'
 
 Dir['./tasks/*.rake'].each { |f| load f }
 
 Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
-  exempt_tags     = ['--tags ~@wip']
+  exempt_tags = ['--tags ~@wip']
+
+  if ::Sprockets::VERSION >= '4.0'
+    exempt_tags.push '--tags ~@sprockets3'
+  else
+    exempt_tags.push '--tags ~@sprockets4'
+  end
+
+  if ENV['SKIP_ASSET_HASH'] == 'true'
+    exempt_tags.push '--tags ~@asset_hash'
+  end
+
+
   t.cucumber_opts = "--color #{exempt_tags.join(' ')} --strict"
 end
 

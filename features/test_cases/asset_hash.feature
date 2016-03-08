@@ -1,4 +1,6 @@
 Feature: Assets get a file hash appended to their URL and references to them are updated
+
+  @asset_hash
   Scenario: Hashed-asset files are produced, and HTML, CSS, and JavaScript gets rewritten to reference the new files
     Given a successfully built app at "asset-hash-app"
     When I cd to "build"
@@ -31,6 +33,7 @@ Feature: Assets get a file hash appended to their URL and references to them are
     And the file "other/index.html" should contain 'src="../javascripts/application-df677242.js"'
     And the file "other/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
 
+  @asset_hash
   Scenario: Hashed assets work in preview server
     Given the Server is running at "asset-hash-app"
     When I go to "/"
@@ -53,6 +56,7 @@ Feature: Assets get a file hash appended to their URL and references to them are
     When I go to "/stylesheets/jquery-mobile-08069726.css"
     Then I should see 'background-image: url(../assets/jquery-mobile/icons-png/action-white-06d3eb76.png)'
 
+  @asset_hash
   Scenario: Enabling an asset host still produces hashed files and references
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
@@ -67,6 +71,7 @@ Feature: Assets get a file hash appended to their URL and references to them are
     When I go to "/stylesheets/site-a15e24a3.css"
     Then I should see 'background-image: url(http://middlemanapp.com/images/100px-5fd6fb90.jpg)'
 
+  @asset_hash
   Scenario: The asset hash should change when a SASS partial changes
     Given the Server is running at "asset-hash-app"
     And the file "source/stylesheets/_partial.sass" has the contents
@@ -85,6 +90,7 @@ Feature: Assets get a file hash appended to their URL and references to them are
     When I go to "/partials/"
     Then I should see 'href="../stylesheets/uses_partials-e8c3d4eb.css'
 
+  @asset_hash
   Scenario: The asset hash should change when a Javascript partial changes
     Given the Server is running at "asset-hash-app"
     And the file "source/javascripts/sprockets_sub.js" has the contents
