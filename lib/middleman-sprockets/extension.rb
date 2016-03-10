@@ -59,6 +59,13 @@ module Middleman
             }.fetch(options[:type], options[:type])
           end
 
+          if File.extname(path).empty?
+            path = path + {
+              js: '.js',
+              css: '.css'
+            }.fetch(kind, '')
+          end
+
           if app.extensions[:sprockets].check_asset(path)
             app.extensions[:sprockets].sprockets_asset_path(environment[path]).sub(/^\/?/, '/')
           else
