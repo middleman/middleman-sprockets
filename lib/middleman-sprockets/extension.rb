@@ -6,7 +6,8 @@ module Middleman
     attr_reader :environment,
                 :interface
 
-    expose_to_config sprockets: :environment
+    expose_to_config   sprockets: :environment
+    expose_to_template sprockets: :environment
 
     option :supported_output_extensions, ['.css', '.js'], 'Output extensions sprockets should process'
     option :imported_asset_path,         'assets',        'Where under source imported assets should be placed.'
