@@ -180,31 +180,6 @@ module Middleman
 
       def generate_resource path, source_file, sprockets_path
         SprocketsResource.new(app.sitemap, path, source_file, sprockets_path, environment)
-      rescue StandardError => e
-        raise e if app.build?
-
-        ext = File.extname(path)
-        error_message = if ext == '.css'
-          ::Sass::SyntaxError.exception_to_css(e)
-        elsif ext == '.js'
-          javascript_exception_response(e)
-        else
-          e.to_s
-        end
-
-        SprocketsResource.new(app.sitemap, path, source_file, sprockets_path, environment, error_message: error_message)
-      end
-
-      # Returns a JavaScript response that re-throws a Ruby exception
-      # in the browser
-      def javascript_exception_response exception
-        file, line = exception.backtrace[0].split(':')
-        err = <<-EOF
-#{exception.class.name}: #{exception.message}
-  on line #{line} of #{file})
-        EOF
-
-        "throw Error(#{err.inspect})"
       end
 
       # Backwards compatible means of finding all the latest gemspecs
