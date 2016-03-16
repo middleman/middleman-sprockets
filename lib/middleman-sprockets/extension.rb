@@ -81,6 +81,8 @@ module Middleman
     end
 
     def manipulate_resource_list resources
+      return resources if app.config[:exit_before_ready]
+
       resources.map do |resource|
         process_candidate_sprockets_resource(resource)
       end + @inline_asset_references.map do |path|
