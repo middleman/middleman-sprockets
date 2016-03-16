@@ -81,12 +81,16 @@ module Middleman
     end
 
     def manipulate_resource_list resources
-      resources.map do |resource|
+      sprockets_resources = resources.map do |resource|
         process_candidate_sprockets_resource(resource)
-      end + @inline_asset_references.map do |path|
+      end
+
+      linked_resources = @inline_asset_references.map do |path|
         asset = environment[path]
         generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
       end
+
+      app.extensions[:sitemap_ignore].manipulate_resource_list sprockets_resources + linked_resources
     end
 
     def base_resource? r
@@ -94,7 +98,7 @@ module Middleman
     end
 
     def processible? r
-      interface.processible?(r.source_file)
+      base_resource?(r) && interface.processible?(r.source_file)
     end
 
     def js? r
@@ -159,7 +163,7 @@ module Middleman
       end
 
       def process_candidate_sprockets_resource resource
-        return resource unless base_resource?(resource) && processible?(resource)
+        return resource unless processible?(resource)
 
         sprockets_path = if js?(resource)
           resource.path.sub(%r{^#{app.config[:js_dir]}\/}, '')
