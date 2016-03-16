@@ -125,7 +125,13 @@ module Middleman
       # an overzealous method to ensure the sprockets cache
       # gets updated when middleman updates files
       #
+      # return early if app is building, files shouldn't change in
+      # that case and we don't want to remove the cache as it
+      # gets hit during the resource manipulator
+      #
       def file_watcher _updated_files, _removed_files
+        return if app.build?
+
         environment.cache = ::Sprockets::Cache::MemoryStore.new
       end
 
