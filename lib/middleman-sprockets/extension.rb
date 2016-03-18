@@ -90,7 +90,11 @@ module Middleman
         generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
       end
 
-      app.extensions[:sitemap_ignore].manipulate_resource_list sprockets_resources + linked_resources
+      if app.extensions[:sitemap_ignore].respond_to?(:manipulate_resource_list)
+        app.extensions[:sitemap_ignore].manipulate_resource_list sprockets_resources + linked_resources
+      else
+        sprockets_resources + linked_resources
+      end
     end
 
     def base_resource? r
