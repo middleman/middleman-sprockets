@@ -55,7 +55,7 @@ module Middleman
             default_response
           end
         end
-        alias_method :to_s, :source
+        alias to_s source
 
         private
 
@@ -65,7 +65,7 @@ module Middleman
 
           def js_response
             file, line = @error.backtrace[0].split(':')
-            err = "#{@error.class.name}: #{@error.message}\n" +
+            err = "#{@error.class.name}: #{@error.message}\n" \
                   "  on line #{line} of #{file})"
 
             "throw Error(#{err.inspect})"

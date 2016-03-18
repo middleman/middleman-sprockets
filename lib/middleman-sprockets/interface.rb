@@ -11,7 +11,6 @@ module Middleman
         setup!
       end
 
-
       module Sprockets4
         def setup!
           acceptable_mimes = options[:supported_output_extensions].map do |ext|
@@ -31,9 +30,7 @@ module Middleman
           file_ext, _mime = ::Sprockets::PathUtils.match_path_extname(filename, environment.config[:mime_exts])
           extensions.include?(file_ext)
         end
-
       end
-
 
       module Sprockets3
         def setup!
@@ -51,7 +48,6 @@ module Middleman
       else
         include Sprockets3
       end
-
     end
   end
 end

@@ -20,16 +20,7 @@ module Middleman
       @environment             = ::Sprockets::Environment.new
       @interface               = Interface.new options, @environment
 
-      begin
-        if defined?(::SassC)
-          require 'sprockets/sassc_processor'
-          environment.register_transformer 'text/sass', 'text/css', ::Sprockets::SasscProcessor.new
-          environment.register_transformer 'text/scss', 'text/css', ::Sprockets::ScsscProcessor.new
-
-          logger.info '== Sprockets will render css with SassC'
-        end
-      rescue LoadError => e
-      end
+      use_sassc_if_available
     end
 
     def after_configuration
@@ -61,10 +52,7 @@ module Middleman
           end
 
           if File.extname(path).empty?
-            path = path + {
-              js: '.js',
-              css: '.css'
-            }.fetch(kind, '')
+            path << { js: '.js', css: '.css' }.fetch(kind, '')
           end
 
           if app.extensions[:sprockets].check_asset(path)
@@ -186,6 +174,19 @@ module Middleman
 
       def generate_resource path, source_file, sprockets_path
         SprocketsResource.new(app.sitemap, path, source_file, sprockets_path, environment)
+      end
+
+      def use_sassc_if_available
+        if defined?(::SassC)
+          require 'sprockets/sassc_processor'
+          environment.register_transformer 'text/sass', 'text/css', ::Sprockets::SasscProcessor.new
+          environment.register_transformer 'text/scss', 'text/css', ::Sprockets::ScsscProcessor.new
+
+          logger.info '== Sprockets will render css with SassC'
+        end
+      rescue LoadError
+        logger.info "== Sprockets will render css with ruby sass\n" \
+                    '   consider using Sprockets 4.x to render with SassC'
       end
 
       # Backwards compatible means of finding all the latest gemspecs

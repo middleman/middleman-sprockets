@@ -20,11 +20,7 @@ Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
     exempt_tags.push '--tags ~@sprockets4'
   end
 
-  if ENV['SKIP_ASSET_HASH'] == 'true'
-    exempt_tags.push '--tags ~@asset_hash'
-  end
-
-
+  exempt_tags.push '--tags ~@asset_hash' if ENV['SKIP_ASSET_HASH'] == 'true'
   t.cucumber_opts = "--color #{exempt_tags.join(' ')} --strict"
 end
 
