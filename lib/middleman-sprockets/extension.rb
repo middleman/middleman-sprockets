@@ -85,12 +85,8 @@ module Middleman
       end
     end
 
-    def base_resource? r
-      r.class.ancestors.first == ::Middleman::Sitemap::Resource
-    end
-
     def processible? r
-      base_resource?(r) && interface.processible?(r.source_file)
+      !r.is_a?(SprocketsResource) && interface.processible?(r.source_file)
     end
 
     def js? r
