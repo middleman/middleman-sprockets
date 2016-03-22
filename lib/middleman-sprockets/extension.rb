@@ -128,7 +128,7 @@ module Middleman
       def expose_app_helpers_to_sprockets!
         @environment.context_class.class_eval do
           def current_resource
-            app.logger.error "The use of `current_resource` in sprockets assets isn't currently implemented"
+            logger.error "The use of `current_resource` in sprockets assets isn't currently implemented"
             nil
           end
 
@@ -166,6 +166,10 @@ module Middleman
         end
 
         sprockets_resource
+      rescue => e
+        logger.error("== Sprockets Debug: #{resource}")
+        logger.error("== Sprockets Debug: #{sprockets_resource}") if sprockets_resource
+        raise e
       end
 
       def generate_resource path, source_file, sprockets_path
