@@ -1,3 +1,5 @@
+require 'middleman-core/configuration'
+
 module Middleman
   module Sprockets
     class Interface

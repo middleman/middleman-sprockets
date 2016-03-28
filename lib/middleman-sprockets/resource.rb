@@ -1,3 +1,5 @@
+require 'middleman-core/sitemap/store'
+
 module Middleman
   module Sprockets
     class Resource < ::Middleman::Sitemap::Resource
