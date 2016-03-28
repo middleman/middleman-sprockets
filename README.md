@@ -1,3 +1,5 @@
+> The master branch is for a pre-released 4.x version of Middleman-Sprockets. For 3.x stable please see the [`v3-stable-real` branch](https://github.com/middleman/middleman-sprockets/tree/v3-stable-real).
+
 # Middleman-Sprockets
 
 `middleman-sprockets` is an extension for the [Middleman] static site generator that allows support for [Sprockets](https://github.com/sstephenson/sprockets) in your assets.
