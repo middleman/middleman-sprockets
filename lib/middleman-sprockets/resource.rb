@@ -1,6 +1,7 @@
 module Middleman
-  class SprocketsExtension
-    class SprocketsResource < ::Middleman::Sitemap::Resource
+  module Sprockets
+    class Resource < ::Middleman::Sitemap::Resource
+      Contract ::Middleman::Sitemap::Store, String, String, String, ::Sprockets::Environment => Any
       def initialize store, path, source_file, sprockets_path, environment
         @app  = store.app
         @path = path
@@ -11,18 +12,22 @@ module Middleman
         super(store, path, source_file)
       end
 
+      Contract Bool
       def errored?
         @errored
       end
 
+      Contract Bool
       def template?
         true
       end
 
+      Contract Any, Any => String
       def render *_args
         sprockets_asset.source
       end
 
+      Contract Or[::Sprockets::Asset, IsA['Middleman::Sprockets::Resource::Error']]
       def sprockets_asset
         @environment[@sprockets_path]
       rescue StandardError => e
@@ -32,21 +37,25 @@ module Middleman
         Error.new(e, ext)
       end
 
+      Contract Bool
       def binary?
         false
       end
 
       class Error
+        include Contracts
 
         def initialize error, ext
           @error = error
           @ext   = ext
         end
 
+        Contract Array
         def links
           []
         end
 
+        Contract String
         def source
           case @ext
           when '.css' then css_response

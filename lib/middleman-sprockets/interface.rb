@@ -1,10 +1,13 @@
 module Middleman
-  class SprocketsExtension
+  module Sprockets
     class Interface
+      include Contracts
+
       attr_reader :options,
                   :environment,
                   :extensions
 
+      Contract ::Middleman::Configuration::ConfigurationManager, ::Sprockets::Environment => Any
       def initialize options, environment
         @options     = options
         @environment = environment
@@ -12,6 +15,8 @@ module Middleman
       end
 
       module Sprockets4
+        include Contracts
+
         def setup!
           acceptable_mimes = options[:supported_output_extensions].map do |ext|
             environment.config[:mime_exts][ext]
@@ -26,6 +31,7 @@ module Middleman
                         end
         end
 
+        Contract String => Bool
         def processible? filename
           file_ext, _mime = ::Sprockets::PathUtils.match_path_extname(filename, environment.config[:mime_exts])
           extensions.include?(file_ext)
@@ -33,10 +39,13 @@ module Middleman
       end
 
       module Sprockets3
+        include Contracts
+
         def setup!
           @extensions = environment.engines.keys
         end
 
+        Contract String => Bool
         def processible? filename
           *template_exts, target_ext = Middleman::Util.collect_extensions(filename)
           options[:supported_output_extensions].include?(target_ext) && (template_exts - extensions).empty?
