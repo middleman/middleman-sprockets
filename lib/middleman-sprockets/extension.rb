@@ -69,19 +69,25 @@ module Middleman
     end
 
     def manipulate_resource_list resources
-      sprockets_resources = resources.map do |resource|
-        process_candidate_sprockets_resource(resource)
+      sprockets_resources = ::Middleman::Util.instrument 'sprockets', name: 'manipulator.sprockets_resources' do
+        resources.map do |resource|
+          process_candidate_sprockets_resource(resource)
+        end
       end
 
-      linked_resources = @inline_asset_references.map do |path|
-        asset = environment[path]
-        generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
+      linked_resources = ::Middleman::Util.instrument 'sprockets', name: 'manipulator.linked_resources' do
+        @inline_asset_references.map do |path|
+          asset = environment[path]
+          generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
+        end
       end
 
-      if app.extensions[:sitemap_ignore].respond_to?(:manipulate_resource_list)
-        app.extensions[:sitemap_ignore].manipulate_resource_list sprockets_resources + linked_resources
-      else
-        sprockets_resources + linked_resources
+      ::Middleman::Util.instrument 'sprockets', name: 'manipulator.ignore_resources' do
+        if app.extensions[:sitemap_ignore].respond_to?(:manipulate_resource_list)
+          app.extensions[:sitemap_ignore].manipulate_resource_list sprockets_resources + linked_resources
+        else
+          sprockets_resources + linked_resources
+        end
       end
     end
 
@@ -153,19 +159,21 @@ module Middleman
       def process_candidate_sprockets_resource resource
         return resource unless processible?(resource)
 
-        sprockets_path = if js?(resource)
-          resource.path.sub(%r{^#{app.config[:js_dir]}\/}, '')
-        else
-          resource.path.sub(%r{^#{app.config[:css_dir]}\/}, '')
+        ::Middleman::Util.instrument 'sprockets', name: 'process_resource', resource: resource do
+          sprockets_path = if js?(resource)
+            resource.path.sub(%r{^#{app.config[:js_dir]}\/}, '')
+          else
+            resource.path.sub(%r{^#{app.config[:css_dir]}\/}, '')
+          end
+
+          sprockets_resource = generate_resource(resource.path, resource.source_file, sprockets_path)
+
+          if sprockets_resource.respond_to?(:sprockets_asset) && !sprockets_resource.errored?
+            @inline_asset_references.merge sprockets_resource.sprockets_asset.links
+          end
+
+          sprockets_resource
         end
-
-        sprockets_resource = generate_resource(resource.path, resource.source_file, sprockets_path)
-
-        if sprockets_resource.respond_to?(:sprockets_asset) && !sprockets_resource.errored?
-          @inline_asset_references.merge sprockets_resource.sprockets_asset.links
-        end
-
-        sprockets_resource
       rescue => e
         logger.error("== Sprockets Debug: #{resource}")
         logger.error("== Sprockets Debug: #{sprockets_resource}") if sprockets_resource
@@ -173,7 +181,11 @@ module Middleman
       end
 
       def generate_resource path, source_file, sprockets_path
-        SprocketsResource.new(app.sitemap, path, source_file, sprockets_path, environment)
+        ::Middleman::Util.instrument 'sprockets', name: 'generate_resource',
+                                                  path: path,
+                                                  sprockets_path: sprockets_path do
+          SprocketsResource.new(app.sitemap, path, source_file, sprockets_path, environment)
+        end
       end
 
       def use_sassc_if_available
