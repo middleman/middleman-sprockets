@@ -26,12 +26,16 @@ module Middleman
 
       Contract Any, Any => String
       def render *_args
-        sprockets_asset.source
+        ::Middleman::Util.instrument 'sprockets.render', asset: self do
+          sprockets_asset.source
+        end
       end
 
       Contract Or[::Sprockets::Asset, IsA['Middleman::Sprockets::Resource::Error']]
       def sprockets_asset
-        @environment[@sprockets_path]
+        ::Middleman::Util.instrument 'sprockets.asset_lookup', asset: self do
+          @environment[@sprockets_path]
+        end
       rescue StandardError => e
         raise e if @app.build?
 
