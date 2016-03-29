@@ -33,6 +33,7 @@ module Middleman
       def after_configuration
         @environment.append_path((app.source_dir + app.config[:js_dir]).to_s)
         @environment.append_path((app.source_dir + app.config[:css_dir]).to_s)
+        @environment.append_path(app.source_dir.to_s)
 
         append_paths_from_gems
 
@@ -104,16 +105,6 @@ module Middleman
         !r.is_a?(Resource) && interface.processible?(r.source_file)
       end
 
-      Contract ::Middleman::Sitemap::Resource => Bool
-      def js? r
-        r.source_file.start_with?((app.source_dir + app.config[:js_dir]).to_s)
-      end
-
-      Contract ::Middleman::Sitemap::Resource => Bool
-      def css? r
-        r.source_file.start_with?((app.source_dir + app.config[:css_dir]).to_s)
-      end
-
       Contract String => Bool
       def check_asset path
         if environment[path]
@@ -174,13 +165,7 @@ module Middleman
           return resource unless processible?(resource)
 
           ::Middleman::Util.instrument 'sprockets', name: 'process_resource', resource: resource do
-            sprockets_path = if js?(resource)
-              resource.path.sub(%r{^#{app.config[:js_dir]}\/}, '')
-            else
-              resource.path.sub(%r{^#{app.config[:css_dir]}\/}, '')
-            end
-
-            sprockets_resource = generate_resource(resource.path, resource.source_file, sprockets_path)
+            sprockets_resource = generate_resource(resource.path, resource.source_file, resource.path)
 
             if sprockets_resource.respond_to?(:sprockets_asset) && !sprockets_resource.errored?
               @inline_asset_references.merge sprockets_resource.sprockets_asset.links
