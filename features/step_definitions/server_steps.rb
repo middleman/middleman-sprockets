@@ -6,6 +6,11 @@ Given /^binding.pry/ do
   binding.pry
 end
 
+Given /^the file "([^\"]*)" content is changed to\:$/ do |name, content|
+  step %Q{a file named "#{name}" with:}, content
+  sleep 1
+  system "touch #{File.join(ENV['MM_ROOT'], name)}"
+end
 
 Then /^sprockets paths should include "([^\"]*)"$/ do |path|
   sprockets = @server_inst.extensions[:sprockets].environment

@@ -22,7 +22,7 @@ Feature: Sass partials should work with Sprockets
     When I go to "/stylesheets/main.css"
     Then I should see "color: red;"
 
-    And the file "source/stylesheets/_partial.scss" has the contents
+    And the file "source/stylesheets/_partial.scss" content is changed to:
       """
       body { color: blue; }
       """
@@ -33,14 +33,14 @@ Feature: Sass partials should work with Sprockets
   Scenario: The stylesheet shows updated content when an imported partial changes
     Given a file named "source/stylesheets/main.css.scss" with:
       """
-      @import "partial";
+      //= require _partial
       """
     And the Server is running
 
     When I go to "/stylesheets/main.css"
     Then I should see "color: red;"
 
-    And the file "source/stylesheets/_partial.scss" has the contents
+    And the file "source/stylesheets/_partial.scss" content is changed to:
       """
       body { color: blue; }
       """
