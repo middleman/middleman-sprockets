@@ -72,8 +72,6 @@ module Middleman
         end
 
         expose_app_helpers_to_sprockets! if options[:expose_middleman_helpers]
-
-        app.files.on_change :source, &method(:file_watcher)
       end
 
       Contract ResourceList => ResourceList
@@ -121,19 +119,6 @@ module Middleman
       end
 
       private
-
-        # an overzealous method to ensure the sprockets cache
-        # gets updated when middleman updates files
-        #
-        # return early if app is building, files shouldn't change in
-        # that case and we don't want to remove the cache as it
-        # gets hit during the resource manipulator
-        #
-        def file_watcher _updated_files, _removed_files
-          return if app.build?
-
-          environment.cache = ::Sprockets::Cache::MemoryStore.new
-        end
 
         def expose_app_helpers_to_sprockets!
           @environment.context_class.class_eval do
