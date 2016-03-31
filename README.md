@@ -26,6 +26,7 @@ activate :sprockets
 
 - [Basic Usage](features/basic_usage.feature)
 - [With Asset Gems](features/asset_gems.feature)
+- [With Bower](features/bower.feature)
 - [Linked Assets](features/linked_assets.feature)
 - [Helpers](features/middleman_helpers.feature)
 
