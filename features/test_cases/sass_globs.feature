@@ -56,3 +56,21 @@ Feature: Sass should glob partials like sass-rails
     And I should see ".d2s1"
     And I should see ".d3s1"
     And I should see ".d3s2"
+
+  @sprockets3
+  Scenario: New files are spotted and imported
+    Because of how sass-globbing works, new or changed dependencies aren't spotted. You'll need to change/save the importing stylesheet for them to show up. Adding or removing a newline is a "cheap" trick to trigger the change.
+
+    Given the Server is running
+    And a file named "source/stylesheets/d2/_s2.scss" with:
+      """
+      .d2s2 { content: 'd2s2'; }
+      """
+    And the file "source/stylesheets/main.css.scss" content is changed to:
+      """
+      @import "**/*";
+
+      """
+
+    When I go to "/stylesheets/main.css"
+    Then I should see ".d2s2"
