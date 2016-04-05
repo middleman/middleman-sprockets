@@ -34,7 +34,7 @@ module Middleman
       Contract Or[::Sprockets::Asset, IsA['Middleman::Sprockets::Resource::Error']]
       def sprockets_asset
         ::Middleman::Util.instrument 'sprockets.asset_lookup', asset: self do
-          @environment[@sprockets_path]
+          @environment[@sprockets_path] || raise(::Sprockets::FileNotFound, @sprockets_path)
         end
       rescue StandardError => e
         raise e if @app.build?
