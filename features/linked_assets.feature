@@ -41,6 +41,9 @@ Feature: Linked assets are included in the sitemap
     When I go to "/assets/logo.png"
     Then the status code should be "200"
 
+    When I go to "/stylesheets/site.css"
+    Then I should see "url(/assets/logo.png)"
+
 
   Scenario: Linked asset destination is configurable
     Given a fixture app "base-app"

@@ -1,3 +1,18 @@
+4.0.0
+=====
+
+This is a major rewrite focussed on adding support for Sprockets 3+ & Middleman 4+. With this come a lot of changes, please read the [upgrade guide](docs/upgrade-3-to-4.md) for more information:
+
+**tl;dr;**
+
+* Requires Middleman 4.0+ & Sprockets 3.0+
+* Remove auto-activation
+* Remove the `import_asset` helper, assets should be linked via a manifest file
+* Remove "automagical" asset placement, linked assets all go in the `imported_asset_path` option
+* Add option to expose middleman helpers to sprockets assets
+* Add compatability for SassC if using Sprockets 4+
+
+
 3.4.2
 ===
 
