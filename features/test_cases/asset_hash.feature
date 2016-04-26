@@ -60,15 +60,15 @@ Feature: Assets get a file hash appended to their URL and references to them are
   Scenario: Enabling an asset host still produces hashed files and references
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-a15e24a3.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-2f4798cc.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-a15e24a3.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-2f4798cc.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-a15e24a3.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-2f4798cc.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
-    When I go to "/stylesheets/site-a15e24a3.css"
+    When I go to "/stylesheets/site-2f4798cc.css"
     Then I should see 'background-image: url(http://middlemanapp.com/images/100px-5fd6fb90.jpg)'
 
   @asset_hash
