@@ -64,7 +64,7 @@ module Middleman
             end
 
             if app.extensions[:sprockets].check_asset(path)
-              app.extensions[:sprockets].sprockets_asset_path(environment[path]).sub(/^\/?/, '/')
+              app.extensions[:sprockets].sprockets_asset_path(env[path]).sub(/^\/?/, '/')
             else
               app.asset_path(kind, path)
             end
@@ -125,6 +125,10 @@ module Middleman
             def current_resource
               logger.error "The use of `current_resource` in sprockets assets isn't currently implemented"
               nil
+            end
+
+            def environment
+              app.environment
             end
 
             def mm_context
