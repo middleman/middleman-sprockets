@@ -31,6 +31,12 @@ gem 'erubis', '~> 2.7.0'
 gem 'haml',   '~> 4.0', require: false
 gem 'sassc', require: false
 
+# catch the version of listen
+# working around bundler not switching the dependency graph itself
+if RUBY_VERSION < '2.2'
+  gem 'listen', '~> 3.0.6'
+end
+
 # Code Quality
 group :test do
   gem 'rubocop',    '~> 0.37.2', require: false
