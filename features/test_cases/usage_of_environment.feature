@@ -10,7 +10,7 @@ Feature: Usage of MM's environment method in a Sprockets asset
     And a file named "source/javascripts/site.js.erb" with:
       """
       console.log('<%= environment %>');
-      console.log('In development? <%= environment?(:development) ? "yes" : "no" %>')
+      console.log('In development? <%= environment?(:development) ? "yes" : "no" %>');
       """
 
 
@@ -25,4 +25,4 @@ Feature: Usage of MM's environment method in a Sprockets asset
     Given a successfully built app
     And I cd to "build"
 
-    Then the file "javascripts/site.js" should contain "console.log('production');"
+    Then the file "javascripts/site.js" should contain "console.log('In development? no');"
