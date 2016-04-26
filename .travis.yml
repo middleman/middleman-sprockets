@@ -9,8 +9,6 @@ rvm:
   - 2.2
   - 2.3.0
   - ruby-head
-  - jruby-19mode
-  - jruby-head
 
 gemfile:
   - gemfiles/middleman-4.1.gemfile
@@ -28,7 +26,5 @@ matrix:
 
   allow_failures:
     - rvm: ruby-head
-    - rvm: jruby-19mode
-    - rvm: jruby-head
     - rvm: 2.2
       gemfile: gemfiles/sprockets-4.0.gemfile
