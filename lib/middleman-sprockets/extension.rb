@@ -22,9 +22,9 @@ module Middleman
       def initialize app, options_hash={}, &block
         super
 
-        @inline_asset_references = Set.new
-        @environment             = ::Sprockets::Environment.new
-        @interface               = Interface.new options, @environment
+        @linked_assets       = Set.new
+        @environment         = ::Sprockets::Environment.new
+        @interface           = Interface.new options, @environment
 
         use_sassc_if_available
       end
@@ -76,24 +76,25 @@ module Middleman
 
       Contract ResourceList => ResourceList
       def manipulate_resource_list resources
-        sprockets_resources = ::Middleman::Util.instrument 'sprockets', name: 'manipulator.sprockets_resources' do
-          resources.map do |resource|
-            process_candidate_sprockets_resource(resource)
-          end
+        sprockets_resources, base_resources = resources.partition(&method(:processible?))
+        ::Middleman::Util.instrument 'sprockets', name: 'manipulator.sprockets_resources' do
+          sprockets_resources.map!(&method(:process_sprockets_resource))
         end
 
         linked_resources = ::Middleman::Util.instrument 'sprockets', name: 'manipulator.linked_resources' do
-          @inline_asset_references.map do |path|
+          @linked_assets.map do |path|
             asset = environment[path]
             generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
           end
         end
 
         ::Middleman::Util.instrument 'sprockets', name: 'manipulator.ignore_resources' do
+          all_resources = base_resources + sprockets_resources + linked_resources
+
           if app.extensions[:sitemap_ignore].respond_to?(:manipulate_resource_list)
-            app.extensions[:sitemap_ignore].manipulate_resource_list sprockets_resources + linked_resources
+            app.extensions[:sitemap_ignore].manipulate_resource_list all_resources
           else
-            sprockets_resources + linked_resources
+            all_resources
           end
         end
       end
@@ -106,7 +107,7 @@ module Middleman
       Contract String => Bool
       def check_asset path
         if environment[path]
-          @inline_asset_references << path
+          @linked_assets << path
           true
         else
           false
@@ -146,14 +147,12 @@ module Middleman
         end
 
         Contract ::Middleman::Sitemap::Resource => Or[::Middleman::Sitemap::Resource, Resource]
-        def process_candidate_sprockets_resource resource
-          return resource unless processible?(resource)
-
+        def process_sprockets_resource resource
           ::Middleman::Util.instrument 'sprockets', name: 'process_resource', resource: resource do
             sprockets_resource = generate_resource(resource.path, resource.source_file, resource.path)
 
             if sprockets_resource.respond_to?(:sprockets_asset) && !sprockets_resource.errored?
-              @inline_asset_references.merge sprockets_resource.sprockets_asset.links
+              @linked_assets.merge sprockets_resource.sprockets_asset.links
             end
 
             sprockets_resource
