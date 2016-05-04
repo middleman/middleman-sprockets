@@ -23,6 +23,7 @@ module Middleman
         super
 
         @linked_assets       = Set.new
+        @sprockets_resources = Set.new
         @environment         = ::Sprockets::Environment.new
         @interface           = Interface.new options, @environment
 
@@ -150,8 +151,8 @@ module Middleman
         def process_sprockets_resource resource
           ::Middleman::Util.instrument 'sprockets', name: 'process_resource', resource: resource do
             sprockets_resource = generate_resource(resource.path, resource.source_file, resource.path)
-
-            if sprockets_resource.respond_to?(:sprockets_asset) && !sprockets_resource.errored?
+            @sprockets_resources << sprockets_resource
+            unless sprockets_resource.errored?
               @linked_assets.merge sprockets_resource.sprockets_asset.links
             end
 
