@@ -6,8 +6,8 @@ env: TEST=true
 rvm:
   - 2.0.0
   - 2.1
-  - 2.2
-  - 2.3.0
+  - 2.2.5
+  - 2.3.1
   - ruby-head
 
 gemfile:
@@ -15,16 +15,16 @@ gemfile:
 
 matrix:
   include:
-  - rvm: 2.2
+  - rvm: 2.3.1
     gemfile: gemfiles/middleman-head.gemfile
-  - rvm: 2.2
+  - rvm: 2.3.1
     gemfile: gemfiles/middleman-4.0.gemfile
     env: SKIP_ASSET_HASH=true
-  - rvm: 2.2
+  - rvm: 2.3.1
     gemfile: gemfiles/sprockets-4.0.gemfile
     env: SKIP_ASSET_HASH=true
 
   allow_failures:
     - rvm: ruby-head
-    - rvm: 2.2
+    - rvm: 2.3.1
       gemfile: gemfiles/sprockets-4.0.gemfile
