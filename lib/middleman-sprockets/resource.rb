@@ -43,6 +43,11 @@ module Middleman
         Error.new(e, ext)
       end
 
+      Contract Set
+      def linked_assets
+        sprockets_asset.links
+      end
+
       Contract Bool
       def binary?
         false
@@ -56,9 +61,9 @@ module Middleman
           @ext   = ext
         end
 
-        Contract Array
+        Contract Set
         def links
-          []
+          Set.new
         end
 
         Contract String

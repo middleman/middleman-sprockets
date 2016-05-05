@@ -82,15 +82,8 @@ module Middleman
           sprockets_resources.map!(&method(:process_sprockets_resource))
         end
 
-        linked_resources = ::Middleman::Util.instrument 'sprockets', name: 'manipulator.linked_resources' do
-          @linked_assets.map do |path|
-            asset = environment[path]
-            generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
-          end
-        end
-
         ::Middleman::Util.instrument 'sprockets', name: 'manipulator.ignore_resources' do
-          all_resources = base_resources + sprockets_resources + linked_resources
+          all_resources = base_resources + sprockets_resources + linked_resources!.to_a
 
           if app.extensions[:sitemap_ignore].respond_to?(:manipulate_resource_list)
             app.extensions[:sitemap_ignore].manipulate_resource_list all_resources
@@ -122,6 +115,25 @@ module Middleman
 
       private
 
+        def linked_resources
+          return @_linked_resources if @_linked_resources
+
+          @_linked_resources = Set.new
+          links = @linked_assets.merge(@sprockets_resources.map(&:linked_assets)
+                                                           .reduce(&:merge) || Set.new()).map do |path|
+            asset = environment[path]
+            generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
+          end
+          @_linked_resources.merge links
+
+          @_linked_resources
+        end
+
+        def linked_resources!
+          @_linked_resources = nil
+          linked_resources
+        end
+
         def expose_app_helpers_to_sprockets!
           @environment.context_class.class_eval do
             def current_resource
@@ -152,9 +164,6 @@ module Middleman
           ::Middleman::Util.instrument 'sprockets', name: 'process_resource', resource: resource do
             sprockets_resource = generate_resource(resource.path, resource.source_file, resource.path)
             @sprockets_resources << sprockets_resource
-            unless sprockets_resource.errored?
-              @linked_assets.merge sprockets_resource.sprockets_asset.links
-            end
 
             sprockets_resource
           end
