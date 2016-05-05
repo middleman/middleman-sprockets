@@ -18,4 +18,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'middleman-core', ['~> 4.0']
   s.add_dependency 'sprockets',      ['>= 3.0']
+
+  s.add_development_dependency 'capybara', ['~> 2.5.0']
 end
