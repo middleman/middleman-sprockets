@@ -100,7 +100,7 @@ module Middleman
 
       Contract ::Middleman::Sitemap::Resource => Bool
       def processible? r
-        !r.is_a?(Resource) && interface.processible?(r.source_file)
+        !r.is_a?(Resource) && !r.file_descriptor.nil? && interface.processible?(r.source_file)
       end
 
       Contract String => Bool
