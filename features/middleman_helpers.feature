@@ -100,13 +100,11 @@ Feature: Access to Middleman helpers
     Then I should see "console.log('hello');"
 
 
-  Scenario: current_resource is unavailable
+  Scenario: current_resource is available
     Given a fixture app "base-app"
     And a file named "config.rb" with:
       """
-      activate :sprockets do |c|
-        c.expose_middleman_helpers = true
-      end
+      activate :sprockets
       """
     And a file named "source/index.html.erb" with:
       """
@@ -122,7 +120,7 @@ Feature: Access to Middleman helpers
     Then I should see "<pre>/</pre>"
 
     When going to "/javascripts/site.js" should not raise an exception
-    And I should see "NoMethodError: undefined method `url' for nil:NilClass"
+    And I should see "console.log('/javascripts/site.js');"
 
 
   Scenario: Helpers are not included by default

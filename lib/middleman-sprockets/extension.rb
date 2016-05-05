@@ -3,13 +3,15 @@ require 'middleman-core/contracts'
 require 'middleman-core/sitemap/resource'
 
 require_relative 'resource'
+require_relative 'resource_store'
 require_relative 'interface'
 
 module Middleman
   module Sprockets
     class Extension < Extension
       attr_reader :environment,
-                  :interface
+                  :interface,
+                  :resources
 
       expose_to_config   sprockets: :environment
       expose_to_template sprockets: :environment
@@ -22,10 +24,10 @@ module Middleman
       def initialize app, options_hash={}, &block
         super
 
-        @linked_assets       = Set.new
-        @sprockets_resources = Set.new
-        @environment         = ::Sprockets::Environment.new
-        @interface           = Interface.new options, @environment
+        @linked_assets = Set.new
+        @resources     = ResourceStore.new
+        @environment   = ::Sprockets::Environment.new
+        @interface     = Interface.new options, @environment
 
         use_sassc_if_available
       end
@@ -46,6 +48,10 @@ module Middleman
         @environment.context_class.send(:define_method, :env)  { the_env }
 
         @environment.context_class.class_eval do
+          def current_resource
+            app.extensions[:sprockets].resources.find_by_path(pathname)
+          end
+
           def asset_path path, options={}
             # Handle people calling with the Middleman/Padrino asset path signature
             if path.is_a?(::Symbol) && !options.is_a?(::Hash)
@@ -119,8 +125,9 @@ module Middleman
           return @_linked_resources if @_linked_resources
 
           @_linked_resources = Set.new
-          links = @linked_assets.merge(@sprockets_resources.map(&:linked_assets)
-                                                           .reduce(&:merge) || Set.new()).map do |path|
+          links = @linked_assets.merge(@resources.resources
+                                                 .map(&:linked_assets)
+                                                 .reduce(&:merge) || Set.new()).map do |path|
             asset = environment[path]
             generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
           end
@@ -136,11 +143,6 @@ module Middleman
 
         def expose_app_helpers_to_sprockets!
           @environment.context_class.class_eval do
-            def current_resource
-              logger.error "The use of `current_resource` in sprockets assets isn't currently implemented"
-              nil
-            end
-
             def mm_context
               @_mm_context ||= app.template_context_class.new(app)
             end
@@ -163,7 +165,7 @@ module Middleman
         def process_sprockets_resource resource
           ::Middleman::Util.instrument 'sprockets', name: 'process_resource', resource: resource do
             sprockets_resource = generate_resource(resource.path, resource.source_file, resource.path)
-            @sprockets_resources << sprockets_resource
+            @resources.add sprockets_resource
 
             sprockets_resource
           end
