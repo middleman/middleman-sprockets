@@ -14,7 +14,26 @@ Feature: Detecting linked asset addition and removal
       """
       """
 
-  Scenario: Link directive or asset-path helper reference added for an asset
+  Scenario: Asset-path helper reference added for an asset
+    The linked assets will be added to the sitemap
+
+    Given a file named "source/stylesheets/manifest.css.scss" with:
+      """
+      """
+    And the Server is running
+
+    When I go to "/assets/b.jpg"
+    Then the status code should be "404"
+
+    Given the file "source/stylesheets/manifest.css.scss" content is changed to:
+      """
+      body { background: asset_url('b.jpg'); }
+      """
+    When I go to "/assets/b.jpg"
+    Then the status code should be "200"
+
+
+  Scenario: Link directive added for an asset
     The linked assets will be added to the sitemap
 
     Given a file named "source/stylesheets/manifest.css.scss" with:
@@ -24,34 +43,26 @@ Feature: Detecting linked asset addition and removal
 
     When I go to "/assets/a.jpg"
     Then the status code should be "404"
-    When I go to "/assets/b.jpg"
-    Then the status code should be "404"
 
     Given the file "source/stylesheets/manifest.css.scss" content is changed to:
       """
       //= link a.jpg
-      body { background: asset_url('b.jpg'); }
       """
 
     When I go to "/assets/a.jpg"
     Then the status code should be "200"
-    When I go to "/assets/b.jpg"
-    Then the status code should be "200"
 
 
-  Scenario: Refrence to linked file removed, both directive & asset-path helper
+  Scenario: Link directive removed from file
     The linked assets are removed from the sitemap
 
     Given a file named "source/stylesheets/manifest.css.scss" with:
       """
       //= link a.jpg
-      body { background: asset_url('b.jpg'); }
       """
     And the Server is running
 
     When I go to "/assets/a.jpg"
-    Then the status code should be "200"
-    When I go to "/assets/b.jpg"
     Then the status code should be "200"
 
     Given the file "source/stylesheets/manifest.css.scss" content is changed to:
@@ -60,53 +71,96 @@ Feature: Detecting linked asset addition and removal
 
     When I go to "/assets/a.jpg"
     Then the status code should be "404"
+
+
+  Scenario: Asset path helper removed from file
+    The linked assets are removed from the sitemap
+
+    Given a file named "source/stylesheets/manifest.css.scss" with:
+      """
+      body { background: asset_url('b.jpg'); }
+      """
+    And the Server is running
+
+    When I go to "/assets/b.jpg"
+    Then the status code should be "200"
+
+    Given the file "source/stylesheets/manifest.css.scss" content is changed to:
+      """
+      """
+
     When I go to "/assets/b.jpg"
     Then the status code should be "404"
 
 
-  Scenario: Asset file with linked assets removed
+  Scenario: Asset file with linked assets removed [asset-path helper]
+    The linked assets are removed from the sitemap
+
+    Given a file named "source/stylesheets/manifest.css.scss" with:
+      """
+      body { background: asset_url('b.jpg'); }
+      """
+    And the Server is running
+
+    When I go to "/assets/b.jpg"
+    Then the status code should be "200"
+
+    Given the file "source/stylesheets/manifest.css.scss" is removed
+
+    When I go to "/assets/b.jpg"
+    Then the status code should be "404"
+
+
+  Scenario: Asset file with linked assets removed [directive]
     The linked assets are removed from the sitemap
 
     Given a file named "source/stylesheets/manifest.css.scss" with:
       """
       //= link a.jpg
-      body { background: asset_url('b.jpg'); }
       """
     And the Server is running
 
     When I go to "/assets/a.jpg"
-    Then the status code should be "200"
-    When I go to "/assets/b.jpg"
     Then the status code should be "200"
 
     Given the file "source/stylesheets/manifest.css.scss" is removed
 
     When I go to "/assets/a.jpg"
     Then the status code should be "404"
+
+
+  Scenario: Asset file with linked assets added [path helper]
+    The linked assets are added to the sitemap
+
+    Given the Server is running
+
     When I go to "/assets/b.jpg"
     Then the status code should be "404"
 
+    Given a file named "source/stylesheets/manifest.css.scss" with:
+      """
+      body { background: asset_url('b.jpg'); }
+      """
 
-  Scenario: Asset file with linked assets added
+    When I go to "/assets/b.jpg"
+    Then the status code should be "200"
+
+
+  Scenario: Asset file with linked assets added [directive]
     The linked assets are added to the sitemap
 
     Given the Server is running
 
     When I go to "/assets/a.jpg"
     Then the status code should be "404"
-    When I go to "/assets/b.jpg"
-    Then the status code should be "404"
 
 
     Given a file named "source/stylesheets/manifest.css.scss" with:
       """
       //= link a.jpg
-      body { background: asset_url('b.jpg'); }
       """
 
     When I go to "/assets/a.jpg"
-    Then the status code should be "200"
-    When I go to "/assets/b.jpg"
     Then the status code should be "200"
 
 
