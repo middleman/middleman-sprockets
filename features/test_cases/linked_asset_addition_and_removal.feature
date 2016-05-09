@@ -4,6 +4,9 @@ Feature: Detecting linked asset addition and removal
     Given a fixture app "base-app"
     And a file named "config.rb" with:
       """
+      config[:watcher_disable] = false
+      config[:watcher_force_polling] = true
+
       activate :sprockets
       sprockets.append_path File.join(root, 'imports')
       """
