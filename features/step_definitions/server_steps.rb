@@ -10,6 +10,10 @@ Given /^the file "([^\"]*)" content is changed to\:$/ do |name, content|
   step %Q{a file named "#{name}" with:}, content
   sleep 1
   system "touch #{File.join(ENV['MM_ROOT'], name)}"
+  step %Q{the filesystem is polled}
+end
+
+Then /^the filesystem is polled$/ do
   @server_inst.files.poll_once!
 end
 

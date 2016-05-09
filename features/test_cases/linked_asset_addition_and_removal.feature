@@ -157,11 +157,11 @@ Feature: Detecting linked asset addition and removal
     When I go to "/assets/a.jpg"
     Then the status code should be "404"
 
-
     Given a file named "source/stylesheets/manifest.css.scss" with:
       """
       //= link a.jpg
       """
+    And the filesystem is polled
 
     When I go to "/assets/a.jpg"
     Then the status code should be "200"
