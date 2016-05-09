@@ -125,9 +125,11 @@ module Middleman
           return @_linked_resources if @_linked_resources
 
           @_linked_resources = Set.new
-          links = @linked_assets.merge(@resources.resources
-                                                 .map(&:linked_assets)
-                                                 .reduce(&:merge) || Set.new()).map do |path|
+          links = (@resources.resources
+                             .map(&:sprockets_asset)
+                             .map(&:links)
+                             .map(&:dup)
+                             .reduce(&:merge) || Set.new()).merge(@linked_assets).map do |path|
             asset = environment[path]
             generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
           end
