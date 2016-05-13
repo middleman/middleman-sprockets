@@ -21,6 +21,7 @@ Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
   end
 
   exempt_tags.push '--tags ~@asset_hash' if ENV['SKIP_ASSET_HASH'] == 'true'
+  exempt_tags.push '--tags ~@middleman_head' unless ENV['MIDDLEMAN_HEAD'] == 'true'
   t.cucumber_opts = "--color #{exempt_tags.join(' ')} --strict"
 end
 
