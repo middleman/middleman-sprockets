@@ -31,6 +31,7 @@ module Middleman
 
       # Contract Pathname => Maybe[IsA['::Middleman::Sprockets::Resource']]
       def find_by_path path
+        path = Pathname.new(path) unless path.is_a?(Pathname)
         store.fetch path, nil
       end
     end

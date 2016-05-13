@@ -49,7 +49,7 @@ module Middleman
 
         @environment.context_class.class_eval do
           def current_resource
-            app.extensions[:sprockets].resources.find_by_path(pathname)
+            app.extensions[:sprockets].resources.find_by_path(filename)
           end
 
           def current_path
