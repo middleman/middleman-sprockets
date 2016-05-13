@@ -52,6 +52,10 @@ module Middleman
             app.extensions[:sprockets].resources.find_by_path(pathname)
           end
 
+          def current_path
+            current_resource.destination_path if current_resource
+          end
+
           def asset_path path, options={}
             # Handle people calling with the Middleman/Padrino asset path signature
             if path.is_a?(::Symbol) && !options.is_a?(::Hash)
@@ -146,7 +150,7 @@ module Middleman
         def expose_app_helpers_to_sprockets!
           @environment.context_class.class_eval do
             def mm_context
-              @_mm_context ||= app.template_context_class.new(app)
+              @_mm_context ||= app.template_context_class.new(app, current_path: current_path)
             end
 
             def method_missing method, *args, &block
