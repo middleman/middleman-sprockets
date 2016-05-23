@@ -46,7 +46,7 @@ Feature: Sass should glob partials like sass-rails
 
     Given a file named "config.rb" with:
       """
-      Object.send :remove_const, :SassC # simulate not having sassc
+      Object.send :remove_const, :SassC if defined?(SassC)# simulate not having sassc
       require 'sass-globbing'
       activate :sprockets
       """
