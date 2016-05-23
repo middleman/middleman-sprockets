@@ -37,3 +37,14 @@ Feature: Files with unhandled file extensions are ignored
 
     When I go to "/library/js/index.js"
     Then I should see "alert('why haml?');"
+
+Scenario: Json files should be ignored for sprockets 4
+  Given a file named "source/file.json.coffee" with:
+    """
+    data:
+      title: "file"
+    """
+  And the Server is running
+
+  When I go to "/file.json"
+  Then I should see 'title: "file"'

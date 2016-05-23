@@ -36,7 +36,8 @@ module Middleman
         Contract String => Bool
         def processible? filename
           file_ext, _mime = ::Sprockets::PathUtils.match_path_extname(filename, environment.config[:mime_exts])
-          extensions.include?(file_ext)
+          *template_exts, target_ext = Middleman::Util.collect_extensions(filename)
+          options[:supported_output_extensions].include?(target_ext) && extensions.include?(file_ext)
         end
       end
 
