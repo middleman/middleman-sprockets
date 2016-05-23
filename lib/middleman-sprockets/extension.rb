@@ -127,10 +127,6 @@ module Middleman
               nil
             end
 
-            def environment
-              app.environment
-            end
-
             def mm_context
               @_mm_context ||= app.template_context_class.new(app)
             end

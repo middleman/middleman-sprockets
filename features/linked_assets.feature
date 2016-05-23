@@ -120,4 +120,4 @@ Feature: Linked assets are included in the sitemap
     Then the status code should be "200"
 
     When I go to "/"
-    Then I should see '<img src="/assets/logo.png" />'
+    Then I should see '<img src="/assets/logo.png"'
