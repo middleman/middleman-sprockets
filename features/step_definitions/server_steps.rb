@@ -14,7 +14,11 @@ Given /^the file "([^\"]*)" content is changed to\:$/ do |name, content|
 end
 
 Then /^the filesystem is polled$/ do
-  @server_inst.files.poll_once!
+  if @server_inst.files.respond_to?(:poll_once!)
+    @server_inst.files.poll_once!
+  elsif @server_inst.files.respond_to?(:find_new_files!)
+    @server_inst.files.find_new_files!
+  end
 end
 
 Then /^sprockets paths should include "([^\"]*)"$/ do |path|
