@@ -144,6 +144,7 @@ Feature: Detecting linked asset addition and removal
       """
       body { background: asset_url('b.jpg'); }
       """
+    And the filesystem is polled
 
     When I go to "/assets/b.jpg"
     Then the status code should be "200"
