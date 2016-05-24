@@ -9,12 +9,12 @@ module Middleman
         @store = {}
       end
 
-      # Contract IsA['::Middleman::Sprockets::Resource'] => Any
+      Contract IsA['::Middleman::Sprockets::Resource'] => Any
       def add resource
         store[resource.file_descriptor.full_path] = resource
       end
 
-      # Contract ArrayOf[IsA['::Middleman::Sprockets::Resource']]
+      Contract ArrayOf[IsA['::Middleman::Sprockets::Resource']]
       def resources
         store.values
       end
@@ -24,12 +24,12 @@ module Middleman
         store.keys
       end
 
-      # Contract Pathname => Bool
+      Contract Pathname => Bool
       def matching_path? path
         paths.include?(path)
       end
 
-      # Contract Pathname => Maybe[IsA['::Middleman::Sprockets::Resource']]
+      Contract Or[String, Pathname] => Maybe[IsA['::Middleman::Sprockets::Resource']]
       def find_by_path path
         path = Pathname.new(path) unless path.is_a?(Pathname)
         store.fetch path, nil
