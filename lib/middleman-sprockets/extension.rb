@@ -24,10 +24,9 @@ module Middleman
       def initialize app, options_hash={}, &block
         super
 
-        @linked_assets = Set.new
-        @resources     = ResourceStore.new
-        @environment   = ::Sprockets::Environment.new
-        @interface     = Interface.new options, @environment
+        @resources   = ResourceStore.new
+        @environment = ::Sprockets::Environment.new
+        @interface   = Interface.new options, @environment
 
         use_sassc_if_available
       end
@@ -75,6 +74,7 @@ module Middleman
             end
 
             if app.extensions[:sprockets].check_asset(path)
+              link_asset(path)
               app.extensions[:sprockets].sprockets_asset_path(env[path]).sub(/^\/?/, '/')
             else
               app.asset_path(kind, path)
@@ -111,7 +111,6 @@ module Middleman
       Contract String => Bool
       def check_asset path
         if environment[path]
-          @linked_assets << path
           true
         else
           false
@@ -126,20 +125,16 @@ module Middleman
       private
 
         def linked_resources
-          return @_linked_resources if @_linked_resources
-
-          @_linked_resources = Set.new
-          links = (@resources.resources
-                             .map(&:sprockets_asset)
-                             .map(&:links)
-                             .map(&:dup)
-                             .reduce(&:merge) || Set.new()).merge(@linked_assets).map do |path|
+          @_linked_resources ||= (@resources.resources
+                                            .map(&:sprockets_asset)
+                                            .map(&:links)
+                                            .reduce(&:merge) || Set.new())
+                                            .map do |path|
             asset = environment[path]
-            generate_resource(sprockets_asset_path(asset), asset.filename, asset.logical_path)
+            generate_resource(sprockets_asset_path(asset),
+                              asset.filename,
+                              asset.logical_path)
           end
-          @_linked_resources.merge links
-
-          @_linked_resources
         end
 
         def linked_resources!
