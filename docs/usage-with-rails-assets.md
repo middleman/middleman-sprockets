@@ -1,37 +1,37 @@
 ## Usage with Rails Assets
 
-One of the simplest ways to use middleman-sprockets to manage frontend assets is via [Rails Assets](https://rails-assets.org) Rails Assets is a frictionless proxy between Bundler and Bower to manage Bower-based assets through your existing Gemfile, and then letting the asset pipeline handle the rest.
+One of the simplest ways to use middleman-sprockets to manage frontend assets is via [Rails Assets](https://rails-assets.org). Rails Assets is a frictionless proxy between Bundler and Bower to manage Bower-based assets through your existing Gemfile, and then letting the asset pipeline handle the rest.
 
 Here's a quick guide to using Rails Assets with a new Middleman 4 site:
 
 1. Go to [rails-assets.org](https://rails-assets.org) and identify your dependency and version. Chances are it's already there; rails-assets then packages your dependency as a gem on demand for consumption by Bundler.
 
-2. In Gemfile, add sprockets and a rails-assets block with the gemfiles chosen from step 1:
+2. In your Gemfile, add sprockets and a rails-assets block with the gemfiles chosen from step 1:
 
-```
-# Gemfile
-gem 'middleman-sprockets', '4.0.0.rc.3'
+  ```
+  # Gemfile
+  gem 'middleman-sprockets', '4.0.0.rc.3'
 
-source 'https://rails-assets.org' do
-  gem 'rails-assets-bootstrap-autohidingnavbar', '1.0.0'
-  gem 'rails-assets-jquery', '2.1.1'
-  gem 'rails-assets-slick.js', '1.5.7'
-end
-```
+  source 'https://rails-assets.org' do
+    gem 'rails-assets-bootstrap-autohidingnavbar', '1.0.0'
+    gem 'rails-assets-jquery', '2.1.1'
+    gem 'rails-assets-slick.js', '1.5.7'
+  end
+  ```
 
 3. In your config.rb, add the following block to enable the asset pipeline and add RailsAssets gems to your load path:
 
-```
-# config.rb
-# General configuration
-activate :sprockets
+  ```
+  # config.rb
+  # General configuration
+  activate :sprockets
 
-if defined? RailsAssets
-  RailsAssets.load_paths.each do |path|
-    sprockets.append_path path
+  if defined? RailsAssets
+    RailsAssets.load_paths.each do |path|
+      sprockets.append_path path
+    end
   end
-end
-```
+  ```
 
 4. run `bundle install`
 
