@@ -44,7 +44,11 @@ You may run into edge cases where the assets in the generated gem are not packag
 cd `bundle show gemname`
 ```
 
-and opening up the library in your text editor will show you the necessary path & file information. In the example above, since slick.js ends with .js, make sure you specify the javascript import as `//= require slick.js.js`.
+and opening up the library in your text editor will show you the necessary path & file information. In the example above, since slick.js ends with .js, make sure you specify the javascript import as:
+
+```
+ //= require slick.js.js
+```
 
 Finally, note that you can still use traditional hand-packaged gems like bootstrap-sass and font-awesome-sass in your Gemfile as well. Here's a complete Gemfile for reference:
 
