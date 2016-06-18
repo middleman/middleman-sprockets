@@ -9,11 +9,13 @@ module Middleman
       attr_reader :imported_assets
       attr_reader :appended_paths
       attr_reader :prepended_paths
+      attr_reader :ignored_paths
 
       def initialize(options={})
         @imported_assets = []
         @appended_paths = []
         @prepended_paths = []
+        @ignored_paths = []
       end
 
       def method_missing?(method)
@@ -44,6 +46,10 @@ module Middleman
 
       def prepend_path(path)
         @prepended_paths << path
+      end
+
+      def ignore_path(path)
+        @ignored_paths << path
       end
     end
   end

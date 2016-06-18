@@ -75,6 +75,7 @@ module Middleman
       @environment = ::Middleman::Sprockets::Environment.new(app, :debug_assets => debug_assets)
       config_environment.apply_to_environment(@environment)
 
+      @config_environment = config_environment
       append_paths_from_gems
       import_images_and_fonts_from_gems
 
@@ -146,6 +147,7 @@ module Middleman
     def import_images_and_fonts_from_gems
       environment.paths
           .reject { |p| p.start_with?(app.source_dir) }
+          .reject { |p| @config_environment.ignored_paths.any?{|r| r.match(p)}}
           .select { |p| p.end_with?('images') || p.end_with?('fonts') }
           .each do |load_path|
         environment.each_entry(load_path) do |path|
