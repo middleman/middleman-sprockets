@@ -10,7 +10,7 @@ gem "yard", "~> 0.8.0", :require => false
 
 # Test tools
 gem "cucumber", "~> 2.0"
-gem "aruba", "~> 0.7.4"
+gem "aruba", "~> 0.10.0"
 gem "rspec", "~> 3.0"
 gem "builder", "~> 3.0"
 gem "simplecov"
