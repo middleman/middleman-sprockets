@@ -98,8 +98,8 @@ Feature: Assets get a file hash appended to their URL and references to them are
       function sprockets_sub_function() { }
       """
     When I go to "/partials/"
-    Then I should see 'src="../javascripts/sprockets_base-b80703b7.js'
-    When I go to "/javascripts/sprockets_base-b80703b7.js"
+    Then I should see 'src="../javascripts/sprockets_base-0252a861.js'
+    When I go to "/javascripts/sprockets_base-0252a861.js"
     Then I should see "sprockets_sub_function"
     And wait a second
     And the file "source/javascripts/sprockets_sub.js" has the contents
@@ -107,6 +107,6 @@ Feature: Assets get a file hash appended to their URL and references to them are
       function sprockets_sub2_function() { }
       """
     When I go to "/partials/"
-    Then I should see 'src="../javascripts/sprockets_base-f624ef94.js'
-    When I go to "/javascripts/sprockets_base-f624ef94.js"
+    Then I should see 'src="../javascripts/sprockets_base-5121d891.js'
+    When I go to "/javascripts/sprockets_base-5121d891.js"
     Then I should see "sprockets_sub2_function"
