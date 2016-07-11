@@ -1,5 +1,5 @@
-> The master branch is for a pre-released 4.x version of Middleman-Sprockets.
-> - For upgrading help please [read the upgrading guide](docs/upgrade-3-to-4.md)
+> The master branch is the 4.x version of Middleman-Sprockets.
+> - If you're upgrading from 3.x, the [upgrading guide](docs/upgrade-3-to-4.md) should get you started.
 > - For 3.x stable usage please see the [`v3-stable-real` branch](https://github.com/middleman/middleman-sprockets/tree/v3-stable-real)
 
 # Middleman-Sprockets
