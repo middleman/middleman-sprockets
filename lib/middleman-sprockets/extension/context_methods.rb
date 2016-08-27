@@ -30,7 +30,8 @@ module Middleman
 
           if app.extensions[:sprockets].check_asset(path)
             link_asset(path)
-            app.extensions[:sprockets].sprockets_asset_path(env[path]).sub(/^\/?/, '/')
+            prefix = app.config[:http_prefix].nil? ? '/' : app.config[:http_prefix].sub(/\/?$/, '/')
+            app.extensions[:sprockets].sprockets_asset_path(env[path]).sub(/^\/?/, prefix)
           else
             app.asset_path(kind, path)
           end
