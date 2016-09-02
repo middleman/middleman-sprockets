@@ -49,6 +49,22 @@ activate :sprockets do |c|
 end
 ```
 
+You can also pass in a proc to `imported_asset_path_processor` to conditionally determine where assets go.
+
+```ruby
+activate :sprockets do |c|
+  c.imported_asset_path_processor = ->(asset) {
+    if asset.logical_path =~ /\.js$/
+      # all files ending with .js get put in /vendor-js
+      File.join('vendor-js', asset.logical_path)
+    else
+      # other assets head to /imported
+      File.join('imported', asset.logical_path)
+    end
+  }
+end
+```
+
 
 **`expose_middleman_helpers` [default: false]**
 

@@ -1,3 +1,6 @@
+- add `imported_asset_path_processor` option to determine imported asset location [@vvasabi](https://github.com/middleman/middleman-sprockets/pull/123)
+
+
 4.0.0
 =====
 
