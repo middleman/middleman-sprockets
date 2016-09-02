@@ -33,9 +33,7 @@ gem 'sassc',  require: false
 
 # catch the version of listen
 # working around bundler not switching the dependency graph itself
-if RUBY_VERSION < '2.2'
-  gem 'listen', '~> 3.0.6'
-end
+gem 'listen', '~> 3.0.6' if RUBY_VERSION < '2.2'
 
 # Code Quality
 group :test do

@@ -38,6 +38,11 @@ Style/RegexpLiteral:
 Style/SignalException:
   Enabled: false
 
+Style/PercentLiteralDelimiters:
+  Enabled: true
+  PreferredDelimiters:
+      '%':  '{}'
+      '%w': '[]'
 
 # Metrics ----------------------------------
 
@@ -55,3 +60,6 @@ Metrics/MethodLength:
 
 Lint/EndAlignment:
   AlignWith: variable
+
+Lint/AmbiguousRegexpLiteral:
+  Exclude: ["features/step_definitions/**/*"]

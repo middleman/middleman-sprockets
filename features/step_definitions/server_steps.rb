@@ -2,15 +2,17 @@ Given /^wait a second$/ do
   sleep(1)
 end
 
+# rubocop:disable Lint/Debugger
 Given /^binding.pry/ do
   binding.pry
 end
+# rubocop:enable Lint/Debugger
 
 Given /^the file "([^\"]*)" content is changed to\:$/ do |name, content|
-  step %Q{a file named "#{name}" with:}, content
+  step %{a file named "#{name}" with:}, content
   sleep 1
   system "touch #{File.join(ENV['MM_ROOT'], name)}"
-  step %Q{the filesystem is polled}
+  step %{the filesystem is polled}
 end
 
 Then /^the filesystem is polled$/ do
@@ -23,10 +25,10 @@ end
 
 Then /^sprockets paths should include "([^\"]*)"$/ do |path|
   sprockets = @server_inst.extensions[:sprockets].environment
-  expect( sprockets.paths ).to include File.join(ENV['MM_ROOT'], path)
+  expect(sprockets.paths).to include File.join(ENV['MM_ROOT'], path)
 end
 
 Then /^sprockets paths should include gem path "([^\"]*)"/ do |path|
   sprockets = @server_inst.extensions[:sprockets].environment
-  expect( sprockets.paths ).to include File.join(PROJECT_ROOT_PATH, 'fixtures', 'gems', path)
+  expect(sprockets.paths).to include File.join(PROJECT_ROOT_PATH, 'fixtures', 'gems', path)
 end

@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path('../lib', __FILE__)
+$LOAD_PATH.push File.expand_path('../lib', __FILE__)
 require 'middleman-sprockets/version'
 
 Gem::Specification.new do |s|
@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = ['Thomas Reynolds', 'Ben Hollis', 'Karl Freeman']
   s.email       = ['me@tdreyno.com', 'ben@benhollis.net', 'karlfreeman@gmail.com']
   s.homepage    = 'https://github.com/middleman/middleman-sprockets'
-  s.summary     = %q{Sprockets support for Middleman}
-  s.description = %q{Sprockets support for Middleman}
+  s.summary     = 'Sprockets support for Middleman'
+  s.description = 'Sprockets support for Middleman'
   s.license     = 'MIT'
   s.files       = `git ls-files -z`.split("\0")
   s.test_files  = `git ls-files -z -- {fixtures,features}/*`.split("\0")
