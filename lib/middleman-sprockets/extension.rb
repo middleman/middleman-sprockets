@@ -47,43 +47,8 @@ module Middleman
         @environment.context_class.send(:define_method, :data) { the_app.data }
         @environment.context_class.send(:define_method, :env)  { the_env }
 
-        @environment.context_class.class_eval do
-          def current_resource
-            app.extensions[:sprockets].resources.find_by_path(filename)
-          end
-
-          def current_path
-            current_resource.destination_path if current_resource
-          end
-
-          def asset_path path, options={}
-            # Handle people calling with the Middleman/Padrino asset path signature
-            if path.is_a?(::Symbol) && !options.is_a?(::Hash)
-              kind = path
-              path = options
-            else
-              kind = {
-                image: :images,
-                font: :fonts,
-                javascript: :js,
-                stylesheet: :css
-              }.fetch(options[:type], options[:type])
-            end
-
-            if File.extname(path).empty?
-              path << { js: '.js', css: '.css' }.fetch(kind, '')
-            end
-
-            if app.extensions[:sprockets].check_asset(path)
-              link_asset(path)
-              app.extensions[:sprockets].sprockets_asset_path(env[path]).sub(/^\/?/, '/')
-            else
-              app.asset_path(kind, path)
-            end
-          end
-        end
-
-        expose_app_helpers_to_sprockets! if options[:expose_middleman_helpers]
+        @environment.context_class.send(:include, ContextMethods)
+        @environment.context_class.send(:prepend, ExposeMiddlemanHelpers) if options[:expose_middleman_helpers]
       end
 
       Contract ResourceList => ResourceList
@@ -146,26 +111,6 @@ module Middleman
         def linked_resources!
           @_linked_resources = nil
           linked_resources
-        end
-
-        def expose_app_helpers_to_sprockets!
-          @environment.context_class.class_eval do
-            def mm_context
-              @_mm_context ||= app.template_context_class.new(app, current_path: current_path)
-            end
-
-            def method_missing method, *args, &block
-              if mm_context.respond_to?(method)
-                return mm_context.send method, *args, &block
-              end
-
-              super
-            end
-
-            def respond_to? method, include_private=false
-              super || mm_context.respond_to?(method, include_private)
-            end
-          end
         end
 
         Contract ::Middleman::Sitemap::Resource => Or[::Middleman::Sitemap::Resource, Resource]
@@ -232,3 +177,6 @@ module Middleman
     end
   end
 end
+
+require_relative 'extension/context_methods'
+require_relative 'extension/expose_middleman_helpers'
