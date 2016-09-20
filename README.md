@@ -71,6 +71,14 @@ Be careful if you are using `bower`-components which place their assets in
 need to use the `#import_asset`-call with the block to place it in the correct
 directory.
 
+**Ignoring imported assets**
+
+Sometimes you may not wish to include all assets from an asset gem. For example lets take the jquery-mobile gem, it includes a bunch of images that you may not want included in your build. Pass a regex to match the path to `sprockets.ignore_path`. Like, `append_path`, you may add multiple.
+
+```ruby
+sprockets.ignore_path /jquery\-mobile/
+```
+
 ## Build & Dependency Status
 
 [![Gem Version](https://badge.fury.io/rb/middleman-sprockets.png)][gem]

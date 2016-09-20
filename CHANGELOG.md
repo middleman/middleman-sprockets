@@ -1,3 +1,5 @@
+* Allow ignoring paths from imported gems [@zach-capalbo](https://github.com/middleman/middleman-sprockets/pull/118)
+
 3.4.2
 ===
 
