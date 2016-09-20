@@ -26,6 +26,7 @@ gem "jquery_mobile_rails", "1.4.1", :require => false
 gem "ejs", "~> 1.1.1"
 gem "eco", "~> 1.0.0"
 gem "erubis", "~> 2.7.0"
+gem "pry-byebug"
 
 # Code Quality
 gem "cane", :platforms => [:mri_19, :mri_20], :require => false
