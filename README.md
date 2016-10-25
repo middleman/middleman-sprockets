@@ -45,25 +45,27 @@ To configure, in `config.rb`:
 
 ```ruby
 activate :sprockets do |c|
-  c.imported_asset_path = YOUR_PATH
+  c.imported_asset_path = "YOUR_PATH"
 end
 ```
 
-You can also pass in a proc to `imported_asset_path_processor` to conditionally determine where assets go.
+You can also pass an object (proc/lambda/class) that responds to `#call` to `imported_asset_path` to conditionally determine where assets go.
 
 ```ruby
 activate :sprockets do |c|
-  c.imported_asset_path_processor = ->(asset) {
-    if asset.logical_path =~ /\.js$/
+  c.imported_asset_path = ->(sprockets_asset) do
+    if sprockets_asset.logical_path =~ /\.js$/
       # all files ending with .js get put in /vendor-js
-      File.join('vendor-js', asset.logical_path)
+      File.join('vendor-js', sprockets_asset.logical_path)
     else
       # other assets head to /imported
-      File.join('imported', asset.logical_path)
+      File.join('imported', sprockets_asset.logical_path)
     end
-  }
+  end
 end
 ```
+
+[View the imported_asset_processor test](features/test_cases/imported_asset_processor.feature) for an example using a class.
 
 
 **`expose_middleman_helpers` [default: false]**

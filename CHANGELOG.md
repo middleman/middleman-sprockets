@@ -1,4 +1,8 @@
-- add `imported_asset_path_processor` option to determine imported asset location [@vvasabi](https://github.com/middleman/middleman-sprockets/pull/123)
+**fixes**
+- respect http_prefix in asset_path helper [@vvasabi](https://github.com/middleman/middleman-sprockets/pull/124)
+
+**features**
+- allow passing proc/class to `imported_asset_path` option to determine imported asset location [@vvasabi](https://github.com/middleman/middleman-sprockets/pull/123)
 
 
 4.0.0

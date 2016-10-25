@@ -17,7 +17,6 @@ module Middleman
       expose_to_template sprockets: :environment
 
       option :supported_output_extensions,   ['.css', '.js'], 'Output extensions sprockets should process'
-      option :imported_asset_path_processor, nil,             'Processor that determines where assets should be placed.'
       option :imported_asset_path,           'assets',        'Where under source imported assets should be placed.'
       option :expose_middleman_helpers,      false,           'Whether to expose middleman helpers to sprockets.'
 
@@ -85,12 +84,11 @@ module Middleman
 
       Contract ::Sprockets::Asset => String
       def sprockets_asset_path sprockets_asset
-        unless options[:imported_asset_path_processor].nil?
-          return options[:imported_asset_path_processor].call(sprockets_asset)
+        if options[:imported_asset_path].is_a?(String)
+          File.join(options[:imported_asset_path], sprockets_asset.logical_path)
+        else
+          options[:imported_asset_path].call(sprockets_asset)
         end
-        path = [sprockets_asset.logical_path]
-        path.unshift(options[:imported_asset_path]) unless options[:imported_asset_path].nil?
-        File.join(path)
       end
 
       private
