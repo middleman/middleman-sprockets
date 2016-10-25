@@ -41,4 +41,5 @@ group :test do
   gem 'simplecov',  '~> 0.9',    require: false
   gem 'coveralls',  '~> 0.8',    require: false
   gem 'codeclimate-test-reporter', '~> 0.3', require: false
+  gem 'benchmark-ips'
 end
