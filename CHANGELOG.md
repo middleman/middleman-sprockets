@@ -1,3 +1,6 @@
+4.1.0
+=====
+
 **fixes**
 - respect http_prefix in asset_path helper [@vvasabi](https://github.com/middleman/middleman-sprockets/pull/124)
 
