@@ -114,7 +114,11 @@ module Middleman
         Contract ::Middleman::Sitemap::Resource => Or[::Middleman::Sitemap::Resource, Resource]
         def process_sprockets_resource resource
           ::Middleman::Util.instrument 'sprockets', name: 'process_resource', resource: resource do
-            sprockets_resource = generate_resource(resource.path, resource.source_file, resource.path)
+            sprockets_resource = generate_resource(
+              resource.path,
+              resource.source_file,
+              source_file_relative_to_root(resource)
+            )
             @resources.add sprockets_resource
 
             sprockets_resource
@@ -145,6 +149,12 @@ module Middleman
         rescue LoadError
           logger.info "== Sprockets will render css with ruby sass\n" \
                       '   consider using Sprockets 4.x to render with SassC'
+        end
+
+        def source_file_relative_to_root resource
+          Pathname.new(resource.source_file).relative_path_from(
+            Pathname.new(File.join(@app.root, @app.config[:source]))
+          ).to_s
         end
 
         # Backwards compatible means of finding all the latest gemspecs

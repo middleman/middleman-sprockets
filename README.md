@@ -108,6 +108,7 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 3. Run `bundle install` inside the project root to install the gem dependencies.
 4. Run test cases: `bundle exec rake test`
 
+To run specs for an individual feature, `cucumber features/PATH_TO_FEATURE`
 
 ## Donate
 
