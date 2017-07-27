@@ -75,11 +75,7 @@ module Middleman
 
       Contract String => Bool
       def check_asset path
-        if environment[path]
-          true
-        else
-          false
-        end
+        path.present? && environment[path]
       end
 
       Contract ::Sprockets::Asset => String
