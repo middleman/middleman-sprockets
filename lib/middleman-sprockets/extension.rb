@@ -75,7 +75,7 @@ module Middleman
 
       Contract String => Bool
       def check_asset path
-        if environment[path]
+        if path.present? && environment[path]
           true
         else
           false
