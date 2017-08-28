@@ -121,6 +121,8 @@ module Middleman
             )
             @resources.add sprockets_resource
 
+            sprockets_resource.ignore! if resource.ignored?
+
             sprockets_resource
           end
         rescue => e
