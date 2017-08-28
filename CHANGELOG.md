@@ -1,3 +1,8 @@
+4.1.1
+=====
+**fixes**
+- support sprockets renderable proxied assets, fixes [#128] related to how the I18n extension moves assets.
+
 4.1.0
 =====
 
